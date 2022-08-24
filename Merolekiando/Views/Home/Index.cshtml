@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+
+<div class="main_content_iner ">
+    <div class="container-fluid plr_30 body_white_bg pt_30">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="single_element">
+                    <div class="quick_activity">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="quick_activity_wrap">
+                                    <div class="single_quick_activity">
+                                        <h4>Categories</h4>
+                                        <h3><span class="counter">@ViewBag.Categories</span> </h3>
+                                    </div>
+                                    <div class="single_quick_activity">
+                                        <h4>Subscriptions</h4>
+                                        <h3><span class="counter">69</span> </h3>
+                                    </div>
+                                    <div class="single_quick_activity">
+                                        <h4>Provinces</h4>
+                                        <h3><span class="counter">@ViewBag.Provinces</span> </h3>
+                                    </div>
+                                    <div class="single_quick_activity">
+                                        <h4>Users</h4>
+                                        <h3><span class="counter">@ViewBag.Users</span> </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,236 @@
+﻿<div class="container-fluid plr_30 body_white_bg pt_30">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">New Request</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Verified</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="container-fluid plr_30 body_white_bg pt_30">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <div class="QA_section">
+                                    <div class="QA_table">
+                                        <table class="table lms_table_active">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Message</th>
+                                                    <th scope="col">Front Image</th>
+                                                    <th scope="col">Back Image</th>
+                                                    <th scope="col">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in @ViewBag.VerificationSent)
+                                                {
+                                                    <tr>
+                                                        <th scope="row"> <a href="#" class="question_content"> @item.UserName</a></th>
+                                                        <th>@item.Message</th>
+                                                        <th> <img style="width: 50px; height: 50px;" class="img" src="@item.SFImage" alt=""> </th>
+                                                        <th> <img style="width: 50px; height: 50px;" class="img" src="@item.SBImage" alt=""> </th>
+                                                        <td>
+                                                            <a href="#" data-target="@item.Userid" id="AcceptClick" class="status_btn">Accept</a>
+                                                            <a href="#" style="background-color:red" data-target="@item.Userid" id="RejectClick" class="status_btn">Reject</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="QA_section">
+                                <div class="QA_table">
+
+                                    <table class="table lms_table_active">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Message</th>
+                                                <th scope="col">Front Image</th>
+                                                <th scope="col">Back Image</th>
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in @ViewBag.Verified)
+                                            {
+                                                <tr>
+                                                    <th scope="row"> <a href="#" class="question_content"> @item.UserName</a></th>
+                                                    <th>@item.Message</th>
+                                                    <th> <img style="width: 50px; height: 50px;" class="img" src="@item.SFImage" alt=""> </th>
+                                                    <th> <img style="width: 50px; height: 50px;" class="img" src="@item.SBImage" alt=""> </th>
+                                                    <td>
+                                                        <a href="#" style="background-color:red" data-target="@item.Userid" id="DeleteCat" class="status_btn">Cancel</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AcceptModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Accept Request</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/User/AcceptAccount" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body" >
+                        
+                    </div>
+                    <div class="white_card_body" id="CatDelId">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="RejectModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Reject Request</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/User/AcceptAccount" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body" >
+                        
+                    </div>
+                    <div class="white_card_body" id="CatrejId">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CancelModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cancel Verfication</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/User/AcceptAccount" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body" >
+                        
+                    </div>
+                    <div class="white_card_body" id="CatcanId">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+
+    $(document).on('click', 'tr td a#AcceptClick', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("VerifyAcceptModal", "User")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#AcceptModal').modal('show');
+                    $("#CatDelId").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+    $(document).on('click', 'tr td a#RejectClick', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("VerifyRejectModal", "User")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#RejectModal').modal('show');
+                    $("#CatrejId").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+    $(document).on('click', 'tr td a#DeleteCat', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("VerifyCancelModal", "User")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#CancelModal').modal('show');
+                    $("#CatcanId").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+</script>
