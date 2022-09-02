@@ -1,9 +1,11 @@
-﻿using Merolekando.Common;
+﻿using MailKit.Net.Smtp;
+using Merolekando.Common;
 using Merolekando.Models.Dtos;
 using Merolekiando.Models;
 using Merolekiando.Models.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,28 +24,62 @@ namespace Merolekando.Services.Auth
             _environment = environment;
         }
 
-        public async Task<string> DeleteUser(int id)
+        public async Task<string> DeleteUser(DeleteAccountDto dto)
         {
             try
             {
-                var user = await _Context.Users.Where(a => a.Id == id && a.IsDeleted != true).FirstOrDefaultAsync();
-                user.IsDeleted = true;
-                _Context.Users.Update(user);
-                _Context.SaveChanges();
-
-                var chat = _Context.Chats.Where(a => a.SenderId == id && a.RecieverId == id).ToList();
-                _Context.Chats.RemoveRange(chat);
-
-                var prd = _Context.Products.Where(a => a.SellerId == id).ToList();
-                foreach (var item in prd)
+                if (dto.LoginType == "Custom")
                 {
-                    item.IsActive = false;
-                    _Context.Products.Update(item);
+                    var user = await _Context.Users.Where(a => a.Id == dto.Id && a.IsDeleted != true).FirstOrDefaultAsync();
+                    string encpass = Methods.Encrypt(dto.Pass);
+                    if (user.Password != encpass)
+                    {
+                        return "Contraseña invalida";
+                    }
 
+                    user.IsDeleted = true;
+                    _Context.Users.Update(user);
+                    _Context.SaveChanges();
+
+                    var chat = _Context.Chats.Where(a => a.SenderId == dto.Id || a.RecieverId == dto.Id).ToList();
+                    _Context.Chats.RemoveRange(chat);
+
+                    var prd = _Context.Products.Where(a => a.SellerId == dto.Id).ToList();
+                    foreach (var item in prd)
+                    {
+                        item.IsActive = false;
+                        _Context.Products.Update(item);
+                    }
+                    _Context.SaveChanges();
+
+                    return "Success";
                 }
-                _Context.SaveChanges();
+                else
+                {
+                    var user = await _Context.Users.Where(a => a.Id == dto.Id && a.IsDeleted != true).FirstOrDefaultAsync();
+                    if (user.UniqueId != dto.Pass)
+                    {
+                        return "Contraseña invalida";
+                    }
 
-                return "Success";
+                    user.IsDeleted = true;
+                    _Context.Users.Update(user);
+                    _Context.SaveChanges();
+
+                    var chat = _Context.Chats.Where(a => a.SenderId == dto.Id || a.RecieverId == dto.Id).ToList();
+                    _Context.Chats.RemoveRange(chat);
+
+                    var prd = _Context.Products.Where(a => a.SellerId == dto.Id).ToList();
+                    foreach (var item in prd)
+                    {
+                        item.IsActive = false;
+                        _Context.Products.Update(item);
+                    }
+                    _Context.SaveChanges();
+
+                    return "Success";
+                }
+                
             }
             catch (Exception ex)
             {
@@ -123,9 +159,15 @@ namespace Merolekando.Services.Auth
             if (user.LoginType == "Custom")
             {
                 string encpass = Methods.Encrypt(user.Password);
+
                 var usr = await _Context.Users.Where(a => a.Email == user.Email && a.Password == encpass && a.IsDeleted == false).FirstOrDefaultAsync();
+                
                 if (usr != null)
                 {
+                    if (usr.IsBlock == true)
+                    {
+                        return "Cuenta bloqueada";
+                    }
                     return "Success";
                 }
                 return "Invalid credentials";
@@ -135,6 +177,10 @@ namespace Merolekando.Services.Auth
                 var Check = await _Context.Users.Where(a => a.UniqueId == user.UniqueId && a.IsDeleted == false).FirstOrDefaultAsync();
                 if (Check != null)
                 {
+                    if (Check.IsBlock == true)
+                    {
+                        return "Cuenta bloqueada";
+                    }
                     return "Success";
                 }
                 else
@@ -374,7 +420,7 @@ namespace Merolekando.Services.Auth
                         dt.Number = user.Number;
                         dt.Date = DateTime.Now.Millisecond;
                         dt.MemberSince = DateTime.Now.Millisecond;
-                        dt.LoginType = "Unique";
+                        dt.LoginType = user.LoginType;
                         await _Context.Users.AddAsync(dt);
                         _Context.SaveChanges();
                     }
@@ -418,45 +464,51 @@ namespace Merolekando.Services.Auth
             }
         }
 
-        public async Task<UserDto> SetEmail(SetUserEmailDto dto)
+        public async Task<Tuple<UserDto, string>> SetEmail(SetUserEmailDto dto)
         {
-            var Check = await _Context.Users.Where(a => a.Id == dto.Id && a.IsDeleted == false).FirstOrDefaultAsync();
+            UserDto dto1 = new();
+            var Check = await _Context.Users.Where(a => a.Id == dto.Id && a.IsDeleted != true).FirstOrDefaultAsync();
             if (Check != null)
             {
                 string encpass = Methods.Encrypt(dto.Password);
                 if (Check.Password == encpass)
                 {
-                    Check.Email = dto.Email;
-                    _Context.Users.Update(Check);
-                    _Context.SaveChanges();
+                    var email = await _Context.Users.Where(a => a.Email == dto.Email && a.IsDeleted != true).FirstOrDefaultAsync();
+                    if (email == null)
+                    {
+                        Check.Email = dto.Email;
+                        _Context.Users.Update(Check);
+                        _Context.SaveChanges();
 
-                    UserDto dto1 = new();
-                    dto1.Address = Check.Address;
-                    dto1.Name = Check.Name;
-                    dto1.Date = Check.Date;
-                    dto1.Email = Check.Email;
-                    dto1.Id = Check.Id;
-                    dto1.IdImage = Check.IdImage;
-                    dto1.Image = Check.Image;
-                    dto1.IsDeleted = Check.IsDeleted;
-                    dto1.IsVerified = Check.IsVerified;
-                    dto1.LoginType = Check.LoginType;
-                    dto1.MemberSince = Check.MemberSince;
-                    dto1.MunicipalityId = Check.MunicipalityId;
-                    dto1.Number = Check.Number;
-                    dto1.Password = Check.Password;
-                    dto1.Rate = Check.Rate;
-                    dto1.VerificationSent = Check.VerificationSent;
-                    dto1.ProvinceId = Check.ProvinceId;
-                    dto1.Status = Check.Status;
-                    dto1.UniqueId = Check.UniqueId;
-                    dto1.Subscriptions = Check.Subscriptions;
-                    dto1.Ratintg = await _Context.Ratings.Where(a => a.UidTo == Check.Id).ToListAsync();
-                    dto1.Favorites = _Context.Favorites.Where(a => a.UserId == Check.Id).ToList();
-                    dto1.Followers = _Context.Folowers.Where(a => a.Folowers == Check.Id).ToList();
-                    return dto1;
+
+                        dto1.Address = Check.Address;
+                        dto1.Name = Check.Name;
+                        dto1.Date = Check.Date;
+                        dto1.Email = Check.Email;
+                        dto1.Id = Check.Id;
+                        dto1.IdImage = Check.IdImage;
+                        dto1.Image = Check.Image;
+                        dto1.IsDeleted = Check.IsDeleted;
+                        dto1.IsVerified = Check.IsVerified;
+                        dto1.LoginType = Check.LoginType;
+                        dto1.MemberSince = Check.MemberSince;
+                        dto1.MunicipalityId = Check.MunicipalityId;
+                        dto1.Number = Check.Number;
+                        dto1.Password = Check.Password;
+                        dto1.Rate = Check.Rate;
+                        dto1.VerificationSent = Check.VerificationSent;
+                        dto1.ProvinceId = Check.ProvinceId;
+                        dto1.Status = Check.Status;
+                        dto1.UniqueId = Check.UniqueId;
+                        dto1.Subscriptions = Check.Subscriptions;
+                        dto1.Ratintg = await _Context.Ratings.Where(a => a.UidTo == Check.Id).ToListAsync();
+                        dto1.Favorites = _Context.Favorites.Where(a => a.UserId == Check.Id).ToList();
+                        dto1.Followers = _Context.Folowers.Where(a => a.Folowers == Check.Id).ToList();
+                        return Tuple.Create(dto1, "Success");
+                    }
+                    Tuple.Create(dto1, "Ya existe el correo electrónico");
                 }
-                return null;
+                Tuple.Create(dto1, "Contraseña antigua inválida");
             }
             return null;
         }
@@ -614,6 +666,41 @@ namespace Merolekando.Services.Auth
                 return "Contraseña antigua inválida";
             }
             return "Success";
+        }
+        public async Task<string> SendEmail(string to)
+        {
+            try
+            {
+                var dt = _Context.Users.Where(x => x.Email == to).FirstOrDefault();
+
+                if (dt != null)
+                {
+                    var message = new MimeMessage();
+                    message.From.Add(new MailboxAddress("Test Project", "titus.zaman@gmail.com"));
+                    message.To.Add(new MailboxAddress("Titus", to));
+                    message.Subject = "This Email by Merolikiando App ";
+                    message.Body = new TextPart("plain")
+                    {
+                        Text = Methods.baseurl + "Home/PasswordRest?id= " + dt.Id + "&email=" + dt.Email
+                    };
+                    using (var client = new SmtpClient())
+                    {
+                        client.Connect("smtp.gmail.com", 587, false);
+                        client.Authenticate("titus.zaman@gmail.com", "rwxfyqsnsbgeaxqr");
+                        client.Send(message);
+                        client.Disconnect(true);
+                    }
+                    return to;
+                }
+                return "Not Exist";
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            
         }
     }
 }

@@ -81,7 +81,9 @@ namespace Merolekando.Controllers
                 {
                     return BadRequest("credenciales no válidas");
                 }
-                return BadRequest("Error");
+                else {
+                    return BadRequest(res.Result);
+                }
             }
             return Unauthorized();
         }
@@ -137,7 +139,7 @@ namespace Merolekando.Controllers
         }
         [HttpPost]
         [Route("DeleteUser")]
-        public IActionResult DeleteUser()
+        public IActionResult DeleteUser(DeleteAccountDto dto)
         {
             var identity = User.Identity as ClaimsIdentity;
             if (identity != null)
@@ -146,12 +148,13 @@ namespace Merolekando.Controllers
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {
-                    var result = _auth.DeleteUser(Convert.ToInt32(name));
+                    dto.Id = Convert.ToInt32(name);
+                    var result = _auth.DeleteUser(dto);
                     if (result.Result == "Success")
                     {
                         return Ok(new { result.Result });
                     }
-                    return BadRequest();
+                    return BadRequest(result.Result);
                 }
                 return Unauthorized("Token Issue");
             }
@@ -193,11 +196,11 @@ namespace Merolekando.Controllers
                 {
                     dto.Id = Convert.ToInt32(name);
                     var result = _auth.SetEmail(dto);
-                    if (result.Result != null)
+                    if (result.Result.Item2 == "Success")
                     {
                         return Ok(new { result.Result });
                     }
-                    return BadRequest();
+                    return BadRequest(result.Result.Item2);
                 }
                 return Unauthorized("Token Issue");
             }
@@ -250,7 +253,7 @@ namespace Merolekando.Controllers
         }
         [HttpPost]
         [Route("ChangePassword")]
-        public IActionResult ChangePassword(ChangePassDto dto)
+        public IActionResult SendEmail(ChangePassDto dto)
         {
             var identity = User.Identity as ClaimsIdentity;
             if (identity != null)
@@ -270,6 +273,17 @@ namespace Merolekando.Controllers
                 return Unauthorized("Token Issue");
             }
             return Unauthorized();
+        }
+        [HttpPost]
+        [Route("SendEmail")]
+        public IActionResult ChangePassword(string to)
+        {
+            var result = _auth.SendEmail(to);
+            if (result.Result == "Not Exist")
+            {
+                return BadRequest(result.Result);
+            }
+            return Ok();
         }
         [HttpGet]
         [Route("GetUsers")]

@@ -17,7 +17,8 @@ namespace Merolekiando.Models
         public string Type { get; set; }
         public string Link { get; set; }
         public bool? Status { get; set; }
-        public int? Time { get; set; }
+        public long? Time { get; set; }
         public string Key { get; set; }
+        public int? ProductId { get; set; }
     }
 }

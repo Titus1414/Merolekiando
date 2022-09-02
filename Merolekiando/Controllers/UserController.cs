@@ -74,33 +74,18 @@ namespace Merolekiando.Controllers
         }
         public IActionResult VerifyAcceptModal(int id)
         {
-            var UsId = HttpContext.Session.GetInt32("userId");
-            if (UsId != null)
-            {
-                var dt = _Context.UserVerifications.Where(a => a.UserId == id).FirstOrDefault();
-                return PartialView("~/Views/User/_AcceptModal.cshtml", dt);
-            }
-            return RedirectToAction("Login");
+            var dt = _Context.UserVerifications.Where(a => a.UserId == id).FirstOrDefault();
+            return PartialView("~/Views/User/_AcceptModal.cshtml", dt);
         }
         public IActionResult VerifyRejectModal(int id)
         {
-            var UsId = HttpContext.Session.GetInt32("userId");
-            if (UsId != null)
-            {
-                var dt = _Context.UserVerifications.Where(a => a.Id == id).FirstOrDefault();
-                return PartialView("~/Views/User/_RejectModal.cshtml", dt);
-            }
-            return RedirectToAction("Login");
+            var dt = _Context.UserVerifications.Where(a => a.Id == id).FirstOrDefault();
+            return PartialView("~/Views/User/_RejectModal.cshtml", dt);
         }
         public IActionResult VerifyCancelModal(int id)
         {
-            var UsId = HttpContext.Session.GetInt32("userId");
-            if (UsId != null)
-            {
-                var dt = _Context.UserVerifications.Where(a => a.Id == id).FirstOrDefault();
-                return PartialView("~/Views/User/_CancelModal.cshtml", dt);
-            }
-            return RedirectToAction("Login");
+            var dt = _Context.UserVerifications.Where(a => a.Id == id).FirstOrDefault();
+            return PartialView("~/Views/User/_CancelModal.cshtml", dt);
         }
         public IActionResult AcceptAccount(int UserId, int check)
         {
@@ -147,7 +132,7 @@ namespace Merolekiando.Controllers
                 {
                     ViewBag.AllAllow = dt;
                 }
-                
+
                 return View();
             }
             return RedirectToAction("Login");

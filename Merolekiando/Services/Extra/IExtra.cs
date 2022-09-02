@@ -26,12 +26,15 @@ namespace Merolekando.Services.Extra
         public Task<List<Banner>> GetBanners();
         public Task<Banner> GetBannerById(int id);
         public Task<UserDto> GiveRate(Rating dto);
-        public Task<List<Message>> GetChatUsers(int id);
+        public Task<string> SetMessageUser(MessaveDto dto);
+        public Task<List<MessagesDto>> GetChatUsers(int id);
+        public Task<List<MessagesDto>> GetChatsByProduct(int id);
         public Task<List<Chat>> GetChatById(int id, int fromId);
         public Task<string> SendMessage(ChatsDto dto);
         public Task<MessageDto> SendImage(SendImageDto dto);
         public Task<UserDto> Follow(Folower dto);
         public Task<string> Notify(int Id, int Pid);
         public Task<List<NotificationDto>> GetNotify(int id);
+        public Task<ContactDto> AllIfon();
     }
 }

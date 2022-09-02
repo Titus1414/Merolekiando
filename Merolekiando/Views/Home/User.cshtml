@@ -1,0 +1,191 @@
+﻿<div class="container-fluid plr_30 body_white_bg pt_30">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="QA_section">
+                <div class="white_box_tittle list_header">
+                    <h4>Users</h4>
+                </div>
+                <div class="QA_table">
+
+                    <table class="table lms_table_active">
+
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in @ViewBag.Users)
+                            {
+                                <tr>
+                                    <th scope="row"> @item.Name </th>
+                                    <td>
+                                        @if(@item.IsBlock != true)
+                                        {
+                                            <a href="#" data-target="@item.Id" id="EditClick" class="status_btn">Block</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="#" data-target="@item.Id" id="EditClick1" style="background-color=grey;" class="status_btn">Unblock</a>
+                                            
+                                        }
+                                        <a href="#" data-target="@item.Id" id="DeleteClick" style="background-color=red;" class="status_btn">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Block User</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/Home/BlockUser" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body">
+                        <h4>Are you sure to block this user</h4>
+                    </div>
+                    <div class="white_card_body" id="CatId">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Block User</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/Home/BlockUser" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body">
+                        <h4>Are you sure to unblock this user</h4>
+                    </div>
+                    <div class="white_card_body" id="CatId1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Block User</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/Home/DeleteUser" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body">
+                        <h4>Are you sure to delete this user</h4>
+                    </div>
+                    <div class="white_card_body" id="CatId2">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+
+    $(document).on('click', 'tr td a#EditClick', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("UserModal", "Home")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#exampleModal').modal('show');
+                    $("#CatId").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+    $(document).on('click', 'tr td a#EditClick1', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("UserModal", "Home")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#exampleModal1').modal('show');
+                    $("#CatId1").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+    $(document).on('click', 'tr td a#DeleteClick', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("UserModal", "Home")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#DeleteModal').modal('show');
+                    $("#CatId2").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+</script>

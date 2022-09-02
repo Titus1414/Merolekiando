@@ -1,0 +1,441 @@
+﻿<div class="container-fluid plr_30 body_white_bg pt_30">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Products</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Reported Products</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#Banners" type="button" role="tab" aria-controls="profile" aria-selected="false">Banners</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="container-fluid plr_30 body_white_bg pt_30">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <div class="QA_section">
+                                    <div class="QA_table">
+                                        <table class="table lms_table_active">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Product Image</th>
+                                                    <th scope="col">Seller Name</th>
+                                                    <th scope="col">Product</th>
+                                                    <th scope="col">Description</th>
+                                                    <th scope="col">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in @ViewBag.Promotions)
+                                                {
+                                                    <tr>
+                                                        <th> <img style="width: 50px; height: 50px;" class="img" src="@item.Image" alt=""> </th>
+                                                        <th> @item.UserName</th>
+                                                        <th> @item.Title</th>
+                                                        <th> @item.Decription </th>
+                                                        <td>
+                                                            @if (@item.IsPromote == true)
+                                                            {
+                                                                <a href="#" style="background-color:grey" data-target="@item.Id" id="PromoteClick" class="status_btn">Demote</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="#" data-target="@item.Id" id="PromoteClick" class="status_btn">Promote</a>
+                                                            }
+
+
+                                                            <a href="#" style="background-color:red" data-target="@item.Id" id="RejectClick" class="status_btn">Delete</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="QA_section">
+                                <div class="QA_table">
+
+                                    <table class="table lms_table_active">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Product Image</th>
+                                                <th scope="col">Seller Name</th>
+                                                <th scope="col">Product</th>
+                                                <th scope="col">Description</th>
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in @ViewBag.ReportedProducts)
+                                            {
+                                                <tr>
+                                                    <th> <img style="width: 50px; height: 50px;" class="img" src="@item.Image" alt=""> </th>
+                                                    <th> @item.UserName</th>
+                                                    <th> @item.Title</th>
+                                                    <th> @item.Decription </th>
+                                                    <td>
+                                                        <a href="#" data-target="@item.Id" id="IgnoreClick" class="status_btn">Ignore</a>
+                                                        <a href="#" style="background-color:red" data-target="@item.Id" id="RejectClick" class="status_btn">Delete</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="Banners" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="QA_section">
+                                <div class="box_right d-flex lms_block">
+                                    <br />
+                                    <div class="add_button ms-2">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#AddBannerModal" class="btn_1">Add New</a>
+                                    </div>
+                                </div>
+                                <div class="QA_table">
+                                    <div class="QA_table">
+
+                                        <table class="table lms_table_active">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Image</th>
+                                                    <th scope="col">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in @ViewBag.Bannerdata)
+                                                {
+                                                    <tr>
+                                                        <th scope="row"> <img style="width: 50px; height: 50px;" class="img" src="@item.Image" alt=""> </th>
+                                                        <td>
+                                                            <a href="#" style="background-color:red" data-target="@item.Id" id="DeleteBanner" class="status_btn">Delete</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="PromoteModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Promot Product</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/Promotion/PromoteProduct" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body" id="PromotId">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/Promotion/DeleteProduct" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body" id="PromotDelId">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="IgnoreModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/Promotion/IgnoreProduct" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body" id="CatDelId">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@*<div class="modal fade" id="RejectModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Reject Request</h5>
+    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <form id="FileForm" action="~/User/AcceptAccount" method="post">
+    <div class="modal-body">
+    <div class="white_card_body">
+    </div>
+    <div class="white_card_body" id="CatrejId">
+    </div>
+    </div>
+    <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+    </form>
+    </div>
+    </div>
+    </div>*@
+
+@*<div class="modal fade" id="CancelModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Cancel Verfication</h5>
+    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <form id="FileForm" action="~/User/AcceptAccount" method="post">
+    <div class="modal-body">
+    <div class="white_card_body">
+    </div>
+    <div class="white_card_body" id="CatcanId">
+    </div>
+    </div>
+    <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+    </form>
+    </div>
+    </div>
+    </div>*@
+
+<div class="modal fade" id="AddBannerModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Banner</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/Promotion/AddBanner" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="white_card_body" id="BannerId">
+
+                        <div class="row justify-content-center">
+
+                            <div class="col-lg-12">
+                                <div class="form-group mb-0">
+                                    <input type="file" accept="image/*" onchange="readURL(this);" required name="Image" id="file" />
+                                    <br />
+                                    <img id="blah" src="#" style="image-rendering: pixelated;margin-left: 24%;margin-top: -5%;width: 110px;height: 60px;" alt="your image" />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <br />
+
+                        <div class="row justify-content-center">
+
+                            <div class="col-lg-12">
+                                <div class="input-group common_date_picker">
+                                    <input class="form-control" type="text" name="Name" placeholder="Name" required>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <br />
+
+                        <div class="row justify-content-center">
+
+                            <div class="col-lg-12">
+                                <div class="form-group mb-0">
+                                    <textarea type="text" class="form-control" name="Description" id="inputText" required placeholder="Description"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="BannerModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Banner</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/Promotion/DeleteBanner" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body" id="DelBannerId">
+                    </div>
+                    <div class="white_card_body" id="BannerId">
+                        <h4>Are you sure to delete this banner</h4>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+
+    $(document).on('click', 'tr td a#PromoteClick', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("PromoteClickModal", "Promotion")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#PromoteModal').modal('show');
+                    $("#PromotId").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+
+    $(document).on('click', 'tr td a#RejectClick', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("DeleteClickModal", "Promotion")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#DeleteModal').modal('show');
+                    $("#PromotDelId").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+
+
+    $(document).on('click', 'tr td a#IgnoreClick', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("IgnoreModal", "Promotion")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#IgnoreModal').modal('show');
+                    $("#CatDelId").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+    $(document).on('click', 'tr td a#DeleteBanner', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("BannerModal", "Promotion")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#BannerModal').modal('show');
+                    $("#DelBannerId").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+</script>

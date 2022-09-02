@@ -38,6 +38,8 @@ namespace Merolekiando.Models
         public string UniqueId { get; set; }
         public string LoginType { get; set; }
         public decimal? Rate { get; set; }
+        public string Description { get; set; }
+        public bool? IsBlock { get; set; }
         public bool? IsDeleted { get; set; }
 
         public virtual Municipality Municipality { get; set; }

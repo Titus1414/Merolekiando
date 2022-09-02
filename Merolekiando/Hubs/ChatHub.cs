@@ -14,7 +14,7 @@ namespace Merolekiando.Hubs
         {
             _Context = dbContext;
         }
-        public async Task SendMessage(string message, string userId)
+        public async Task SendMessage(string message, string userId, string Pid)
         {
             var tkn = Context.User.Claims;
             var sType = "";
@@ -23,8 +23,19 @@ namespace Merolekiando.Hubs
             int stakrid = 0;
             var UserNameRMsg = "";
             string json = "";
-            Chat dto = new();
 
+            var chngeFrom = _Context.Messages.Where(a => a.To == Convert.ToInt32(userId)).ToList();
+            foreach (var item in chngeFrom)
+            {
+                item.ConnId = Context.ConnectionId;
+                _Context.Messages.Update(item);
+                _Context.SaveChanges();
+            }
+
+            
+
+
+            Chat dto = new();
             if (message.Contains("/Resources/Images/Messages"))
             {
                 //message = "/wwwroot" + message;
@@ -45,8 +56,6 @@ namespace Merolekiando.Hubs
             }
             else
             {
-                
-
                 connectIdUser = Context.User.Claims.FirstOrDefault().Value;
                 var sd = _Context.Messages.AsQueryable().Where(a => a.ConnId == Context.ConnectionId).FirstOrDefault().From;
                 usrid = Convert.ToInt32(sd);
@@ -56,16 +65,18 @@ namespace Merolekiando.Hubs
 
                 dto.SenderId = usrid;
                 dto.RecieverId = Convert.ToInt32(userId);
-                dto.Time = (int)DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                dto.Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 dto.Message = message;
                 dto.ConnTo = ToId;
                 dto.ConnFrom = Context.ConnectionId;
                 dto.ConnId = userId;
                 dto.Type = "Text";
-
+                if (Pid != "")
+                {
+                    dto.ProductId = Convert.ToInt32(Pid);
+                }
                 _Context.Chats.Add(dto);
                 _Context.SaveChanges();
-
 
                 if (dto.Type == "Link")
                 {
@@ -73,11 +84,63 @@ namespace Merolekiando.Hubs
                 }
                 json = "{" + @"""text""" + ":" + @"""" + dto.Message + @"""" + "," + @"""connId""" + ":" + @"""" + Context.ConnectionId + @"""" + "," + @"""from""" + ":" + usrid + "," + @"""when""" + ":" + DateTimeOffset.Now.ToUnixTimeMilliseconds() + "," + @"""to""" + ":" + userId + "," + @"""type""" + ":" + @"""" + dto.Type.ToString() + @"""" + "," + @"""Link""" + ":" + @""""+ "" + @"""" + "}";
             }
-            
 
+            var msg = _Context.Messages.Where(a => a.From == dto.SenderId && a.To == dto.RecieverId || (a.From == dto.RecieverId && a.To == dto.SenderId)).FirstOrDefault();
+            if (Pid != "")
+            {
+                msg = _Context.Messages.Where(a => a.From == dto.SenderId && a.To == dto.RecieverId && a.ProductId == Convert.ToInt32(Pid)).FirstOrDefault();
+            }
             
+            if (message.Contains("/Resources/Images/Messages"))
+            {
+                msg.LastMessage = "Image";
+                msg.Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                var msgN = _Context.Messages.Where(a => a.From == dto.SenderId && a.To == null).FirstOrDefault();
+                if (msgN != null)
+                {
+                    msgN.To = dto.RecieverId;
+                    if (Pid != "")
+                    {
+                        msgN.ProductId = Convert.ToInt32(Pid);
+                    }
+                    msgN.LastMessage = message;
+                    _Context.Messages.Update(msgN);
+                    _Context.SaveChanges();
+                }
+            }
+            else
+            {
+                msg.LastMessage = message;
+                msg.Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                var msgN = _Context.Messages.Where(a => a.From == dto.SenderId && a.To == null).FirstOrDefault();
+                if (msgN != null)
+                {
+                    msgN.To = dto.RecieverId;
+                    if (Pid != "")
+                    {
+                        msgN.ProductId = Convert.ToInt32(Pid);
+                    }
+                    msgN.LastMessage = message;
+                    _Context.Messages.Update(msgN);
+                    _Context.SaveChanges();
+                }
+            }
+            _Context.Messages.Update(msg);
+            _Context.SaveChanges();
+
+
+            var Messagess = _Context.Messages.Where(a => a.From == dto.SenderId && a.To == dto.RecieverId).ToList();
+            if (Messagess.Count > 1)
+            {
+                var Messagessa = _Context.Messages.Where(a => a.From == dto.SenderId && a.To == dto.RecieverId && a.Image == null).FirstOrDefault();
+                _Context.Messages.Remove(Messagessa);
+                _Context.SaveChanges();
+            }
+
+
             await Clients.Clients(dto.ConnTo).SendAsync(method: "ReceiveMessage", message, Context.ConnectionId, UserNameRMsg, DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString(), json);
             await Clients.Clients(Context.ConnectionId).SendAsync("OwnMessage", message, Context.ConnectionId, connectIdUser, DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString(), json);
+            await Clients.Clients(dto.ConnTo).SendAsync("MessageNotification", message, UserNameRMsg);
         }
         public override async Task OnConnectedAsync()
         {
@@ -130,30 +193,38 @@ namespace Merolekiando.Hubs
                         }
                     }
                 }
+                var lsts = await _Context.Messages.AsQueryable().Where(a => a.From == Convert.ToInt32(connectIdUser)).ToListAsync();
+                foreach (var item in lsts) 
+                {
+                    item.ConnId = connectionId;
+                    _Context.Messages.Update(item);
+                    _Context.SaveChanges();
+                }
 
                 if (dt != null)
                 {
-                    dt.ConnId = connectionId;
-                    dt.From = Convert.ToInt32(connectIdUser);
-                    //dt.IsOnline = true;
-                    _Context.Messages.Update(dt);
-                    _Context.SaveChanges();
+
+
+                    //dt.ConnId = connectionId;
+                    //dt.From = Convert.ToInt32(connectIdUser);
+                    ////var user = _Context.Users.Where(a => a.Id == Convert.ToInt32(connectIdUser)).FirstOrDefault();
+                    ////dt.Name = user.Name;
+                    //_Context.Messages.Update(dt);
+                    //_Context.SaveChanges();
                 }
                 else
                 {
                     Message lstd = new();
                     lstd.ConnId = connectionId;
                     lstd.From = Convert.ToInt32(connectIdUser);
-                    //lstd.IsOnline = true;
+                    //var user = _Context.Users.Where(a => a.Id == Convert.ToInt32(connectIdUser)).FirstOrDefault();
+                    //lstd.Name = user.Name;
                     _Context.Messages.Add(lstd);
                     _Context.SaveChanges();
 
                 }
 
             }
-
-
-
 
             _ = Clients.All.SendAsync("OnlineUserList", connectionId);
             //return base.OnConnectedAsync();

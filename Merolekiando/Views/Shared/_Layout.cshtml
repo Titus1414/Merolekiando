@@ -39,40 +39,54 @@
         </div>
         <ul id="sidebar_menu">
             <li class="mm-active">
-                <a asp-controller="Home" asp-action="Index" aria-expanded="false">
+                <a href="@Url.Action("Index","Home")"@* asp-controller="Home" asp-action="Index"*@ aria-expanded="false">
                     <img src="img/menu-icon/1.svg" alt="">
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="">
-                <a asp-controller="Category" asp-action="Index" aria-expanded="false">
+                <a href="@Url.Action("Index","Category")" @*asp-controller="Category" asp-action="Index"*@ aria-expanded="false">
                     <img src="img/menu-icon/2.svg" alt="">
                     <span>Categories</span>
                 </a>
             </li>
             <li class="">
-                <a asp-controller="User" asp-action="Verification" aria-expanded="false">
+                <a href="@Url.Action("Verification","User")" @*asp-controller="User" asp-action="Verification"*@ aria-expanded="false">
                     <img src="img/menu-icon/3.svg" alt="">
                     <span>Verification</span>
                 </a>
             </li>
             <li class="">
-                <a asp-controller="User" asp-action="Subscription" aria-expanded="false">
+                <a href="@Url.Action("Subscription","User")" @*asp-controller="User" asp-action="Subscription"*@ aria-expanded="false">
                     <img src="img/menu-icon/4.svg" alt="">
                     <span>Subscriptions</span>
                 </a>
             </li>
             <li class="">
-                <a asp-controller="Province" asp-action="Index" href="#" aria-expanded="false">
+                <a href="@Url.Action("User","Home")" aria-expanded="false">
+                    <img src="img/menu-icon/6.svg" alt="">
+                    <span>User Manage</span>
+                </a>
+            </li>
+            <li class="">
+                <a href="@Url.Action("Index","Province")" aria-expanded="false">
                     <img src="img/menu-icon/5.svg" alt="">
                     <span>Provinces</span>
                 </a>
-                @*<ul>
-                    <li><a href="chart_box_1.html">Chart Boxes 1</a></li>
-                    <li><a href="profilebox.html">Profile Box</a></li>
-                </ul>*@
             </li>
             <li class="">
+                <a href="@Url.Action("Index","Promotion")" aria-expanded="false">
+                    <img src="img/menu-icon/6.svg" alt="">
+                    <span>Promotion</span>
+                </a>
+            </li>
+            <li class="">
+                <a href="@Url.Action("Contact","Home")" aria-expanded="false">
+                    <img src="img/menu-icon/2.svg" alt="">
+                    <span>Contact</span>
+                </a>
+            </li>
+            @*<li class="">
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="img/menu-icon/6.svg" alt="">
                     <span>Forms</span>
@@ -94,22 +108,16 @@
                         </ul>
                     </li>
                 </ul>
-            </li>
+            </li>*@
             <li class="">
-                <a class="has-arrow" href="#" aria-expanded="false">
-                    <img src="img/menu-icon/7.svg" alt="">
-                    <span>Charts</span>
+                <a href="@Url.Action("Logout","Home")" aria-expanded="false">
+                    <span>Logout</span>
                 </a>
-                <ul>
-                    <li><a href="chartjs.html">ChartJS</a></li>
-                    <li><a href="apex_chart.html">Apex Charts</a></li>
-                    <li><a href="chart_sparkline.html">chart sparkline</a></li>
-                </ul>
             </li>
         </ul>
     </nav>
     <section class="main_content dashboard_part">
-        <div class="container-fluid g-0">
+        @*<div class="container-fluid g-0">
             <div class="row">
                 <div class="col-lg-12 p-0">
                     <div class="header_iner d-flex justify-content-between align-items-center">
@@ -151,7 +159,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>*@
         <div class="main_content_iner ">
             @RenderBody()
         </div>
@@ -178,9 +186,6 @@
     <script src="~/dash/vendors/niceselect/js/jquery.nice-select.min.js"></script>
     <script src="~/dash/vendors/owl_carousel/js/owl.carousel.min.js"></script>
     <script src="~/dash/vendors/gijgo/gijgo.min.js"></script>
-    @*<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.jqueryui.min.js"></script>
-    <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>*@
     <script src="~/dash/vendors/datatable/js/jquery.dataTables.min.js"></script>
     <script src="~/dash/vendors/datatable/js/dataTables.responsive.min.js"></script>
     <script src="~/dash/vendors/datatable/js/dataTables.buttons.min.js"></script>

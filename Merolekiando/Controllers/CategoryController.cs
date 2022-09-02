@@ -53,23 +53,14 @@ namespace Merolekiando.Controllers
         }
         public IActionResult CategoryEditModal(int id)
         {
-            var UsId = HttpContext.Session.GetInt32("userId");
-            if (UsId != null)
-            {
-                var dto = _Context.Categories.Where(a => a.Id == id).FirstOrDefault();
-                return PartialView("~/Views/Category/_EditCategory.cshtml", dto);
-            }
-            return RedirectToAction("Login", "Home");
+            var dto = _Context.Categories.Where(a => a.Id == id).FirstOrDefault();
+            return PartialView("~/Views/Category/_EditCategory.cshtml", dto);
+
         }
         public IActionResult SubCategoryEditModal(int id)
         {
-            var UsId = HttpContext.Session.GetInt32("userId");
-            if (UsId != null)
-            {
-                var dto = _Context.SubCategories.Where(a => a.Id == id).FirstOrDefault();
-                return PartialView("~/Views/Category/_EditSubCategory.cshtml", dto);
-            }
-            return RedirectToAction("Login", "Home");
+            var dto = _Context.SubCategories.Where(a => a.Id == id).FirstOrDefault();
+            return PartialView("~/Views/Category/_EditSubCategory.cshtml", dto);
         }
         [HttpPost]
         public IActionResult Index(Category dto)
@@ -143,13 +134,8 @@ namespace Merolekiando.Controllers
         }
         public IActionResult CategoryDeleteModal(int id)
         {
-            var UsId = HttpContext.Session.GetInt32("userId");
-            if (UsId != null)
-            {
-                var dto = _Context.Categories.Where(a => a.Id == id).FirstOrDefault();
-                return PartialView("~/Views/Category/_DeleteCategory.cshtml", dto);
-            }
-            return RedirectToAction("Login", "Home");
+            var dto = _Context.Categories.Where(a => a.Id == id).FirstOrDefault();
+            return PartialView("~/Views/Category/_DeleteCategory.cshtml", dto);
         }
         public IActionResult CategoryDelete(int id)
         {
@@ -170,13 +156,8 @@ namespace Merolekiando.Controllers
         }
         public IActionResult SubCategoryDeleteModal(int id)
         {
-            var UsId = HttpContext.Session.GetInt32("userId");
-            if (UsId != null)
-            {
-                var dto = _Context.SubCategories.Where(a => a.Id == id).FirstOrDefault();
-                return PartialView("~/Views/Category/_DeleteSubCategory.cshtml", dto);
-            }
-            return RedirectToAction("Login", "Home");
+            var dto = _Context.SubCategories.Where(a => a.Id == id).FirstOrDefault();
+            return PartialView("~/Views/Category/_DeleteSubCategory.cshtml", dto);
         }
         public IActionResult DeleteSubCategory(int id)
         {

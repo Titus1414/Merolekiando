@@ -14,6 +14,7 @@
                 <div class="QA_table">
 
                     <table class="table lms_table_active">
+
                         <thead>
                             <tr>
                                 <th scope="col">Name</th>
@@ -27,12 +28,11 @@
                                     <th scope="row"> <a asp-controller="Province" asp-action="Municiplity" asp-route-id="@item.Id" class="question_content"> @item.Name</a></th>
                                     <td>
                                         <a href="#" data-target="@item.Id" id="EditClick" class="status_btn">Edit</a>
-                                        <a href="#" style="background-color:red" data-target="@item.Id" id="DeleteCat" class="status_btn">Delete</a>
                                     </td>
                                 </tr>
                             }
-
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -44,12 +44,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit Category</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Edit Provice</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="FileForm" action="~/Province/Index" method="post">
+            <form id="FileForm" action="~/Province/Manage" method="post">
                 <div class="modal-body">
                     <div class="white_card_body" id="CatId">
                     </div>
@@ -67,42 +67,16 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Category</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Add Province</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="FileForm" action="~/Category/Index" method="post">
+            <form id="FileForm" action="~/Province/Manage" method="post">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label" for="exampleFormControlInput1">Name</label>
                         <input type="text" name="Name" class="form-control" value="" placeholder="">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Delete Category</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="FileForm" action="~/Category/CategoryDelete" method="post">
-                <div class="modal-body">
-                    <div class="white_card_body">
-                        <h4> Are you sure to delete this record ! </h4>
-                    </div>
-                    <div class="white_card_body" id="CatDelId">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -123,7 +97,7 @@
         var val = $(this).attr("data-target");
             $.ajax({
                 type: 'post',
-                url: '@Url.Action("CategoryEditModal", "Category")',
+                url: '@Url.Action("ProvinceEditModal", "Province")',
                 data: { 'id': val },
                 contenttype: 'application/json; charset=utf-8',
                 async: true,
@@ -131,27 +105,6 @@
                     debugger
                     $('#exampleModal').modal('show');
                     $("#CatId").html(data);
-                },
-                error: function (xhr) {
-                    alert('error');
-                }
-        })
-
-    });
-    $(document).on('click', 'tr td a#DeleteCat', function () {
-    //$("#PosClick").click(function () {
-            debugger
-        var val = $(this).attr("data-target");
-            $.ajax({
-                type: 'post',
-                url: '@Url.Action("CategoryDeleteModal", "Category")',
-                data: { 'id': val },
-                contenttype: 'application/json; charset=utf-8',
-                async: true,
-                success: function (data) {
-                    debugger
-                    $('#deleteModal').modal('show');
-                    $("#CatDelId").html(data);
                 },
                 error: function (xhr) {
                     alert('error');

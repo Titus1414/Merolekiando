@@ -313,7 +313,7 @@
     const connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Debug)
         //.withUrl("https://localhost:44303/Chat", options)
-        .withUrl("https://localhost:44303/Chat")
+        .withUrl("http://64.20.48.40/Chat")
         .configureLogging(signalR.LogLevel.Information)
         .build();
     connection.start().then(() => {

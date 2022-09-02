@@ -213,19 +213,19 @@ namespace Merolekando.Services.Extra
 
         public async Task<List<ProvinceDto>> GetProvinces()
         {
-            var dt = from t1 in _Context.Provinces
-                     join t2 in _Context.Municipalities on t1.Id equals t2.PrvId
-                     select new { t1, t2 };
+
+            var dt = _Context.Provinces.ToList();
             List<ProvinceDto> lst = new();
 
-            foreach (var item in dt.Select(a => a.t1).ToList())
+            foreach (var item in dt)
             {
                 List<MunicipalityDto> mnclst = new();
                 ProvinceDto dto = new();
                 dto.Id = item.Id;
                 dto.Name = item.Name;
                 dto.Time = item.Time;
-                foreach (var itm in dt.Select(a => a.t2).ToList())
+                var dd = _Context.Municipalities.Where(a => a.PrvId == item.Id).ToList();
+                foreach (var itm in dd)
                 {
                     if (itm.PrvId == dto.Id)
                     {
@@ -378,10 +378,133 @@ namespace Merolekando.Services.Extra
             }
         }
 
-        public async Task<List<Message>> GetChatUsers(int id)
+        public async Task<List<MessagesDto>> GetChatUsers(int id)
         {
-            var data = await _Context.Messages.Where(a => a.From != id).ToListAsync();
-            return data;
+            //var data = await _Context.Messages.Where(a => a.From != null && a.To != null && ( a.To == id || a.From == id) && a.Name != null).ToListAsync();
+            var data = await _Context.Messages.Where(a => a.From != id && a.ProductId != null).ToListAsync();
+            List<MessagesDto> lst = new();
+            if (data.Count == 0)
+            {
+                var chk = _Context.Messages.Where(a => a.From == id).Distinct().Select(a => a.To).Distinct().ToList();
+                foreach (var item in chk)
+                {
+                    var usr = _Context.Users.Where(a => a.Id == item).FirstOrDefault();
+                    var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id || a.RecieverId == usr.Id).Max(a => a.Id);
+                    var chat = _Context.Chats.Where(a => a.Id == chatId).FirstOrDefault();
+                    MessagesDto dto = new();
+                    var dx = _Context.Messages.Where(a => a.To == item).ToList();
+                    List<int> pidLst = new();
+                    //var rsd = lst.Where(a => a.From == item.From && a.To == item.To).FirstOrDefault();
+                    //if (rsd != null)
+                    //{
+                    foreach (var itm in dx)
+                    {
+                        if (itm.ProductId != null)
+                        {
+                            pidLst.Add((int)itm.ProductId);
+                        }
+                    }
+                    if (chat.Type == "Link")
+                    {
+                        
+                        dto.ProductIds = pidLst;
+                        dto.LastMessgeTime = (long)chat.Time;
+                        dto.Name = usr.Name;
+                        dto.From = item;
+                        dto.To = id;
+                    }
+                    else
+                    {
+                        dto.LastMessage = chat.Message;
+                        dto.ProductIds = pidLst;
+                        dto.LastMessgeTime = (long)chat.Time;
+                        dto.From = item;
+                        dto.To = id;
+                        if (usr.Name != null)
+                        {
+                            dto.Name = usr.Name;
+                        }
+                        else
+                        {
+                            var usra = _Context.Users.Where(a => a.Id == item).FirstOrDefault();
+                            dto.Name = usra.Name;
+                        }
+                        
+                        dto.FromImage = usr.Image;
+                    }
+                    lst.Add(dto);
+                }
+                
+            }
+            else
+            {
+                foreach (var item in data)
+                {
+                    var usr = _Context.Users.Where(a => a.Id == item.From).FirstOrDefault();
+                    var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id || a.RecieverId == usr.Id).Max(a => a.Id);
+                    var chat = _Context.Chats.Where(a => a.Id == chatId).FirstOrDefault();
+                    MessagesDto dto = new();
+                    var dx = _Context.Messages.Where(a => a.From == item.From && a.To == item.To).ToList();
+                    List<int> pidLst = new();
+                    //var rsd = lst.Where(a => a.From == item.From && a.To == item.To).FirstOrDefault();
+                    //if (rsd != null)
+                    //{
+                    foreach (var itm in dx)
+                    {
+                        if (itm.ProductId != null)
+                        {
+                            pidLst.Add((int)itm.ProductId);
+                        }
+                    }
+                    if (chat.Type == "Link")
+                    {
+                        dto.Id = item.Id;
+                        dto.LastMessage = "Image";
+                        dto.ConnId = item.ConnId;
+                        dto.From = item.From;
+                        dto.ProductIds = pidLst;
+                        dto.LastMessgeTime = (long)chat.Time;
+                        dto.Name = item.Name;
+                        dto.To = item.To;
+                        dto.Read = item.Read;
+                        dto.FromImage = usr.Image;
+                        dto.ProductImage = item.Image;
+                    }
+                    else
+                    {
+                        dto.Id = item.Id;
+                        dto.LastMessage = chat.Message;
+                        dto.ConnId = item.ConnId;
+                        dto.From = item.From;
+                        dto.ProductIds = pidLst;
+                        dto.LastMessgeTime = (long)chat.Time;
+                        if (item.Name != null)
+                        {
+                            dto.Name = item.Name;
+                        }
+                        else
+                        {
+                            var usra = _Context.Users.Where(a => a.Id == item.From).FirstOrDefault();
+                            dto.Name = usra.Name;
+                        }
+
+                        dto.To = item.To;
+                        dto.Read = item.Read;
+                        dto.FromImage = usr.Image;
+
+                        if (item.ProductId != null)
+                        {
+                            //var prd = _Context.ProdImages.Where(a => a.PId == item.ProductId).FirstOrDefault();
+                            dto.ProductImage = item.Image;
+                        }
+                    }
+                    lst.Add(dto);
+                    //}
+                }
+            }
+            
+            
+            return lst;
         }
 
 
@@ -489,7 +612,7 @@ namespace Merolekando.Services.Extra
                 _Context.SaveChanges();
             }
 
-            var Check = await _Context.Users.Where(a => a.Id == dto.Folowers && a.IsDeleted == false).FirstOrDefaultAsync();
+            var Check = await _Context.Users.Where(a => a.Id == dto.Folowers && a.IsDeleted != true).FirstOrDefaultAsync();
 
             UserDto dto1 = new();
             dto1.Address = Check.Address;
@@ -615,6 +738,120 @@ namespace Merolekando.Services.Extra
                 _Context.SaveChanges();
             }
             return lst;
+        }
+
+        public async Task<List<MessagesDto>> GetChatsByProduct(int id)
+        {
+            var data = await _Context.Messages.Where(a => a.ProductId != id && a.From != null && a.To != null && a.From != id).ToListAsync();
+            List<MessagesDto> lst = new();
+            foreach (var item in data)
+            {
+                var usr = _Context.Users.Where(a => a.Id == item.To).FirstOrDefault();
+                var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id).Max(a => a.Id);
+                var chat = _Context.Chats.Where(a => a.Id == chatId).FirstOrDefault();
+                var dx = _Context.Messages.Where(a => a.From == item.From && a.To == item.To).ToList();
+                MessagesDto dto = new();
+                List<int> pidLst = new();
+
+                foreach (var itm in dx)
+                {
+                    if (itm.ProductId != null)
+                    {
+                        pidLst.Add((int)itm.ProductId);
+                    }
+                }
+
+                if (chat.Type == "Link")
+                {
+                    dto.Id = item.Id;
+                    dto.LastMessage = "Image";
+                    dto.ConnId = item.ConnId;
+                    dto.From = item.From;
+                    dto.ProductIds = pidLst;
+                    dto.LastMessgeTime = (long)chat.Time;
+                    dto.Name = item.Name;
+                    dto.To = item.To;
+                    dto.Read = item.Read;
+                    dto.FromImage = usr.Image;
+                }
+                else
+                {
+                    dto.Id = item.Id;
+                    dto.LastMessage = chat.Message;
+                    dto.ConnId = item.ConnId;
+                    dto.From = item.From;
+                    dto.ProductIds = pidLst;
+                    dto.LastMessgeTime = (long)chat.Time;
+                    dto.Name = item.Name;
+                    dto.To = item.To;
+                    dto.Read = item.Read;
+                    dto.FromImage = usr.Image;
+                }
+                lst.Add(dto);
+
+            }
+            return lst;
+        }
+
+        public async Task<ContactDto> AllIfon()
+        {
+            ContactDto dto = new();
+            var dt = _Context.Users.Where(a => a.LoginType == "Admin" && a.IsDeleted != true).FirstOrDefault();
+            dto.Description = dt.Description;
+            dto.Number = dt.Number;
+            dto.Email = dt.Email;
+            dto.UserImage = dt.Image;
+            dto.BannerImage = _Context.Banners.Select(a => a.Image).ToList();
+            dto.AllowAll = _Context.Settings.Select(a => a.SubsAllAllow).FirstOrDefault();
+            return dto;
+        }
+
+        public async Task<string> SetMessageUser(MessaveDto dto)
+        {
+            var dt = _Context.Messages.Where(a => a.From == dto.From && a.To == dto.To && a.ProductId == dto.ProductIds).FirstOrDefault();
+            var pdt = _Context.ProdImages.Where(a => a.PId == dto.ProductIds).FirstOrDefault();
+            if (dt == null)
+            {
+
+                Message message = new();
+                message.From = dto.From;
+                message.To = dto.To;
+                message.ProductId = dto.ProductIds;
+                message.Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                message.Image = pdt.Image;
+                var user = _Context.Users.Where(a => a.Id == dto.From).FirstOrDefault();
+                message.Name = user.Name;
+                var msgs = _Context.Messages.Where(a => a.From == dto.From && a.ConnId != null).FirstOrDefault();
+                message.ConnId = msgs.ConnId;
+                _Context.Messages.Add(message);
+                _Context.SaveChanges();
+
+                return "Success";
+            }
+            else
+            {
+                if (dt.Name == null)
+                {
+                    var user = _Context.Users.Where(a => a.Id == dto.From).FirstOrDefault();
+                    dt.Name = user.Name;
+                }
+                dt.Image = pdt.Image;
+
+                _Context.Messages.Update(dt);
+                _Context.SaveChanges();
+
+                var dts = await _Context.Messages.Where(a => a.From == dto.From && a.To == dto.To || (a.From == dto.To && a.To == dto.From)).ToListAsync();
+                if (dts.Count > 0)
+                {
+                    foreach (var item in dts)
+                    {
+                        item.Image = pdt.Image;
+                        _Context.Messages.Update(item);
+                        await _Context.SaveChangesAsync();
+                    }
+                }
+            }
+            return "Already Exist";
         }
     }
 }

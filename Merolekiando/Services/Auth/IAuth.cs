@@ -15,12 +15,13 @@ namespace Merolekando.Services.Auth
         public Task<List<UserDto>> GetUser();
         public Task<UserDto> GetUserById(int id);
         public Task<UserDto> ResetPasssword(ResetPasswordDto dto);
-        public Task<string> DeleteUser(int id);
+        public Task<string> DeleteUser(DeleteAccountDto dto);
         public Task<UserDto> SetImage(SetUserImageDto dto);
-        public Task<UserDto> SetEmail(SetUserEmailDto dto);
+        public Task<Tuple<UserDto, string>> SetEmail(SetUserEmailDto dto);
         public Task<UserDto> SetFavProduct(int id, int pid);
         public Task<UserDto> SendVerification(VerifyDto dto);
         public Task<UserDto> UpdateUser(UserDto user);
         public Task<string> ChangePassword(ChangePassDto dto);
+        public Task<string> SendEmail(string to);
     }
 }

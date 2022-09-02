@@ -311,6 +311,28 @@ namespace Merolekando.Controllers
             }
             return Unauthorized();
         }
+        [HttpPost]
+        [Route("SetMessageUserlist")]
+        public IActionResult SetMessageUserlist(MessaveDto dto)
+        {
+            var identity = User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
+                if (name != null)
+                {
+                    dto.From = Convert.ToInt32(name);
+                    var result = _extra.SetMessageUser(dto);
+                    if (result.Result != null)
+                    {
+                        return Ok(new { result.Result });
+                    }
+                }
+                return Unauthorized("Token Issue");
+            }
+            return Unauthorized();
+        }
         [HttpGet]
         [Route("GetMunicipilty")]
         public IActionResult GetMunicipilty(int id)
@@ -519,6 +541,24 @@ namespace Merolekando.Controllers
             return Unauthorized();
         }
         [HttpGet]
+        [Route("GetChatsByProduct")]
+        public IActionResult GetChatsByProduct(int id)
+        {
+            var identity = User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
+                if (name != null)
+                {
+                    var result = _extra.GetChatsByProduct(id);
+                    return Ok(new { result.Result });
+                }
+                return Unauthorized("Token Issue");
+            }
+            return Unauthorized();
+        }
+        [HttpGet]
         [Route("GetChatById")]
         public async Task<IActionResult> GetChatById(int id)
         {
@@ -548,6 +588,24 @@ namespace Merolekando.Controllers
                 if (name != null)
                 {
                     var result = _extra.GetNotify( Convert.ToInt32(name));
+                    return Ok(new { result.Result });
+                }
+                return Unauthorized("Token Issue");
+            }
+            return Unauthorized();
+        }
+        [HttpGet]
+        [Route("AllInfo")]
+        public async Task<IActionResult> AllInfo()
+        {
+            var identity = User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
+                if (name != null)
+                {
+                    var result = _extra.AllIfon();
                     return Ok(new { result.Result });
                 }
                 return Unauthorized("Token Issue");

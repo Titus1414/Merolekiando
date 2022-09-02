@@ -44,7 +44,7 @@ namespace Merolekiando.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=64.20.48.40;Database=MerolikandoDB;User Id=Merole;Password=Mero321?; MultipleActiveResultSets=true");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-NNNJB7B;Database=MerolikandoDB;Trusted_Connection=True;MultipleActiveResultSets=true;");
             }
         }
 
@@ -207,6 +207,10 @@ namespace Merolekiando.Models
                     .HasMaxLength(150)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Image)
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.LastMessage)
                     .IsUnicode(false)
                     .HasColumnName("lastMessage");
@@ -216,12 +220,11 @@ namespace Merolekiando.Models
                     .IsUnicode(false)
                     .HasColumnName("name");
 
-                entity.Property(e => e.ProductIds)
-                    .HasMaxLength(250)
-                    .IsUnicode(false)
-                    .HasColumnName("productIds");
+                entity.Property(e => e.ProductId).HasColumnName("productId");
 
                 entity.Property(e => e.Read).HasColumnName("read");
+
+                entity.Property(e => e.Time).HasColumnName("time");
 
                 entity.HasOne(d => d.ToNavigation)
                     .WithMany(p => p.Messages)
@@ -442,6 +445,10 @@ namespace Merolekiando.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Date).HasColumnName("date");
+
+                entity.Property(e => e.Description)
+                    .IsUnicode(false)
+                    .HasColumnName("description");
 
                 entity.Property(e => e.Email)
                     .HasMaxLength(50)

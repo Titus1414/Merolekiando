@@ -11,7 +11,7 @@ namespace Merolekando.Services.Product
         public Task<List<Productdto>> GetProductAsync(int id);
         public Task<List<Productdto>> GetUserProduct(int id);
         public Task<Productdto> GetProductId(int id);
-        public Task<List<Productdto>> GetProductSellerId(int id, int sellerId);
+        public Task<List<Productdto>> GetProductSellerId(int sellerId);
         public Task<List<Productdto>> GetProductCategoryId(int id);
         public Task<List<Productdto>> GetProductSubCategoryId(int id);
         public Task<List<Productdto>> GetFavProducts(int id);

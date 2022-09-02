@@ -2,336 +2,46 @@
     Layout = null;
 }
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link rel="icon" href="~/dash/Images/logo.png" type="image/png">
+    <link rel="stylesheet" href="~/dash/css/bootstrap1.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/themefy_icon/themify-icons.css" />
+    <link rel="stylesheet" href="~/dash/vendors/swiper_slider/css/swiper.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/select2/css/select2.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/niceselect/css/nice-select.css" />
+    <link rel="stylesheet" href="~/dash/vendors/owl_carousel/css/owl.carousel.css" />
+    <link rel="stylesheet" href="~/dash/vendors/gijgo/gijgo.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/font_awesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/tagsinput/tagsinput.css" />
+    <link rel="stylesheet" href="~/dash/vendors/datatable/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/datatable/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/datatable/css/buttons.dataTables.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/text_editor/summernote-bs4.css" />
+    <link rel="stylesheet" href="~/dash/vendors/morris/morris.css">
+    <link rel="stylesheet" href="~/dash/vendors/material_icon/material-icons.css" />
+    <link rel="stylesheet" href="~/dash/css/metisMenu.css">
+    <link rel="stylesheet" href="~/dash/css/style1.css" />
+    <link rel="stylesheet" href="~/dash/css/colors/default.css" id="colorSkinCSS">
+<div class="col-lg-3"></div>
+<div class="col-lg-6" style="margin-left:25%">
 
-<style>
-    import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
-
-    * {
-        margin: 0%;
-        padding: 0%;
-        box-sizing: border-box;
-        font-family: "poppins";
-    }
-
-    body {
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #7d2ae8;
-        padding: 30px;
-    }
-
-    .container {
-        position: relative;
-        max-width: 850px;
-        width: 100%;
-        background: #fff;
-        padding: 30px 40px;
-        box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
-        perspective: 2700px;
-    }
-
-        .container .cover {
-            position: absolute;
-            top: 0%;
-            left: 50%;
-            height: 100%;
-            width: 50%;
-            z-index: 98;
-            transition: all 1s ease;
-            transform-origin: left;
-            transform-style: preserve-3d;
-        }
-
-            .container .cover::before {
-                content: '';
-                position: absolute;
-                height: 100%;
-                width: 100%;
-                background: #7d2ae8;
-                opacity: 0.5;
-                z-index: 100;
-            }
-
-            .container .cover::after {
-                content: '';
-                position: absolute;
-                height: 100%;
-                width: 100%;
-                background: #7d2ae8;
-                transform: rotateY(-180deg);
-                opacity: 0.5;
-                z-index: 100;
-            }
-
-        .container #flip:checked ~ .cover {
-            transform: rotateY(-180deg);
-        }
-
-        .container .cover img {
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            z-index: 12;
-            backface-visibility: hidden;
-        }
-
-        .container .cover .back .backImg {
-            transform: rotateY(180deg);
-        }
-
-        .container .cover .text {
-            position: absolute;
-            z-index: 111;
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .container .cover .text-1,
-        .container .cover .text-2 {
-            font-size: 26px;
-            font-weight: 600;
-            color: white;
-            text-align: center;
-            backface-visibility: hidden;
-        }
-
-        .container .cover .text-2 {
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .container form {
-            height: 100%;
-            width: 100%;
-            background: white;
-        }
-
-        .container .form-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-    .form-content .login-form,
-    .form-content .signup-form {
-        width: calc(100% / 2 - 25px);
-    }
-
-    form .form-content .title {
-        position: relative;
-        font-size: 24px;
-        font-weight: 500;
-        color: #333;
-    }
-
-    form .signup-form .title:before {
-        width: 20px;
-    }
-
-    form .form-content .title:before {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        height: 3px;
-        width: 25px;
-        background: #7d2ae8;
-    }
-
-    form .form-content .input-boxes {
-        margin-top: 30px;
-    }
-
-    form .form-content .input-box {
-        display: flex;
-        align-items: center;
-        height: 50px;
-        width: 100%;
-        margin: 10px 0;
-        position: relative;
-    }
-
-    .form-content .input-box input {
-        height: 100%;
-        width: 100%;
-        outline-color: none;
-        border: none;
-        padding: 0 30px;
-        font-size: 17px;
-        font-weight: 500;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.2);
-        transition: all 0.5s ease;
-    }
-
-        .form-content .input-box input:focus,
-        .form-content .input-box input:valid {
-            border-color: #7d2ae8;
-        }
-
-    .form-content .input-box i {
-        position: absolute;
-        color: #7d2ae8;
-        font-size: 17px;
-    }
-
-    form .form-content .text {
-        font-size: 14px;
-        font-weight: 500;
-        color: #333;
-    }
-
-        form .form-content .text a {
-            text-decoration: none;
-        }
-
-            form .form-content .text a:hover {
-                text-decoration: underline;
-            }
-
-    form .form-content .button {
-        color: white;
-        margin-top: 40px;
-    }
-
-        form .form-content .button input {
-            color: white;
-            background: #7d2ae8;
-            border-radius: 6px;
-            padding: 0%;
-            cursor: pointer;
-            transition: all 0.5 ease;
-        }
-
-            form .form-content .button input:hover {
-                background: #5b1369;
-            }
-
-    form .form-content label {
-        color: #5b1369;
-        cursor: pointer;
-    }
-
-        form .form-content label:hover {
-            text-decoration: underline;
-        }
-
-    form .form-content .login-text,
-    form .form-content .sign-up-text {
-        text-align: center;
-        margin-top: 25px;
-    }
-
-    .container #flip {
-        display: none;
-    }
-
-    media (max-width: 730px) {
-        .container .cover
-
-    {
-        display: none;
-    }
-
-    .form-content .login-form,
-    .form-content .signup-form {
-        width: 100%;
-    }
-
-    .form-content .signup-form {
-        display: none;
-    }
-
-    .container #flip:checked ~ form .signup-form {
-        display: block;
-    }
-
-    .container #flip:checked ~ form .login-form {
-        display: none;
-    }
-
-    }
-</style>
-
-<body>
-    <div class="container">
-        <input type="checkbox" id="flip">
-        <div class="cover">
-            <div class="front">
-                <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YXBwbGUlMjBsYXB0b3B8ZW58MHx8MHx8&w=1000&q=80" alt="">
-                <!-- <div class="text">
-                    <span class="text-1">Every new friend is a <br> new adneventure</span>
-                    <span class="text-2">Lets get connected</span>
-                </div> -->
-            </div>
-            <div class="back">
-                <img class="backImg" src="data:image/jpeg;base64,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" alt="">
-                <!-- <div class="text">
-                    <span class="text-1">Every new friend is a <br> new adneventure</span>
-                    <span class="text-2">Lets get connected</span>
-                </div> -->
-            </div>
+    <div class="modal-content cs_modal" style="border:0px">
+        <div class="modal-header">
+            <img src="~/img/unnamed12.jpeg" style="width: 100%;height: 250px;opacity: 0.4;" />
         </div>
-
-        <div class="form-content">
+        <div class="modal-body">
             <form method="post" asp-action="Login" asp-controller="Home">
-                <div class="login-form">
-                    <div class="title">Login</div>
-                    <div class="input-boxes">
-                        <div class="input-box">
-                            <i class="bi bi-envelope-fill"></i>
-                            <input type="text" name="Email" placeholder="Enter Your Email">
-                            <input type="text" name="LoginType" hidden value="Admin" >
-                        </div>
-                        <div class="input-box">
-                            <i class="bi bi-lock-fill"></i>
-                            <input type="password" name="Password" placeholder="Enter Your Password">
-                        </div>
-                        <div class="text"><a href="#">Forgot Passwrod?</a></div>
-                        <div class="button input-box">
-
-                            <input type="submit" value="Submit">
-
-                        </div>
-                        <div class="text login-text">
-                            Don't have an Account? <label for="flip">Signup Now</label>
-                        </div>
-                    </div>
+                
+                <div class="">
+                    <input type="text" name="Email" class="form-control" placeholder="Enter your email">
+                    <input type="text" name="LoginType" hidden value="Admin" >
                 </div>
-            </form>
-            <form method="post">
-                <div class="signup-form">
-                    <div class="title">Signup</div>
-                    <div class="input-boxes">
-                        <div class="input-box">
-                            <i class="bi bi-person-fill"></i>
-                            <input type="text" placeholder="Enter Your Name">
-                        </div>
-                        <div class="input-box">
-                            <i class="bi bi-envelope-fill"></i>
-                            <input type="text" placeholder="Enter Your Email">
-                        </div>
-                        <div class="input-box">
-                            <i class="bi bi-lock-fill"></i>
-                            <input type="password" placeholder="Enter Your Password">
-                        </div>
-                        <div class="button input-box">
-                            <input type="submit" value="Submit">
-                        </div>
-                        <div class="text sign-up-text">
-                            Already have an Account? <label for="flip">Login Now</label>
-                        </div>
-                    </div>
+                <div class="">
+                    <input type="password" name="Password" class="form-control" placeholder="Password">
                 </div>
+                <input href="#" type="submit" class="btn_1 full_width text-center" style="background-color: #71d171;color: white;height: auto;" value="Log In">
+                
             </form>
         </div>
     </div>
-</body>
+</div>
+<div class="col-lg-3"></div>

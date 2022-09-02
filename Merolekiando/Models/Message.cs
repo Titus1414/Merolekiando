@@ -14,7 +14,9 @@ namespace Merolekiando.Models
         public string LastMessage { get; set; }
         public string Name { get; set; }
         public bool? Read { get; set; }
-        public string ProductIds { get; set; }
+        public int? ProductId { get; set; }
+        public string Image { get; set; }
+        public long? Time { get; set; }
 
         public virtual User ToNavigation { get; set; }
     }

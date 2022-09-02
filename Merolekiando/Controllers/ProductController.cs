@@ -244,7 +244,7 @@ namespace Merolekando.Controllers
                 if (name != null)
                 {
 
-                    var result = _productService.GetProductSellerId(Convert.ToInt32(name), id);
+                    var result = _productService.GetProductSellerId( id);
                     if (result.Result != null)
                     {
                         return Ok(new { result.Result });
