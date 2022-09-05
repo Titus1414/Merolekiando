@@ -68,7 +68,7 @@ namespace Merolekando.Controllers
                 var res = _auth.Login(user);
                 if (res.Result == "Success")
                 {
-                    var usr = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted == false).FirstOrDefault();
+                    var usr = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted != true).FirstOrDefault();
                     if (usr == null)
                     {
                         return BadRequest("Error");

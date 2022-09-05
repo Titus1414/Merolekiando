@@ -336,7 +336,7 @@ namespace Merolekando.Controllers
                 if (name != null)
                 {
 
-                    var result = _productService.SearchProducts(Search);
+                    var result = _productService.SearchProducts(Search, Convert.ToInt32(name));
                     if (result.Result != null)
                     {
                         return Ok(new { result.Result });

@@ -28,6 +28,7 @@
                                     <th scope="row"> <a asp-controller="Province" asp-action="Municiplity" asp-route-id="@item.Id" class="question_content"> @item.Name</a></th>
                                     <td>
                                         <a href="#" data-target="@item.Id" id="EditClick" class="status_btn">Edit</a>
+                                        <a href="#" data-target="@item.Id" id="DeleteClick" style="background-color:red;" class="status_btn">Delete</a>
                                     </td>
                                 </tr>
                             }
@@ -57,6 +58,33 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="exampleModalDelete" tabindex="-1" role="dialog" aria-bs-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Provice</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="FileForm" action="~/Province/DeleteProvinces" method="post">
+                <div class="modal-body">
+                    <div class="white_card_body">
+                        <h4> Are you sure to delete this record? </h4>
+                    </div>
+                    <div class="white_card_body" id="DelCatId">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-primary">Yes</button>
                 </div>
             </form>
         </div>
@@ -105,6 +133,27 @@
                     debugger
                     $('#exampleModal').modal('show');
                     $("#CatId").html(data);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+        })
+
+    });
+    $(document).on('click', 'tr td a#DeleteClick', function () {
+    //$("#PosClick").click(function () {
+            debugger
+        var val = $(this).attr("data-target");
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("ProvinceDeleteModal", "Province")',
+                data: { 'id': val },
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    debugger
+                    $('#exampleModalDelete').modal('show');
+                    $("#DelCatId").html(data);
                 },
                 error: function (xhr) {
                     alert('error');

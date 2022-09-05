@@ -79,12 +79,12 @@ namespace Merolekiando.Controllers
         }
         public IActionResult VerifyRejectModal(int id)
         {
-            var dt = _Context.UserVerifications.Where(a => a.Id == id).FirstOrDefault();
+            var dt = _Context.UserVerifications.Where(a => a.UserId == id).FirstOrDefault();
             return PartialView("~/Views/User/_RejectModal.cshtml", dt);
         }
         public IActionResult VerifyCancelModal(int id)
         {
-            var dt = _Context.UserVerifications.Where(a => a.Id == id).FirstOrDefault();
+            var dt = _Context.UserVerifications.Where(a => a.UserId == id).FirstOrDefault();
             return PartialView("~/Views/User/_CancelModal.cshtml", dt);
         }
         public IActionResult AcceptAccount(int UserId, int check)
@@ -143,6 +143,11 @@ namespace Merolekiando.Controllers
             return PartialView("~/Views/User/_AllowSubsModal.cshtml", dt);
 
         }
+        public IActionResult DenySubsModal(int id)
+        {
+            var dt = _Context.Users.Where(a => a.Id == id).FirstOrDefault();
+            return PartialView("~/Views/User/_DenySubsModal.cshtml", dt);
+        }
         public IActionResult ManageSub(SubsDto dto)
         {
             var user = _Context.Users.Where(a => a.Id == dto.Id).FirstOrDefault();
@@ -150,6 +155,20 @@ namespace Merolekiando.Controllers
             {
                 DateTimeOffset dateTime = new();
                 dateTime = dto.Date;
+                user.Subscriptions = dateTime.ToUnixTimeMilliseconds();
+                _Context.Users.Update(user);
+                _Context.SaveChanges();
+            }
+
+            return RedirectToAction("Subscription");
+        }
+        public IActionResult DenySub(SubsDto dto)
+        {
+            var user = _Context.Users.Where(a => a.Id == dto.Id).FirstOrDefault();
+            if (user != null)
+            {
+                DateTimeOffset dateTime = new();
+                dateTime = DateTime.Now.AddDays(-5);
                 user.Subscriptions = dateTime.ToUnixTimeMilliseconds();
                 _Context.Users.Update(user);
                 _Context.SaveChanges();

@@ -1,8 +1,10 @@
 ﻿using Merolekiando.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Merolekiando.Controllers
 {
@@ -106,10 +108,105 @@ namespace Merolekiando.Controllers
             var dto = _Context.Provinces.Where(a => a.Id == id).FirstOrDefault();
             return PartialView("~/Views/Province/_ProvinceEditModal.cshtml", dto);
         }
+        public IActionResult ProvinceDeleteModal(int id)
+        {
+            var dto = _Context.Provinces.Where(a => a.Id == id).FirstOrDefault();
+            return PartialView("~/Views/Province/_ProvinceDeleteModal.cshtml", dto);
+        }
         public IActionResult MunicipalityEditModal(int id)
         {
             var dto = _Context.Municipalities.Where(a => a.Id == id).FirstOrDefault();
             return PartialView("~/Views/Province/_MunicipalityEditModal.cshtml", dto);
+        }
+        public IActionResult MunicipalityDeleteModal(int id)
+        {
+            var dto = _Context.Municipalities.Where(a => a.Id == id).FirstOrDefault();
+            return PartialView("~/Views/Province/_MunicipalityDeleteModal.cshtml", dto);
+        }
+        public async Task<IActionResult> DeleteProvinces(int id)
+        {
+            var UsId = HttpContext.Session.GetInt32("userId");
+            if (UsId != null)
+            {
+                try
+                {
+                    var prdPrvnc = _Context.ProdProvinces.Where(a => a.ProvinceId == id).ToListAsync();
+                    _Context.ProdProvinces.RemoveRange();
+                    _Context.SaveChanges();
+
+                    var mncLst = await _Context.Municipalities.Where(a => a.PrvId == id).ToListAsync();
+                    foreach (var item in mncLst)
+                    {
+                        var prodMnc = await _Context.ProdMunicipalities.Where(a => a.MncId == item.Id).ToListAsync();
+                        _Context.ProdMunicipalities.RemoveRange(prodMnc);
+                        _Context.SaveChanges();
+
+                        var users = await _Context.Users.Where(a => a.MunicipalityId == item.Id).ToListAsync();
+
+                        foreach (var itm in users)
+                        {
+                            itm.Municipality = null;
+                            _Context.Users.Update(itm);
+                            _Context.SaveChanges();
+                        }
+                    }
+
+                    var usr = await _Context.Users.Where(a => a.ProvinceId == id).ToListAsync();
+                    foreach (var item in usr)
+                    {
+                        item.ProvinceId = null;
+                        _Context.Users.Update(item);
+                        _Context.SaveChanges();
+                    }
+                    var prvnce = _Context.Provinces.Where(a => a.Id == id).FirstOrDefault();
+                    if (prvnce != null)
+                    {
+                        _Context.Provinces.Remove(prvnce);
+                        _Context.SaveChanges();
+                    }
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+
+            }
+            return RedirectToAction("Login", "Home");
+        }
+        public async Task<IActionResult> DeleteMunicipality(int id)
+        {
+            var UsId = HttpContext.Session.GetInt32("userId");
+            if (UsId != null)
+            {
+                try
+                {
+                    var prodMnc = await _Context.ProdMunicipalities.Where(a => a.MncId == id).ToListAsync();
+                    _Context.ProdMunicipalities.RemoveRange(prodMnc);
+                    _Context.SaveChanges();
+
+                    var users = await _Context.Users.Where(a => a.MunicipalityId == id).ToListAsync();
+                    foreach (var user in users)
+                    {
+                        user.MunicipalityId = null;
+                        _Context.Users.Update(user);
+                        _Context.SaveChanges();
+                    }
+
+                    var mnc = _Context.Municipalities.Where(a => a.Id == id).FirstOrDefault();
+                    _Context.Municipalities.Remove(mnc);
+                    _Context.SaveChanges();
+
+                    return RedirectToAction("Municiplity", new {id = mnc.PrvId });
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            
+            }
+            return RedirectToAction("Login", "Home");
         }
     }
 }

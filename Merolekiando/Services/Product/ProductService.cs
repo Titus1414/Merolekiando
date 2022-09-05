@@ -795,30 +795,38 @@ namespace Merolekando.Services.Product
             try
             {
                 List<Productdto> lstp = new();
+                var usr = _Context.Users.Where(a => a.Id == id).FirstOrDefault();
 
-                var dt = await _Context.Products.Where(a => a.CategoryId == id && a.IsActive == true).ToListAsync();
-                foreach (var item in dt)
+                var dt = from t1 in _Context.Products
+                           join t3 in _Context.ProdProvinces on t1.Id equals t3.Pid
+                           join t4 in _Context.ProdMunicipalities on t1.Id equals t4.Pid
+                           where t1.CategoryId == id && t1.IsActive == true && t3.ProvinceId == usr.ProvinceId && t4.MncId == usr.MunicipalityId && t1.IsSold != true
+                           select new { t1 };
+
+                //var dt = await _Context.Products.Where(a => a.CategoryId == id && a.IsActive == true && a.IsSold != true).ToListAsync();
+                
+                foreach (var item in dt.ToList())
                 {
                     Productdto data = new();
-                    data.Id = item.Id;
-                    data.IsDelivering = item.IsDelivering;
-                    data.CategoryId = item.CategoryId;
-                    data.Condition = item.Condition;
-                    data.Description = item.Description;
-                    data.FireOnPrice = item.FireOnPrice;
-                    data.IsPickup = item.IsPickup;
-                    data.IsPromoted = item.IsPromoted;
-                    data.IsReported = item.IsReported;
-                    data.IsSold = item.IsSold;
-                    data.Price = item.Price;
-                    data.SellerId = item.SellerId;
-                    data.SubCategoryId = item.SubCategoryId;
-                    data.Title = item.Title;
-                    data.CreatedDate = item.CreatedDate;
+                    data.Id = item.t1.Id;
+                    data.IsDelivering = item.t1.IsDelivering;
+                    data.CategoryId = item.t1.CategoryId;
+                    data.Condition = item.t1.Condition;
+                    data.Description = item.t1.Description;
+                    data.FireOnPrice = item.t1.FireOnPrice;
+                    data.IsPickup = item.t1.IsPickup;
+                    data.IsPromoted = item.t1.IsPromoted;
+                    data.IsReported = item.t1.IsReported;
+                    data.IsSold = item.t1.IsSold;
+                    data.Price = item.t1.Price;
+                    data.SellerId = item.t1.SellerId;
+                    data.SubCategoryId = item.t1.SubCategoryId;
+                    data.Title = item.t1.Title;
+                    data.CreatedDate = item.t1.CreatedDate;
                     //data.Provice = await _Context.ProdProvinces.Where(a => a.Pid == id).ToListAsync();
                     //data.Municipalities = await _Context.ProdMunicipalities.Where(a => a.Pid == id).ToListAsync();
                     //data.ProdViews = await _Context.ProdViews.Where(a => a.PId == item.Id).ToListAsync();
-                    var pv = await _Context.ProdViews.Where(a => a.PId == item.Id).ToListAsync();
+                    var pv = await _Context.ProdViews.Where(a => a.PId == item.t1.Id).ToListAsync();
                     List<ProdViewsDto> pvLst = new();
                     foreach (var itm1 in pv)
                     {
@@ -829,7 +837,7 @@ namespace Merolekando.Services.Product
                         pvLst.Add(dt1);
                     }
                     data.ProdViews = pvLst;
-                    var imgs = await _Context.ProdImages.Where(a => a.PId == item.Id).ToListAsync();
+                    var imgs = await _Context.ProdImages.Where(a => a.PId == item.t1.Id).ToListAsync();
 
                     List<ProdImagesDto> lst = new();
 
@@ -845,7 +853,7 @@ namespace Merolekando.Services.Product
                     data.ProdImages = lst;
 
                     List<ProvinceDto> lstA = new();
-                    var provnc = await _Context.ProdProvinces.Where(a => a.Pid == item.Id).ToListAsync();
+                    var provnc = await _Context.ProdProvinces.Where(a => a.Pid == item.t1.Id).ToListAsync();
                     foreach (var itemA in provnc)
                     {
                         var d = await _Context.Provinces.Where(a => a.Id == itemA.ProvinceId).FirstOrDefaultAsync();
@@ -854,7 +862,7 @@ namespace Merolekando.Services.Product
                         ProvinceDto dtoA = new();
                         dtoA.Id = itemA.ProvinceId;
                         dtoA.Name = d.Name;
-                        var prodMunc = await _Context.ProdMunicipalities.Where(a => a.Pid == item.Id).ToListAsync();
+                        var prodMunc = await _Context.ProdMunicipalities.Where(a => a.Pid == item.t1.Id).ToListAsync();
                         foreach (var itm in prodMunc)
                         {
                             var sd = await _Context.Municipalities.Where(a => a.Id == itm.MncId).FirstOrDefaultAsync();
@@ -890,30 +898,38 @@ namespace Merolekando.Services.Product
             {
                 List<Productdto> lstp = new();
 
-                var dt = await _Context.Products.Where(a => a.SubCategoryId == id && a.IsActive == true).ToListAsync();
-                foreach (var item in dt)
+                var usr = _Context.Users.Where(a => a.Id == id).FirstOrDefault();
+
+                var dt = from t1 in _Context.Products
+                         join t3 in _Context.ProdProvinces on t1.Id equals t3.Pid
+                         join t4 in _Context.ProdMunicipalities on t1.Id equals t4.Pid
+                         where t1.SubCategoryId == id && t1.IsActive == true && t3.ProvinceId == usr.ProvinceId && t4.MncId == usr.MunicipalityId && t1.IsSold != true
+                         select new { t1 };
+
+                //var dt = await _Context.Products.Where(a => a.SubCategoryId == id && a.IsActive == true && a.IsSold != true).ToListAsync();
+                foreach (var item in dt.ToList())
                 {
                     Productdto data = new();
-                    data.Id = item.Id;
-                    data.IsDelivering = item.IsDelivering;
-                    data.CategoryId = item.CategoryId;
-                    data.Condition = item.Condition;
-                    data.Description = item.Description;
-                    data.FireOnPrice = item.FireOnPrice;
-                    data.IsPickup = item.IsPickup;
-                    data.IsPromoted = item.IsPromoted;
-                    data.IsReported = item.IsReported;
-                    data.IsSold = item.IsSold;
-                    data.Price = item.Price;
-                    data.SellerId = item.SellerId;
-                    data.SubCategoryId = item.SubCategoryId;
-                    data.Title = item.Title;
-                    data.CreatedDate = item.CreatedDate;
+                    data.Id = item.t1.Id;
+                    data.IsDelivering = item.t1.IsDelivering;
+                    data.CategoryId = item.t1.CategoryId;
+                    data.Condition = item.t1.Condition;
+                    data.Description = item.t1.Description;
+                    data.FireOnPrice = item.t1.FireOnPrice;
+                    data.IsPickup = item.t1.IsPickup;
+                    data.IsPromoted = item.t1.IsPromoted;
+                    data.IsReported = item.t1.IsReported;
+                    data.IsSold = item.t1.IsSold;
+                    data.Price = item.t1.Price;
+                    data.SellerId = item.t1.SellerId;
+                    data.SubCategoryId = item.t1.SubCategoryId;
+                    data.Title = item.t1.Title;
+                    data.CreatedDate = item.t1.CreatedDate;
                     //data.Provice = await _Context.ProdProvinces.Where(a => a.Pid == id).ToListAsync();
                     //data.Municipalities = await _Context.ProdMunicipalities.Where(a => a.Pid == id).ToListAsync();
                     //data.ProdViews = await _Context.ProdViews.Where(a => a.PId == item.Id).ToListAsync();
 
-                    var pv = await _Context.ProdViews.Where(a => a.PId == item.Id).ToListAsync();
+                    var pv = await _Context.ProdViews.Where(a => a.PId == item.t1.Id).ToListAsync();
                     List<ProdViewsDto> pvLst = new();
                     foreach (var itm1 in pv)
                     {
@@ -925,7 +941,7 @@ namespace Merolekando.Services.Product
                     }
                     data.ProdViews = pvLst;
 
-                    var imgs = await _Context.ProdImages.Where(a => a.PId == item.Id).ToListAsync();
+                    var imgs = await _Context.ProdImages.Where(a => a.PId == item.t1.Id).ToListAsync();
 
                     List<ProdImagesDto> lst = new();
 
@@ -941,7 +957,7 @@ namespace Merolekando.Services.Product
                     data.ProdImages = lst;
 
                     List<ProvinceDto> lstA = new();
-                    var provnc = await _Context.ProdProvinces.Where(a => a.Pid == item.Id).ToListAsync();
+                    var provnc = await _Context.ProdProvinces.Where(a => a.Pid == item.t1.Id).ToListAsync();
                     foreach (var itemA in provnc)
                     {
                         var d = await _Context.Provinces.Where(a => a.Id == itemA.ProvinceId).FirstOrDefaultAsync();
@@ -950,7 +966,7 @@ namespace Merolekando.Services.Product
                         ProvinceDto dtoA = new();
                         dtoA.Id = itemA.ProvinceId;
                         dtoA.Name = d.Name;
-                        var prodMunc = await _Context.ProdMunicipalities.Where(a => a.Pid == item.Id).ToListAsync();
+                        var prodMunc = await _Context.ProdMunicipalities.Where(a => a.Pid == item.t1.Id).ToListAsync();
                         foreach (var itm in prodMunc)
                         {
                             var sd = await _Context.Municipalities.Where(a => a.Id == itm.MncId).FirstOrDefaultAsync();
@@ -1391,19 +1407,27 @@ namespace Merolekando.Services.Product
             }
         }
 
-        public async Task<List<Productdto>> SearchProducts(string Search)
+        public async Task<List<Productdto>> SearchProducts(string Search, int id)
         {
             try
             {
-                var data = await _Context.Products.Where(a => a.Title.Contains(Search) && a.IsActive == true).ToListAsync();
+                var usr = _Context.Users.Where(a => a.Id == id).FirstOrDefault();
+
+                var data = from t1 in _Context.Products
+                          join t3 in _Context.ProdProvinces on t1.Id equals t3.Pid
+                          join t4 in _Context.ProdMunicipalities on t1.Id equals t4.Pid
+                          where t1.Title.Contains(Search) && t1.IsActive == true && t3.ProvinceId == usr.ProvinceId && t4.MncId == usr.MunicipalityId && t1.IsSold != true
+                          select new { t1 };
+
+                //var data = await _Context.Products.Where(a => a.Title.Contains(Search) && a.IsActive == true && a.IsSold != true).ToListAsync();
 
                 List<Productdto> lstP = new();
 
-                foreach (var item in data)
+                foreach (var item in data.ToList())
                 {
 
                     Productdto dataP = new();
-                    var dt = await _Context.Products.Where(a => a.Id == item.Id && a.IsActive == true).FirstOrDefaultAsync();
+                    var dt = await _Context.Products.Where(a => a.Id == item.t1.Id && a.IsActive == true).FirstOrDefaultAsync();
                     if (dt != null)
                     {
                         dataP.Id = dt.Id;
@@ -1453,7 +1477,7 @@ namespace Merolekando.Services.Product
                         dataP.ProdImages = lst;
 
                         List<ProvinceDto> lstA = new();
-                        var provnc = await _Context.ProdProvinces.Where(a => a.Pid == item.Id).ToListAsync();
+                        var provnc = await _Context.ProdProvinces.Where(a => a.Pid == item.t1.Id).ToListAsync();
                         foreach (var itemA in provnc)
                         {
                             var d = await _Context.Provinces.Where(a => a.Id == itemA.ProvinceId).FirstOrDefaultAsync();
@@ -1462,7 +1486,7 @@ namespace Merolekando.Services.Product
                             ProvinceDto dtoA = new();
                             dtoA.Id = itemA.ProvinceId;
                             dtoA.Name = d.Name;
-                            var prodMunc = await _Context.ProdMunicipalities.Where(a => a.Pid == item.Id).ToListAsync();
+                            var prodMunc = await _Context.ProdMunicipalities.Where(a => a.Pid == item.t1.Id).ToListAsync();
                             foreach (var itm in prodMunc)
                             {
                                 var sd = await _Context.Municipalities.Where(a => a.Id == itm.MncId).FirstOrDefaultAsync();

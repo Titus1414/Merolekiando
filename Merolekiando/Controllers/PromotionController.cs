@@ -138,7 +138,7 @@ namespace Merolekiando.Controllers
                 var dt = _Context.Products.Where(a => a.Id == Id).FirstOrDefault();
                 if (dt != null)
                 {
-                    dt.IsActive = true;
+                    dt.IsActive = false;
                     _Context.Products.Update(dt);
                     _Context.SaveChanges();
                 }

@@ -169,23 +169,33 @@ namespace Merolekiando.Controllers
         }
         public IActionResult Login()
         {
-
+            ViewBag.Flag = 1;
             return View();
         }
         [HttpPost]
         public IActionResult Login(User dto)
         {
+            int flg = 0;
             if (dto.LoginType == "Admin")
             {
+                if (string.IsNullOrEmpty(dto.Password) || dto.Password == "0")
+                {
+                    ViewBag.Flag = flg;
+                    return View();
+                }
                 string encpass = Methods.Encrypt(dto.Password);
                 var usr = _Context.Users.Where(a => a.Email == dto.Email && a.Password == encpass && a.IsDeleted != true).FirstOrDefault();
                 if (usr != null)
                 {
                     HttpContext.Session.SetInt32("userId", usr.Id);
+                    flg = 1;
+                    ViewBag.Flag = flg;
                     return RedirectToAction("Index");
                 }
+                ViewBag.Flag = flg;
                 return View();
             }
+            ViewBag.Flag = flg;
             return View();
         }
         public IActionResult Privacy()

@@ -190,7 +190,7 @@ namespace Merolekando.Services.Auth
                     dt.IsDeleted = false;
                     dt.Name = user.Name;
                     dt.Email = user.Email;
-
+                    dt.LoginType = user.LoginType;
                     await _Context.Users.AddAsync(dt);
                     _Context.SaveChanges();
                     return "Success";
@@ -506,9 +506,9 @@ namespace Merolekando.Services.Auth
                         dto1.Followers = _Context.Folowers.Where(a => a.Folowers == Check.Id).ToList();
                         return Tuple.Create(dto1, "Success");
                     }
-                    Tuple.Create(dto1, "Ya existe el correo electrónico");
+                    return Tuple.Create(dto1, "Ya existe el correo electrónico");
                 }
-                Tuple.Create(dto1, "Contraseña antigua inválida");
+                return Tuple.Create(dto1, "Contraseña antigua inválida");
             }
             return null;
         }
@@ -653,13 +653,13 @@ namespace Merolekando.Services.Auth
 
         public async Task<string> ChangePassword(ChangePassDto dto)
         {
-            var dt = _Context.Users.Where(a => a.Id == dto.Uid).FirstOrDefault();
+            var dt = await _Context.Users.Where(a => a.Id == dto.Uid).FirstOrDefaultAsync();
             string encpass = Methods.Encrypt(dto.OldPass);
-            if (dt.Password == encpass)
+            if (dt.Password != encpass)
             {
                 dt.Password = encpass;
                 _Context.Users.Update(dt);
-                _Context.SaveChanges();
+                await _Context.SaveChangesAsync();
             }
             else
             {
