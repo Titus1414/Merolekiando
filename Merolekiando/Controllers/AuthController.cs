@@ -65,10 +65,35 @@ namespace Merolekando.Controllers
         {
             if (user.LoginType != null)
             {
+                if (user.LoginType == "Custom")
+                {
+                    var us = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted != true).FirstOrDefault();
+                    if (us != null)
+                    {
+                        var usera = _Context.Users.Where(a => a.Id == us.Id).FirstOrDefault();
+                        if (usera.IsBlock == true)
+                        {
+                            return Unauthorized("Tu cuenta ha sido bloqueada");
+                        }
+                    }
+                }
+                else
+                {
+                    var us = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted != true && a.UniqueId == user.UniqueId).FirstOrDefault();
+                    if (us != null)
+                    {
+                        var usera = _Context.Users.Where(a => a.Id == us.Id).FirstOrDefault();
+                        if (usera.IsBlock == true)
+                        {
+                            return Unauthorized("Tu cuenta ha sido bloqueada");
+                        }
+                    }
+                }
+                
                 var res = _auth.Login(user);
                 if (res.Result == "Success")
                 {
-                    var usr = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted != true).FirstOrDefault();
+                    var usr = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted != true && a.LoginType == user.LoginType).FirstOrDefault();
                     if (usr == null)
                     {
                         return BadRequest("Error");
@@ -339,6 +364,24 @@ namespace Merolekando.Controllers
             }
             return Unauthorized();
         }
+        //[HttpGet]
+        //[Route("CheckUser")]
+        //public IActionResult CheckUser()
+        //{
+        //    var identity = User.Identity as ClaimsIdentity;
+        //    if (identity != null)
+        //    {
+        //        IEnumerable<Claim> claims = identity.Claims;
+        //        var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
+        //        if (name != null)
+        //        {
+        //            var result = _auth.CheckUser(Convert.ToInt32(name));
+        //            return Ok(new { result.Result });
+        //        }
+        //        return Unauthorized("Token Issue");
+        //    }
+        //    return Unauthorized();
+        //}
         [HttpGet]
         [Route("token")]
         public async Task<IActionResult> GetTokenfo(string QrCode)

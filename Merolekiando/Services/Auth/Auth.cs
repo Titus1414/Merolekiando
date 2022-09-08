@@ -174,7 +174,7 @@ namespace Merolekando.Services.Auth
             }
             else
             {
-                var Check = await _Context.Users.Where(a => a.UniqueId == user.UniqueId && a.IsDeleted == false).FirstOrDefaultAsync();
+                var Check = await _Context.Users.Where(a => a.UniqueId == user.UniqueId && a.IsDeleted != true && a.LoginType == user.LoginType).FirstOrDefaultAsync();
                 if (Check != null)
                 {
                     if (Check.IsBlock == true)
@@ -655,9 +655,10 @@ namespace Merolekando.Services.Auth
         {
             var dt = await _Context.Users.Where(a => a.Id == dto.Uid).FirstOrDefaultAsync();
             string encpass = Methods.Encrypt(dto.OldPass);
-            if (dt.Password != encpass)
+            if (dt.Password == encpass)
             {
-                dt.Password = encpass;
+                string enpass = Methods.Encrypt(dto.NewPass);
+                dt.Password = enpass;
                 _Context.Users.Update(dt);
                 await _Context.SaveChangesAsync();
             }
@@ -702,5 +703,16 @@ namespace Merolekando.Services.Auth
 
             
         }
+
+        //public async Task<string> CheckUser(int id)
+        //{
+
+        //    var user = _Context.Users.Where(a => a.Id == id ).FirstOrDefault();
+        //    if (user.IsBlock == true)
+        //    {
+        //        return "Block";
+        //    }
+        //    return "Unblock";
+        //}
     }
 }

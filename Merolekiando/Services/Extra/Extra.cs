@@ -237,7 +237,10 @@ namespace Merolekando.Services.Extra
                     }
                 }
                 dto.Municipalitiees = mnclst;
-                lst.Add(dto);
+                if (dd.Count > 0)
+                {
+                    lst.Add(dto);
+                }
             }
 
             return lst;
@@ -381,7 +384,7 @@ namespace Merolekando.Services.Extra
         public async Task<List<MessagesDto>> GetChatUsers(int id)
         {
             //var data = await _Context.Messages.Where(a => a.From != null && a.To != null && ( a.To == id || a.From == id) && a.Name != null).ToListAsync();
-            var data = await _Context.Messages.Where(a => a.From != id && a.ProductId != null).ToListAsync();
+            var data = await _Context.Messages.Where(a => a.From != id && a.ProductId != null && a.To == id).ToListAsync();
             List<MessagesDto> lst = new();
             if (data.Count == 0)
             {
@@ -440,66 +443,73 @@ namespace Merolekando.Services.Extra
             {
                 foreach (var item in data)
                 {
-                    var usr = _Context.Users.Where(a => a.Id == item.From).FirstOrDefault();
-                    var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id || a.RecieverId == usr.Id).Max(a => a.Id);
-                    var chat = _Context.Chats.Where(a => a.Id == chatId).FirstOrDefault();
-                    MessagesDto dto = new();
-                    var dx = _Context.Messages.Where(a => a.From == item.From && a.To == item.To).ToList();
-                    List<int> pidLst = new();
-                    //var rsd = lst.Where(a => a.From == item.From && a.To == item.To).FirstOrDefault();
-                    //if (rsd != null)
-                    //{
-                    foreach (var itm in dx)
+                    var usr = _Context.Users.Where(a => a.Id == item.From && a.IsDeleted != true).FirstOrDefault();
+                    if (usr != null)
                     {
-                        if (itm.ProductId != null)
+                        var chts = _Context.Chats.Where(a => a.SenderId == usr.Id || a.RecieverId == usr.Id).FirstOrDefault();
+                        if (chts != null)
                         {
-                            pidLst.Add((int)itm.ProductId);
-                        }
-                    }
-                    if (chat.Type == "Link")
-                    {
-                        dto.Id = item.Id;
-                        dto.LastMessage = "Image";
-                        dto.ConnId = item.ConnId;
-                        dto.From = item.From;
-                        dto.ProductIds = pidLst;
-                        dto.LastMessgeTime = (long)chat.Time;
-                        dto.Name = item.Name;
-                        dto.To = item.To;
-                        dto.Read = item.Read;
-                        dto.FromImage = usr.Image;
-                        dto.ProductImage = item.Image;
-                    }
-                    else
-                    {
-                        dto.Id = item.Id;
-                        dto.LastMessage = chat.Message;
-                        dto.ConnId = item.ConnId;
-                        dto.From = item.From;
-                        dto.ProductIds = pidLst;
-                        dto.LastMessgeTime = (long)chat.Time;
-                        if (item.Name != null)
-                        {
-                            dto.Name = item.Name;
-                        }
-                        else
-                        {
-                            var usra = _Context.Users.Where(a => a.Id == item.From).FirstOrDefault();
-                            dto.Name = usra.Name;
-                        }
+                            var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id || a.RecieverId == usr.Id).Max(a => a.Id);
+                            var chat = _Context.Chats.Where(a => a.Id == chatId).FirstOrDefault();
+                            MessagesDto dto = new();
+                            var dx = _Context.Messages.Where(a => a.From == item.From && a.To == item.To).ToList();
+                            List<int> pidLst = new();
+                            foreach (var itm in dx)
+                            {
+                                if (itm.ProductId != null)
+                                {
+                                    pidLst.Add((int)itm.ProductId);
+                                }
+                            }
+                            if (chat.Type == "Link")
+                            {
+                                dto.Id = item.Id;
+                                dto.LastMessage = "Image";
+                                dto.ConnId = item.ConnId;
+                                dto.From = item.From;
+                                dto.ProductIds = pidLst;
+                                dto.LastMessgeTime = (long)chat.Time;
+                                dto.Name = item.Name;
+                                dto.To = item.To;
+                                dto.Read = item.Read;
+                                dto.FromImage = usr.Image;
+                                dto.ProductImage = item.Image;
+                            }
+                            else
+                            {
+                                dto.Id = item.Id;
+                                dto.LastMessage = item.LastMessage;
+                                dto.ConnId = item.ConnId;
+                                dto.From = item.From;
+                                dto.ProductIds = pidLst;
+                                dto.LastMessgeTime = (long)item.Time;
+                                if (item.Name != null)
+                                {
+                                    dto.Name = item.Name;
+                                }
+                                else
+                                {
+                                    var usra = _Context.Users.Where(a => a.Id == item.From).FirstOrDefault();
+                                    if (usra != null)
+                                    {
+                                        dto.Name = usra.Name;
+                                    }
+                                }
 
-                        dto.To = item.To;
-                        dto.Read = item.Read;
-                        dto.FromImage = usr.Image;
+                                dto.To = item.To;
+                                dto.Read = item.Read;
+                                dto.FromImage = usr.Image;
 
-                        if (item.ProductId != null)
-                        {
-                            //var prd = _Context.ProdImages.Where(a => a.PId == item.ProductId).FirstOrDefault();
-                            dto.ProductImage = item.Image;
+                                if (item.ProductId != null)
+                                {
+                                    dto.ProductImage = item.Image;
+                                }
+                            }
+                            lst.Add(dto);
                         }
+                        
                     }
-                    lst.Add(dto);
-                    //}
+
                 }
             }
             
@@ -747,48 +757,54 @@ namespace Merolekando.Services.Extra
             foreach (var item in data)
             {
                 var usr = _Context.Users.Where(a => a.Id == item.To).FirstOrDefault();
-                var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id).Max(a => a.Id);
-                var chat = _Context.Chats.Where(a => a.Id == chatId).FirstOrDefault();
-                var dx = _Context.Messages.Where(a => a.From == item.From && a.To == item.To).ToList();
-                MessagesDto dto = new();
-                List<int> pidLst = new();
-
-                foreach (var itm in dx)
+                if (usr != null)
                 {
-                    if (itm.ProductId != null)
+                    var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id).Max(a => a.Id);
+                    var chat = _Context.Chats.Where(a => a.Id == chatId).FirstOrDefault();
+                    if (chat != null)
                     {
-                        pidLst.Add((int)itm.ProductId);
+                        var dx = _Context.Messages.Where(a => a.From == item.From && a.To == item.To).ToList();
+                        MessagesDto dto = new();
+                        List<int> pidLst = new();
+
+                        foreach (var itm in dx)
+                        {
+                            if (itm.ProductId != null)
+                            {
+                                pidLst.Add((int)itm.ProductId);
+                            }
+                        }
+
+                        if (chat.Type == "Link")
+                        {
+                            dto.Id = item.Id;
+                            dto.LastMessage = "Image";
+                            dto.ConnId = item.ConnId;
+                            dto.From = item.From;
+                            dto.ProductIds = pidLst;
+                            dto.LastMessgeTime = (long)chat.Time;
+                            dto.Name = item.Name;
+                            dto.To = item.To;
+                            dto.Read = item.Read;
+                            dto.FromImage = usr.Image;
+                        }
+                        else
+                        {
+                            dto.Id = item.Id;
+                            dto.LastMessage = chat.Message;
+                            dto.ConnId = item.ConnId;
+                            dto.From = item.From;
+                            dto.ProductIds = pidLst;
+                            dto.LastMessgeTime = (long)chat.Time;
+                            dto.Name = item.Name;
+                            dto.To = item.To;
+                            dto.Read = item.Read;
+                            dto.FromImage = usr.Image;
+                        }
+                        lst.Add(dto);
                     }
+                    
                 }
-
-                if (chat.Type == "Link")
-                {
-                    dto.Id = item.Id;
-                    dto.LastMessage = "Image";
-                    dto.ConnId = item.ConnId;
-                    dto.From = item.From;
-                    dto.ProductIds = pidLst;
-                    dto.LastMessgeTime = (long)chat.Time;
-                    dto.Name = item.Name;
-                    dto.To = item.To;
-                    dto.Read = item.Read;
-                    dto.FromImage = usr.Image;
-                }
-                else
-                {
-                    dto.Id = item.Id;
-                    dto.LastMessage = chat.Message;
-                    dto.ConnId = item.ConnId;
-                    dto.From = item.From;
-                    dto.ProductIds = pidLst;
-                    dto.LastMessgeTime = (long)chat.Time;
-                    dto.Name = item.Name;
-                    dto.To = item.To;
-                    dto.Read = item.Read;
-                    dto.FromImage = usr.Image;
-                }
-                lst.Add(dto);
-
             }
             return lst;
         }

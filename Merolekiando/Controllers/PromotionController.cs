@@ -29,8 +29,9 @@ namespace Merolekiando.Controllers
             {
                 var dt = from t1 in _Context.Products
                          join t2 in _Context.Users on t1.SellerId equals t2.Id
+                         join t3 in _Context.ProdImages on t1.Id equals t3.PId
                          where t1.IsActive == true
-                         select new { t1.Id, t1.Title, t1.Description, t2.Name, Uid = t2.Id, t1.ProdImages, t1.IsPromoted  };
+                         select new { t1.Id, t1.Title, t1.Description, t2.Name, Uid = t2.Id, t3.Image, t1.IsPromoted  };
 
                 List<PromotionDto> lst = new();
                 foreach (var item in dt.ToList())
@@ -41,7 +42,7 @@ namespace Merolekiando.Controllers
                     dto.Decription = item.Description;
                     dto.Title = item.Title;
                     dto.Uid = item.Uid;
-                    dto.Image = Methods.baseurl + item.ProdImages;
+                    dto.Image = Methods.baseurl + item.Image;
                     dto.IsPromote = item.IsPromoted;
                     lst.Add(dto);
                 }
@@ -51,7 +52,8 @@ namespace Merolekiando.Controllers
                 var dt1 = from t1 in _Context.Products
                          join t2 in _Context.Users on t1.SellerId equals t2.Id
                          where t1.IsActive == true && t1.IsReported == true
-                         select new { t1.Id, t1.Title, t1.Description, t2.Name, Uid = t2.Id, t1.ProdImages };
+                          join t3 in _Context.ProdImages on t1.Id equals t3.PId
+                          select new { t1.Id, t1.Title, t1.Description, t2.Name, Uid = t2.Id, t3.Image };
 
                 List<PromotionDto> lst1 = new();
                 foreach (var item in dt1.ToList())
@@ -62,7 +64,7 @@ namespace Merolekiando.Controllers
                     dto.Decription = item.Description;
                     dto.Title = item.Title;
                     dto.Uid = item.Uid;
-                    dto.Image = Methods.baseurl + item.ProdImages;
+                    dto.Image = Methods.baseurl + item.Image;
                     lst1.Add(dto);
                 }
                 ViewBag.ReportedProducts = lst1;

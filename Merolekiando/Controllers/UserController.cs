@@ -33,7 +33,7 @@ namespace Merolekiando.Controllers
             {
                 var usr = from t1 in _Context.Users
                           join t2 in _Context.UserVerifications on t1.Id equals t2.UserId
-                          where t1.VerificationSent == true && t1.IsVerified != true
+                          where t1.IsDeleted != true && t1.VerificationSent == true && t1.IsVerified != true
                           select new { t1.Name, t1.Id, t2.Fimage, t2.Bimage, t2.Message };
 
                 List<VerifyDto> lst = new();
@@ -52,7 +52,7 @@ namespace Merolekiando.Controllers
 
                 var usr1 = from t1 in _Context.Users
                            join t2 in _Context.UserVerifications on t1.Id equals t2.UserId
-                           where t1.VerificationSent == true && t1.IsVerified == true
+                           where t1.IsDeleted != true && t1.VerificationSent == true && t1.IsVerified == true
                            select new { t1.Name, t1.Id, t2.Fimage, t2.Bimage, t2.Message };
 
                 List<VerifyDto> lst1 = new();
@@ -103,9 +103,15 @@ namespace Merolekiando.Controllers
                     {
                         usr.IsVerified = false;
                         usr.VerificationSent = false;
+
+                        var ver = _Context.UserVerifications.Where(a => a.UserId == UserId).ToList();
+                        _Context.UserVerifications.RemoveRange(ver);
+                        _Context.SaveChanges();
                     }
                     _Context.Users.Update(usr);
                     _Context.SaveChanges();
+
+
                 }
                 catch (System.Exception ex)
                 {
@@ -121,7 +127,7 @@ namespace Merolekiando.Controllers
             var UsId = HttpContext.Session.GetInt32("userId");
             if (UsId != null)
             {
-                var user = _Context.Users.Where(a => a.IsDeleted != true).ToList();
+                var user = _Context.Users.Where(a => a.IsDeleted != true && a.LoginType != "Admin").ToList();
                 ViewBag.Users = user;
                 var dt = _Context.Settings.Select(a => a.SubsAllAllow).FirstOrDefault();
                 if (dt == null)

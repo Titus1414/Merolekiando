@@ -5,13 +5,14 @@
                 <div class="white_box_tittle list_header">
                     <h4>Users</h4>
                 </div>
-                <div class="QA_table">
+                <div class="QA_table mb_30">
 
                     <table class="table lms_table_active">
 
                         <thead>
                             <tr>
                                 <th scope="col">Name</th>
+                                <th scope="col">Email</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -20,15 +21,16 @@
                             {
                                 <tr>
                                     <th scope="row"> @item.Name </th>
+                                    <th scope="row"> @item.Email </th>
                                     <td>
-                                        @if(@item.IsBlock != true)
+                                        @if (@item.IsBlock != true)
                                         {
                                             <a href="#" data-target="@item.Id" id="EditClick" class="status_btn">Block</a>
                                         }
                                         else
                                         {
                                             <a href="#" data-target="@item.Id" id="EditClick1" style="background-color:grey;" class="status_btn">Unblock</a>
-                                            
+
                                         }
                                         <a href="#" data-target="@item.Id" id="DeleteClick" style="background-color:red;" class="status_btn">Delete</a>
                                     </td>
@@ -125,67 +127,73 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
 
-    $(document).on('click', 'tr td a#EditClick', function () {
-    //$("#PosClick").click(function () {
-            debugger
-        var val = $(this).attr("data-target");
-            $.ajax({
-                type: 'post',
-                url: '@Url.Action("UserModal", "Home")',
-                data: { 'id': val },
-                contenttype: 'application/json; charset=utf-8',
-                async: true,
-                success: function (data) {
-                    debugger
-                    $('#exampleModal').modal('show');
-                    $("#CatId").html(data);
-                },
-                error: function (xhr) {
-                    alert('error');
-                }
-        })
+        $(document).on('click', 'tr td a#EditClick', function () {
+        //$("#PosClick").click(function () {
+                debugger
+            var val = $(this).attr("data-target");
+                $.ajax({
+                    type: 'post',
+                    url: '@Url.Action("UserModal", "Home")',
+                    data: { 'id': val },
+                    contenttype: 'application/json; charset=utf-8',
+                    async: true,
+                    success: function (data) {
+                        debugger
+                        $('#exampleModal').modal('show');
+                        $("#CatId").html(data);
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+            })
 
-    });
-    $(document).on('click', 'tr td a#EditClick1', function () {
-    //$("#PosClick").click(function () {
-            debugger
-        var val = $(this).attr("data-target");
-            $.ajax({
-                type: 'post',
-                url: '@Url.Action("UserModal", "Home")',
-                data: { 'id': val },
-                contenttype: 'application/json; charset=utf-8',
-                async: true,
-                success: function (data) {
-                    debugger
-                    $('#exampleModal1').modal('show');
-                    $("#CatId1").html(data);
-                },
-                error: function (xhr) {
-                    alert('error');
-                }
-        })
+        });
+        $(document).on('click', 'tr td a#EditClick1', function () {
+        //$("#PosClick").click(function () {
+                debugger
+            var val = $(this).attr("data-target");
+                $.ajax({
+                    type: 'post',
+                    url: '@Url.Action("UserModal", "Home")',
+                    data: { 'id': val },
+                    contenttype: 'application/json; charset=utf-8',
+                    async: true,
+                    success: function (data) {
+                        debugger
+                        $('#exampleModal1').modal('show');
+                        $("#CatId1").html(data);
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+            })
 
-    });
-    $(document).on('click', 'tr td a#DeleteClick', function () {
-    //$("#PosClick").click(function () {
-            debugger
-        var val = $(this).attr("data-target");
-            $.ajax({
-                type: 'post',
-                url: '@Url.Action("UserModal", "Home")',
-                data: { 'id': val },
-                contenttype: 'application/json; charset=utf-8',
-                async: true,
-                success: function (data) {
-                    debugger
-                    $('#DeleteModal').modal('show');
-                    $("#CatId2").html(data);
-                },
-                error: function (xhr) {
-                    alert('error');
-                }
-        })
+        });
+        $(document).on('click', 'tr td a#DeleteClick', function () {
+        //$("#PosClick").click(function () {
+                debugger
+            var val = $(this).attr("data-target");
+                $.ajax({
+                    type: 'post',
+                    url: '@Url.Action("UserModal", "Home")',
+                    data: { 'id': val },
+                    contenttype: 'application/json; charset=utf-8',
+                    async: true,
+                    success: function (data) {
+                        debugger
+                        $('#DeleteModal').modal('show');
+                        $("#CatId2").html(data);
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+            })
 
+        });
+
+        $(document).ready( function () {
+            $('#DataTables_Table_0').dataTable({
+    "bDestroy": true
     });
+        });
 </script>

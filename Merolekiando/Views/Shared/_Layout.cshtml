@@ -15,12 +15,11 @@
     <link rel="stylesheet" href="~/dash/vendors/gijgo/gijgo.min.css" />
     <link rel="stylesheet" href="~/dash/vendors/font_awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/dash/vendors/tagsinput/tagsinput.css" />
-    @*<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.jqueryui.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.4.0/css/select.jqueryui.min.css" />*@
+    @*<link rel="stylesheet" href="~/dash/vendors/datatable/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/datatable/css/responsive.dataTables.min.css" />*@
+    <link rel="stylesheet" href="~/dash/vendors/datatable/css/other/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="~/dash/vendors/datatable/css/other/responsive.dataTables.min.css" />
 
-    <link rel="stylesheet" href="~/dash/vendors/datatable/css/jquery.dataTables.min.css" />
-    <link rel="stylesheet" href="~/dash/vendors/datatable/css/responsive.dataTables.min.css" />
     <link rel="stylesheet" href="~/dash/vendors/datatable/css/buttons.dataTables.min.css" />
     <link rel="stylesheet" href="~/dash/vendors/text_editor/summernote-bs4.css" />
     <link rel="stylesheet" href="~/dash/vendors/morris/morris.css">
@@ -186,9 +185,13 @@
     <script src="~/dash/vendors/niceselect/js/jquery.nice-select.min.js"></script>
     <script src="~/dash/vendors/owl_carousel/js/owl.carousel.min.js"></script>
     <script src="~/dash/vendors/gijgo/gijgo.min.js"></script>
-    <script src="~/dash/vendors/datatable/js/jquery.dataTables.min.js"></script>
+    @*<script src="~/dash/vendors/datatable/js/jquery.dataTables.min.js"></script>
     <script src="~/dash/vendors/datatable/js/dataTables.responsive.min.js"></script>
-    <script src="~/dash/vendors/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="~/dash/vendors/datatable/js/dataTables.buttons.min.js"></script>*@
+    <script src="~/dash/vendors/datatable/js/other/jquery.dataTables.min.js"></script>
+    <script src="~/dash/vendors/datatable/js/other/dataTables.responsive.min.js"></script>
+    <script src="~/dash/vendors/datatable/js/other/dataTables.buttons.min.js"></script>
+
     <script src="~/dash/vendors/datatable/js/buttons.flash.min.js"></script>
     <script src="~/dash/vendors/datatable/js/jszip.min.js"></script>
     <script src="~/dash/vendors/datatable/js/pdfmake.min.js"></script>
@@ -208,5 +211,6 @@
     <script src="~/dash/vendors/apex_chart/bar_active_1.js"></script>
     <script src="~/dash/vendors/chartjs/chartjs_active.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    
 </body>
 </html>

@@ -23,5 +23,6 @@ namespace Merolekando.Services.Auth
         public Task<UserDto> UpdateUser(UserDto user);
         public Task<string> ChangePassword(ChangePassDto dto);
         public Task<string> SendEmail(string to);
+        //public Task<string> CheckUser(int id);
     }
 }

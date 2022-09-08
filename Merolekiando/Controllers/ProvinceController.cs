@@ -130,8 +130,8 @@ namespace Merolekiando.Controllers
             {
                 try
                 {
-                    var prdPrvnc = _Context.ProdProvinces.Where(a => a.ProvinceId == id).ToListAsync();
-                    _Context.ProdProvinces.RemoveRange();
+                    var prdPrvnc = await _Context.ProdProvinces.Where(a => a.ProvinceId == id).ToListAsync();
+                    _Context.ProdProvinces.RemoveRange(prdPrvnc);
                     _Context.SaveChanges();
 
                     var mncLst = await _Context.Municipalities.Where(a => a.PrvId == id).ToListAsync();

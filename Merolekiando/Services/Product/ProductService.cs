@@ -217,8 +217,7 @@ namespace Merolekando.Services.Product
                 {
 
                     var usr = _Context.Users.Where(a => a.Id == dto.SellerId).FirstOrDefault();
-                    var set = _Context.Settings.FirstOrDefault();
-                    if (usr.Subscriptions < DateTimeOffset.Now.ToUnixTimeMilliseconds() || (set != null && set.SubsAllAllow == true) )
+                    if (usr.Subscriptions >= DateTimeOffset.Now.ToUnixTimeMilliseconds())
                     {
                         Merolekiando.Models.Product pro = new();
                         pro.CategoryId = dto.CategoryId;
@@ -454,26 +453,28 @@ namespace Merolekando.Services.Product
                     foreach (var itemA in provnc)
                     {
                         var d = await _Context.Provinces.Where(a => a.Id == itemA.ProvinceId).FirstOrDefaultAsync();
-
-                        List<MunicipalityDto> mnclst = new();
-                        ProvinceDto dtoA = new();
-                        dtoA.Id = itemA.ProvinceId;
-                        dtoA.Name = d.Name;
-                        var prodMunc = await _Context.ProdMunicipalities.Where(a => a.Pid == item.Id).ToListAsync();
-                        foreach (var itm in prodMunc)
+                        if (d != null)
                         {
-                            var sd = await _Context.Municipalities.Where(a => a.Id == itm.MncId).FirstOrDefaultAsync();
-                            if (sd.PrvId == d.Id)
+                            List<MunicipalityDto> mnclst = new();
+                            ProvinceDto dtoA = new();
+                            dtoA.Id = itemA.ProvinceId;
+                            dtoA.Name = d.Name;
+                            var prodMunc = await _Context.ProdMunicipalities.Where(a => a.Pid == item.Id).ToListAsync();
+                            foreach (var itm in prodMunc)
                             {
-                                MunicipalityDto dto1 = new();
-                                dto1.Id = sd.Id;
-                                dto1.Name = sd.Name;
-                                dto1.Time = sd.Time;
-                                mnclst.Add(dto1);
+                                var sd = await _Context.Municipalities.Where(a => a.Id == itm.MncId).FirstOrDefaultAsync();
+                                if (sd.PrvId == d.Id)
+                                {
+                                    MunicipalityDto dto1 = new();
+                                    dto1.Id = sd.Id;
+                                    dto1.Name = sd.Name;
+                                    dto1.Time = sd.Time;
+                                    mnclst.Add(dto1);
+                                }
                             }
+                            dtoA.Municipalitiees = mnclst;
+                            lstA.Add(dtoA);
                         }
-                        dtoA.Municipalitiees = mnclst;
-                        lstA.Add(dtoA);
                     }
 
                     dto.provinceDtos = lstA;
@@ -790,12 +791,12 @@ namespace Merolekando.Services.Product
             }
             
         }
-        public async Task<List<Productdto>> GetProductCategoryId(int id)
+        public async Task<List<Productdto>> GetProductCategoryId(int id, int uid)
         {
             try
             {
                 List<Productdto> lstp = new();
-                var usr = _Context.Users.Where(a => a.Id == id).FirstOrDefault();
+                var usr = _Context.Users.Where(a => a.Id == uid).FirstOrDefault();
 
                 var dt = from t1 in _Context.Products
                            join t3 in _Context.ProdProvinces on t1.Id equals t3.Pid
@@ -892,13 +893,13 @@ namespace Merolekando.Services.Product
                 throw;
             }
         }
-        public async Task<List<Productdto>> GetProductSubCategoryId(int id)
+        public async Task<List<Productdto>> GetProductSubCategoryId(int id, int uid)
         {
             try
             {
                 List<Productdto> lstp = new();
 
-                var usr = _Context.Users.Where(a => a.Id == id).FirstOrDefault();
+                var usr = _Context.Users.Where(a => a.Id == uid).FirstOrDefault();
 
                 var dt = from t1 in _Context.Products
                          join t3 in _Context.ProdProvinces on t1.Id equals t3.Pid

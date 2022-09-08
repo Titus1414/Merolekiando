@@ -1,6 +1,7 @@
 ﻿using Merolekando.Models;
 using Merolekando.Models.Dtos;
 using Merolekando.Services.Product;
+using Merolekiando.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +20,11 @@ namespace Merolekando.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService)
+        private readonly MerolikandoDBContext _Context;
+        public ProductController(IProductService productService, MerolikandoDBContext Context)
         {
             _productService = productService;
+            _Context = Context;
         }
 
         [HttpPost]
@@ -44,13 +47,27 @@ namespace Merolekando.Controllers
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {
+                    var usr = _Context.Users.Where(a => a.Id == Convert.ToInt32(name)).FirstOrDefault();
+                    if (usr.IsBlock == true)
+                    {
+                        return Unauthorized("Tu cuenta ha sido bloqueada");
+                    }
+                    var set = _Context.Settings.FirstOrDefault();
+                    if (set.SubsAllAllow != true)
+                    {
+                        if (usr.Subscriptions == null || usr.Subscriptions < DateTimeOffset.Now.ToUnixTimeMilliseconds())
+                        {
+                            return BadRequest("Por favor, suscríbete para publicar");
+                        }
+                    }
+                    
                     user.SellerId = Convert.ToInt32(name);
                     var result = _productService.ManageProduct(user);
                     if (result.Result != null)
                     {
                         return Ok(new { result.Result });
                     }
-                    return Unauthorized("Something went wrong");
+                    return Unauthorized("Algo salió mal");
                 }
                 return Unauthorized("Token Issue");
             }
@@ -67,6 +84,12 @@ namespace Merolekando.Controllers
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {
+                    var usr = _Context.Users.Where(a => a.Id == Convert.ToInt32(name)).FirstOrDefault();
+                    if (usr.IsBlock == true)
+                    {
+                        return Unauthorized("Tu cuenta ha sido bloqueada");
+                    }
+
                     user.SellerId = Convert.ToInt32(name);
                     var result = _productService.ManageProduct(user);
                     return Ok(new { result.Result });
@@ -267,7 +290,7 @@ namespace Merolekando.Controllers
                 if (name != null)
                 {
 
-                    var result = _productService.GetProductCategoryId(id);
+                    var result = _productService.GetProductCategoryId(id, Convert.ToInt32(name));
                     if (result.Result != null)
                     {
                         return Ok(new { result.Result });
@@ -290,7 +313,7 @@ namespace Merolekando.Controllers
                 if (name != null)
                 {
 
-                    var result = _productService.GetProductSubCategoryId(id);
+                    var result = _productService.GetProductSubCategoryId(id, Convert.ToInt32(name));
                     if (result.Result != null)
                     {
                         return Ok(new { result.Result });

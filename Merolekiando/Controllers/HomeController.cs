@@ -102,9 +102,13 @@ namespace Merolekiando.Controllers
             var UsId = HttpContext.Session.GetInt32("userId");
             if (UsId != null)
             {
+                DateTimeOffset dateTime = new();
+                dateTime = DateTime.Now;
+
                 ViewBag.Categories = _Context.Categories.ToList().Count;
                 ViewBag.Provinces = _Context.Provinces.ToList().Count;
-                ViewBag.Users = _Context.Users.Where(a => a.IsDeleted != true).ToList().Count;
+                ViewBag.Users = _Context.Users.Where(a => a.IsDeleted != true && a.LoginType != "Admin").ToList().Count;
+                ViewBag.SubsCnt = _Context.Users.Where(a => a.IsDeleted != true && a.IsBlock != true && a.Subscriptions >= dateTime.ToUnixTimeMilliseconds()).ToList().Count;
                 return View();
             }
             return RedirectToAction("Login");
