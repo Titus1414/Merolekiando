@@ -217,7 +217,8 @@ namespace Merolekando.Services.Product
                 {
 
                     var usr = _Context.Users.Where(a => a.Id == dto.SellerId).FirstOrDefault();
-                    if (usr.Subscriptions >= DateTimeOffset.Now.ToUnixTimeMilliseconds())
+                    var set = _Context.Settings.FirstOrDefault();
+                    if (usr.Subscriptions >= DateTimeOffset.Now.ToUnixTimeMilliseconds() || set.SubsAllAllow == true)
                     {
                         Merolekiando.Models.Product pro = new();
                         pro.CategoryId = dto.CategoryId;

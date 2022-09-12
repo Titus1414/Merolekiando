@@ -168,6 +168,18 @@ namespace Merolekando.Services.Auth
                     {
                         return "Cuenta bloqueada";
                     }
+                    if (usr.Date == null)
+                    {
+                        usr.Date = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        _Context.Users.Update(usr);
+                        _Context.SaveChanges();
+                    }
+                    if (usr.MemberSince == null)
+                    {
+                        usr.MemberSince = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        _Context.Users.Update(usr);
+                        _Context.SaveChanges();
+                    }
                     return "Success";
                 }
                 return "Invalid credentials";
@@ -181,6 +193,18 @@ namespace Merolekando.Services.Auth
                     {
                         return "Cuenta bloqueada";
                     }
+                    if (Check.Date == null)
+                    {
+                        Check.Date = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        _Context.Users.Update(Check);
+                        _Context.SaveChanges();
+                    }
+                    if (Check.MemberSince == null)
+                    {
+                        Check.MemberSince = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        _Context.Users.Update(Check);
+                        _Context.SaveChanges();
+                    }
                     return "Success";
                 }
                 else
@@ -189,8 +213,10 @@ namespace Merolekando.Services.Auth
                     dt.UniqueId = user.UniqueId;
                     dt.IsDeleted = false;
                     dt.Name = user.Name;
-                    dt.Email = user.Email;
+                    dt.Email = user.Email;  
                     dt.LoginType = user.LoginType;
+                    dt.Date = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    dt.MemberSince = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                     await _Context.Users.AddAsync(dt);
                     _Context.SaveChanges();
                     return "Success";
@@ -367,8 +393,8 @@ namespace Merolekando.Services.Auth
                         dt.Email = user.Email;
                         dt.Password = encpass;
                         dt.Number = user.Number;
-                        dt.Date = DateTime.Now.Millisecond;
-                        dt.MemberSince = DateTime.Now.Millisecond;
+                        dt.Date = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        dt.MemberSince = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                         dt.IsDeleted = false;
                         dt.LoginType = "Custom";
                         await _Context.Users.AddAsync(dt);
@@ -418,8 +444,8 @@ namespace Merolekando.Services.Auth
                         dt.Name = user.Name;
                         dt.Email = user.Email;
                         dt.Number = user.Number;
-                        dt.Date = DateTime.Now.Millisecond;
-                        dt.MemberSince = DateTime.Now.Millisecond;
+                        dt.Date = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        dt.MemberSince = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                         dt.LoginType = user.LoginType;
                         await _Context.Users.AddAsync(dt);
                         _Context.SaveChanges();

@@ -131,7 +131,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -158,7 +158,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest("Password must be same!");
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -181,7 +181,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest(result.Result);
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -204,7 +204,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -227,7 +227,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest(result.Result.Item2);
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -249,7 +249,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest(result.Result);
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -272,7 +272,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest(result.Result);
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -295,7 +295,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest(result.Result);
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -321,10 +321,15 @@ namespace Merolekando.Controllers
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {
+                    var usera = _Context.Users.Where(a => a.Id == Convert.ToInt32(name)).FirstOrDefault();
+                    if (usera.IsBlock == true)
+                    {
+                        return Unauthorized("Tu cuenta ha sido bloqueada");
+                    }
                     var result = _auth.GetUser();
                     return Ok(new { result.Result });
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -342,7 +347,7 @@ namespace Merolekando.Controllers
                     var result = _auth.GetUserById(id);
                     return Ok(new { result.Result });
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -357,10 +362,15 @@ namespace Merolekando.Controllers
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {
+                    var usera = _Context.Users.Where(a => a.Id == Convert.ToInt32(name)).FirstOrDefault();
+                    if (usera.IsBlock == true)
+                    {
+                        return Unauthorized("Tu cuenta ha sido bloqueada");
+                    }
                     var result = _auth.GetUserById(Convert.ToInt32(name));
                     return Ok(new { result.Result });
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -378,7 +388,7 @@ namespace Merolekando.Controllers
         //            var result = _auth.CheckUser(Convert.ToInt32(name));
         //            return Ok(new { result.Result });
         //        }
-        //        return Unauthorized("Token Issue");
+        //        return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
         //    }
         //    return Unauthorized();
         //}

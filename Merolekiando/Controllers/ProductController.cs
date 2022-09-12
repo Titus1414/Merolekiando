@@ -69,7 +69,7 @@ namespace Merolekando.Controllers
                     }
                     return Unauthorized("Algo salió mal");
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -94,7 +94,7 @@ namespace Merolekando.Controllers
                     var result = _productService.ManageProduct(user);
                     return Ok(new { result.Result });
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -116,7 +116,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest(result.Result);
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -138,7 +138,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest(result.Result);
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -160,7 +160,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest(result.Result);
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -182,7 +182,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest(result.Result);
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -206,7 +206,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -228,7 +228,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -251,7 +251,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -274,7 +274,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -297,7 +297,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -320,7 +320,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -343,7 +343,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -366,7 +366,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
@@ -388,7 +388,7 @@ namespace Merolekando.Controllers
                     }
                     return BadRequest();
                 }
-                return Unauthorized("Token Issue");
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
         }
