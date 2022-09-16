@@ -590,10 +590,8 @@ namespace Merolekando.Services.Product
                     }
 
                     dto.provinceDtos = lstA;
-
-                    var msgsCnt = _Context.Messages.Where(a => a.ProductId == item.Id).ToList();
+                    var msgsCnt = _Context.Chats.Where(a => a.ProductId == item.Id).Select(a => a.SenderId).Distinct().ToList();
                     dto.ChatCount = msgsCnt.Count;
-
                     lst.Add(dto);
                 }
 

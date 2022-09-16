@@ -45,6 +45,20 @@ namespace Merolekiando.Hubs
                         _Context.SaveChanges();
                     }
                 }
+                var rsMsga = _Context.Messages.Where(a => a.From == Convert.ToInt32(from) && a.To == Convert.ToInt32(userId)).FirstOrDefault();
+                if (rsMsga != null)
+                {
+                    rsMsga.ProductId = Convert.ToInt32(Pid);
+                    _Context.Messages.Update(rsMsga);
+                    _Context.SaveChanges();
+                }
+                var rsMsg1 = _Context.Messages.Where(a => a.From == Convert.ToInt32(userId) && a.To == Convert.ToInt32(from)).FirstOrDefault();
+                if (rsMsg1 != null)
+                {
+                    rsMsg1.ProductId = Convert.ToInt32(Pid);
+                    _Context.Messages.Update(rsMsg1);
+                    _Context.SaveChanges();
+                }
             }
 
             Chat dto = new();
@@ -269,6 +283,33 @@ namespace Merolekiando.Hubs
                 _Context.Messages.RemoveRange(rmeeList);
                 _Context.SaveChanges();
             }
+
+            var ReverseChat = _Context.Messages.Where(a => a.From == Convert.ToInt32(userId) && a.To == Convert.ToInt32(from)).FirstOrDefault();
+            if (ReverseChat == null)
+            {
+                Message msgs = new();
+                msgs.From = Convert.ToInt32(userId);
+                msgs.To = Convert.ToInt32(from);
+                msgs.LastMessage = message;
+                var pidset = _Context.Messages.Where(a => a.From == Convert.ToInt32(from) && a.To == Convert.ToInt32(userId)).FirstOrDefault();
+                if (!string.IsNullOrEmpty(Pid))
+                {
+                    
+                    if (pidset != null)
+                    {
+                        msgs.ProductId = pidset.ProductId;
+                    }
+                }
+                msgs.Image = pidset.Image;
+                var ausr = _Context.Users.Where(a => a.Id == Convert.ToInt32(userId)).FirstOrDefault();
+                msgs.Name = ausr.Name;
+                string ConnectionIdas = _Context.Messages.Where(a => a.From == Convert.ToInt32(userId)).Select(a => a.ConnId).FirstOrDefault();
+                msgs.ConnId = ConnectionIdas;
+                msgs.Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                _Context.Messages.Add(msgs);
+                _Context.SaveChanges();
+            }
+
 
             await Clients.Clients(dto.ConnTo).SendAsync(method: "ReceiveMessage", message, Context.ConnectionId, UserNameRMsg, DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString(), json);
             await Clients.Clients(Context.ConnectionId).SendAsync("OwnMessage", message, Context.ConnectionId, connectIdUser, DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString(), json);

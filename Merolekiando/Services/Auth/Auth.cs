@@ -215,6 +215,7 @@ namespace Merolekando.Services.Auth
                     dt.Name = user.Name;
                     dt.Email = user.Email;  
                     dt.LoginType = user.LoginType;
+                    dt.Subscriptions = DateTimeOffset.Now.AddDays(-5).ToUnixTimeMilliseconds();
                     dt.Date = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                     dt.MemberSince = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                     await _Context.Users.AddAsync(dt);
@@ -343,6 +344,13 @@ namespace Merolekando.Services.Auth
                 dt.Number = user.Number;
                 _Context.Users.Update(dt);
                 _Context.SaveChanges();
+                var msg = _Context.Messages.Where(a => a.From == dt.Id).ToList();
+                foreach (var item in msg)
+                {
+                    item.Name = dt.Name;
+                    _Context.Messages.Update(item);
+                    _Context.SaveChanges();
+                }
             }
 
             var data = await _Context.Users.Where(a => a.Id == user.Id && a.IsDeleted != true).FirstOrDefaultAsync();
@@ -393,6 +401,7 @@ namespace Merolekando.Services.Auth
                         dt.Email = user.Email;
                         dt.Password = encpass;
                         dt.Number = user.Number;
+                        dt.Subscriptions = DateTimeOffset.Now.AddDays(-5).ToUnixTimeMilliseconds();
                         dt.Date = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                         dt.MemberSince = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                         dt.IsDeleted = false;
@@ -444,6 +453,7 @@ namespace Merolekando.Services.Auth
                         dt.Name = user.Name;
                         dt.Email = user.Email;
                         dt.Number = user.Number;
+                        dt.Subscriptions = DateTimeOffset.Now.AddDays(-5).ToUnixTimeMilliseconds();
                         dt.Date = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                         dt.MemberSince = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                         dt.LoginType = user.LoginType;
@@ -713,7 +723,7 @@ namespace Merolekando.Services.Auth
                     using (var client = new SmtpClient())
                     {
                         client.Connect("smtp.gmail.com", 587, false);
-                        client.Authenticate("titus.zaman@gmail.com", "rwxfyqsnsbgeaxqr");
+                        client.Authenticate("titus.zaman@gmail.com", "adjcozkqqodunwvs");
                         client.Send(message);
                         client.Disconnect(true);
                     }

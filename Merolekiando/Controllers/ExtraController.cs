@@ -551,7 +551,7 @@ namespace Merolekando.Controllers
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {
-                    var result = _extra.GetChatsByProduct(id);
+                    var result = _extra.GetChatsByProduct(id, Convert.ToInt32(name));
                     return Ok(new { result.Result });
                 }
                 return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
@@ -606,6 +606,24 @@ namespace Merolekando.Controllers
                 if (name != null)
                 {
                     var result = _extra.AllIfon();
+                    return Ok(new { result.Result });
+                }
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
+            }
+            return Unauthorized();
+        }
+        [HttpGet]
+        [Route("CheckSubs")]
+        public async Task<IActionResult> CheckSubs()
+        {
+            var identity = User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
+                if (name != null)
+                {
+                    var result = _extra.CheckSubs(Convert.ToInt32(name));
                     return Ok(new { result.Result });
                 }
                 return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");

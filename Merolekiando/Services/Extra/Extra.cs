@@ -750,20 +750,25 @@ namespace Merolekando.Services.Extra
             return lst;
         }
 
-        public async Task<List<MessagesDto>> GetChatsByProduct(int id)
+        public async Task<List<MessagesDto>> GetChatsByProduct(int id, int uid)
         {
-            var data = await _Context.Messages.Where(a => a.ProductId != id && a.From != null && a.To != null && a.From != id).ToListAsync();
+            //var data = await _Context.Messages.Where(a => a.ProductId == id && a.From != null && a.To != null && a.From != uid).ToListAsync();
+            var data = await _Context.Chats.Where(a => a.ProductId == id).Select(a => new { a.SenderId, a.RecieverId }).Distinct().ToListAsync();
             List<MessagesDto> lst = new();
             foreach (var item in data)
             {
-                var usr = _Context.Users.Where(a => a.Id == item.To).FirstOrDefault();
+                var usr = _Context.Users.Where(a => a.Id == item.RecieverId).FirstOrDefault();
                 if (usr != null)
                 {
                     var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id).Max(a => a.Id);
+                    if (chatId == null)
+                    {
+                        chatId = _Context.Chats.Where(a => a.RecieverId == usr.Id).Max(a => a.Id);
+                    }
                     var chat = _Context.Chats.Where(a => a.Id == chatId).FirstOrDefault();
                     if (chat != null)
                     {
-                        var dx = _Context.Messages.Where(a => a.From == item.From && a.To == item.To).ToList();
+                        var dx = _Context.Messages.Where(a => a.From == item.SenderId && a.To == item.RecieverId).ToList();
                         MessagesDto dto = new();
                         List<int> pidLst = new();
 
@@ -774,31 +779,32 @@ namespace Merolekando.Services.Extra
                                 pidLst.Add((int)itm.ProductId);
                             }
                         }
+                        var msgs = _Context.Messages.Where(a => a.From == item.SenderId && a.To == item.RecieverId || a.From == item.RecieverId && a.To == item.SenderId && a.ProductId == id).FirstOrDefault();
 
                         if (chat.Type == "Link")
                         {
-                            dto.Id = item.Id;
+                            dto.Id = msgs.Id;
                             dto.LastMessage = "Image";
-                            dto.ConnId = item.ConnId;
-                            dto.From = item.From;
+                            dto.ConnId = msgs.ConnId;
+                            dto.From = item.SenderId;
                             dto.ProductIds = pidLst;
                             dto.LastMessgeTime = (long)chat.Time;
-                            dto.Name = item.Name;
-                            dto.To = item.To;
-                            dto.Read = item.Read;
+                            dto.Name = msgs.Name;
+                            dto.To = item.RecieverId;
+                            dto.Read = msgs.Read;
                             dto.FromImage = usr.Image;
                         }
                         else
                         {
-                            dto.Id = item.Id;
-                            dto.LastMessage = chat.Message;
-                            dto.ConnId = item.ConnId;
-                            dto.From = item.From;
+                            dto.Id = msgs.Id;
+                            dto.LastMessage = msgs.LastMessage;
+                            dto.ConnId = msgs.ConnId;
+                            dto.From = item.SenderId;
                             dto.ProductIds = pidLst;
                             dto.LastMessgeTime = (long)chat.Time;
-                            dto.Name = item.Name;
-                            dto.To = item.To;
-                            dto.Read = item.Read;
+                            dto.Name = msgs.Name;
+                            dto.To = item.RecieverId;
+                            dto.Read = msgs.Read;
                             dto.FromImage = usr.Image;
                         }
                         lst.Add(dto);
@@ -868,6 +874,17 @@ namespace Merolekando.Services.Extra
                 }
             }
             return "Already Exist";
+        }
+
+        public async Task<long?> CheckSubs(int id)
+        {
+            var check = _Context.Settings.FirstOrDefault();
+            if (check.SubsAllAllow != true)
+            {
+                var user = _Context.Users.Where(a => a.Id == id).FirstOrDefault();
+                return user.Subscriptions;
+            }
+            return DateTimeOffset.Now.AddDays(1).ToUnixTimeMilliseconds();
         }
     }
 }
