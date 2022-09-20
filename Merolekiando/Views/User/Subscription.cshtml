@@ -15,7 +15,8 @@
                                     <input class="form-check-input" data-bs-toggle="modal" data-bs-target="#AllowAllModal" type="checkbox" id="switchDefault" checked>
                                     <label class="form-check-label" for="switchDefault">Allow All</label>
                                 </div>
-                            }else
+                            }
+                            else
                             {
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" data-bs-toggle="modal" data-bs-target="#AllowAllModal" type="checkbox" id="switchDefault">
@@ -39,6 +40,7 @@
                             <tr>
                                 <th scope="col">Name</th>
                                 <th scope="col">Email</th>
+                                <th scope="col">Finish In</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -48,6 +50,28 @@
                                 <tr>
                                     <th scope="row"> <a class="question_content"> @item.Name</a></th>
                                     <th scope="row"> <a class="question_content"> @item.Email</a></th>
+                                    @{
+                                        var day = "";
+                                        var hr = "";
+                                        var min = "";
+                                        if (item.Subscriptions != null)
+                                        {
+                                            long dt = item.Subscriptions - DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                                            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(dt);
+                                            day = dateTimeOffset.ToString("dd ");
+                                            hr = dateTimeOffset.ToString("HH");
+                                            min = dateTimeOffset.ToString("MM");
+                                        }
+
+                                    }
+                                    @if (@item.Subscriptions < DateTimeOffset.Now.ToUnixTimeMilliseconds())
+                                    {
+                                        <th scope="row"> <a class="question_content">  </a></th>
+                                    }
+                                    else
+                                    {
+                                        <th scope="row"> <a class="question_content"> @day Days @hr Hrs @min Mins   </a></th>
+                                    }
                                     <td>
                                         @if (@item.Subscriptions < DateTimeOffset.Now.ToUnixTimeMilliseconds())
                                         {

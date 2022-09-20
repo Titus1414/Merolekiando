@@ -94,6 +94,11 @@ namespace Merolekando.Controllers
                 if (res.Result == "Success")
                 {
                     var usr = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted != true && a.LoginType == user.LoginType).FirstOrDefault();
+                    if (user.LoginType == "Apple")
+                    {
+                        usr = _Context.Users.Where(a => a.UniqueId == user.UniqueId && a.IsDeleted != true && a.LoginType == user.LoginType).FirstOrDefault();
+                    }
+                    
                     if (usr == null)
                     {
                         return BadRequest("Error");
