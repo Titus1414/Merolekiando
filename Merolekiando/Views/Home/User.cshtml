@@ -11,6 +11,7 @@
 
                         <thead>
                             <tr>
+                                <th scope="col">Id</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Actions</th>
@@ -20,6 +21,7 @@
                             @foreach (var item in @ViewBag.Users)
                             {
                                 <tr>
+                                    <th scope="row"> @item.Id </th>
                                     <th scope="row"> @item.Name </th>
                                     <th scope="row"> @item.Email </th>
                                     <td>

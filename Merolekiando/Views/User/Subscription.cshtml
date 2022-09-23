@@ -38,6 +38,7 @@
                     <table class="table lms_table_active">
                         <thead>
                             <tr>
+                                <th scope="col">Id</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Finish In</th>
@@ -48,6 +49,7 @@
                             @foreach (var item in @ViewBag.Users)
                             {
                                 <tr>
+                                    <th scope="row"> <a class="question_content"> @item.Id</a></th>
                                     <th scope="row"> <a class="question_content"> @item.Name</a></th>
                                     <th scope="row"> <a class="question_content"> @item.Email</a></th>
                                     @{
