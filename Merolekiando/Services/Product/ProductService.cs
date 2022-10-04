@@ -204,6 +204,7 @@ namespace Merolekando.Services.Product
                     }
 
                     dataa.provinceDtos = lstA;
+                    dataa.Link = Methods.baseurl + "Category/Product?Id=" + dt.Id;
                     return dataa;
                 }
                 catch (Exception ex)
@@ -384,9 +385,8 @@ namespace Merolekando.Services.Product
                             await _hubContext.Clients.Clients(user.ConnId).SendAsync("ProductNotification", SelerName, dataa);
 
                         }
-
+                        dataa.Link = Methods.baseurl + "Category/Product?Id=" + dt.Id;
                         //await _hubContext.Clients.
-
 
                         return dataa;
                     }
@@ -491,6 +491,7 @@ namespace Merolekando.Services.Product
                         pvLst.Add(dt1);
                     }
                     dto.ProdViews = pvLst;
+                    dto.Link = Methods.baseurl + "Category/Product?Id=" + item.Id;
                     lst.Add(dto);
                 }
 
@@ -592,6 +593,7 @@ namespace Merolekando.Services.Product
                     dto.provinceDtos = lstA;
                     var msgsCnt = _Context.Chats.Where(a => a.ProductId == item.Id).Select(a => a.SenderId).Distinct().ToList();
                     dto.ChatCount = msgsCnt.Count;
+                    dto.Link = Methods.baseurl + "Category/Product?Id=" + item.Id;
                     lst.Add(dto);
                 }
 
@@ -682,7 +684,7 @@ namespace Merolekando.Services.Product
                 }
 
                 data.provinceDtos = lstA;
-
+                data.Link = Methods.baseurl + "Category/Product?Id=" + dt.Id;
                 return data;
             }
             catch (Exception)
@@ -777,7 +779,7 @@ namespace Merolekando.Services.Product
                     }
 
                     data.provinceDtos = lstA;
-
+                    data.Link = Methods.baseurl + "Category/Product?Id=" + item.Id;
                     lstp.Add(data);
 
                 }
@@ -880,7 +882,7 @@ namespace Merolekando.Services.Product
                     }
 
                     data.provinceDtos = lstA;
-
+                    data.Link = Methods.baseurl + "Category/Product?Id=" + item.t1.Id;
                     lstp.Add(data);
                 }
                 
@@ -984,7 +986,7 @@ namespace Merolekando.Services.Product
                     }
 
                     data.provinceDtos = lstA;
-
+                    data.Link = Methods.baseurl + "Category/Product?Id=" + item.t1.Id;
                     lstp.Add(data);
                 }
                 
@@ -1093,7 +1095,7 @@ namespace Merolekando.Services.Product
                     dtoA.Municipalitiees = mnclst;
                     lstA.Add(dtoA);
                 }
-
+                data.Link = Methods.baseurl + "Category/Product?Id=" + dt.Id;
                 data.provinceDtos = lstA;
                 return data;
             }
@@ -1189,7 +1191,7 @@ namespace Merolekando.Services.Product
                 }
 
                 data.provinceDtos = lstA;
-
+                data.Link = Methods.baseurl + "Category/Product?Id=" + dt.Id;
                 return data;
             }
             catch (Exception ex)
@@ -1292,7 +1294,7 @@ namespace Merolekando.Services.Product
                     }
 
                     data.provinceDtos = lstA;
-
+                    data.Link = Methods.baseurl + "Category/Product?Id=" + dt.Id;
                     return data;
                 }
                 return null;
@@ -1394,7 +1396,7 @@ namespace Merolekando.Services.Product
                     }
 
                     dataP.provinceDtos = lstA;
-
+                    dataP.Link = Methods.baseurl + "Category/Product?Id=" + dt.Id;
                     lstP.Add(dataP);
                 }
 
@@ -1504,7 +1506,7 @@ namespace Merolekando.Services.Product
                         }
 
                         dataP.provinceDtos = lstA;
-
+                        dataP.Link = Methods.baseurl + "Category/Product?Id=" + dt.Id;
                         lstP.Add(dataP);
                     }
                     

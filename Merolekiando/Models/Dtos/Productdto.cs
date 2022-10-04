@@ -23,6 +23,7 @@ namespace Merolekando.Models.Dtos
         public string? Condition { get; set; }
         public bool? IsReported { get; set; }
         public long? CreatedDate { get; set; }
+        public string Link { get; set; }
         public List<IFormFile>? images { get; set; }
         public List<int>? removeImagesId { get; set; }
         public List<string>? imagesGet { get; set; }

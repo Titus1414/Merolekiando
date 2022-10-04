@@ -19,6 +19,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Merolekiando.Hubs;
+using Microsoft.OpenApi.Models;
 
 namespace Merolekiando
 {
@@ -47,9 +48,14 @@ namespace Merolekiando
             services.AddScoped<ChatHub>();
 
             services.AddSignalR();
-//#if DEBUG
-//            services.AddRazorPages().AddRazorRuntimeCompilation();
-//#endif
+            //#if DEBUG
+            //            services.AddRazorPages().AddRazorRuntimeCompilation();
+            //#endif
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v2", new OpenApiInfo { Title = "Merolekiando", Version = "v2" });
+            });
             services.AddCors(options =>
             {
                 options.AddPolicy(
@@ -124,6 +130,12 @@ namespace Merolekiando
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v2/swagger.json", "Merolekiando");
+            });
 
             app.UseEndpoints(endpoints =>
             {

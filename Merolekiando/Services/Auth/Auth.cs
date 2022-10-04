@@ -129,29 +129,32 @@ namespace Merolekando.Services.Auth
         {
             var dt = await _Context.Users.Where(a => a.IsDeleted != true && a.Id == id).FirstOrDefaultAsync();
             UserDto dto = new();
-            dto.Address = dt.Address;
-            dto.Name = dt.Name;
-            dto.Date = dt.Date;
-            dto.Email = dt.Email;
-            dto.Id = dt.Id;
-            dto.IdImage = dt.IdImage;
-            dto.Image = dt.Image;
-            dto.IsDeleted = dt.IsDeleted;
-            dto.IsVerified = dt.IsVerified;
-            dto.LoginType = dt.LoginType;
-            dto.MemberSince = dt.MemberSince;
-            dto.MunicipalityId = dt.MunicipalityId;
-            dto.Number = dt.Number;
-            dto.Password = dt.Password;
-            dto.Rate = dt.Rate;
-            dto.VerificationSent = dt.VerificationSent;
-            dto.ProvinceId = dt.ProvinceId;
-            dto.Status = dt.Status;
-            dto.UniqueId = dt.UniqueId;
-            dto.Subscriptions = dt.Subscriptions;
-            dto.Ratintg = await _Context.Ratings.Where(a => a.UidTo == dt.Id).ToListAsync();
-            dto.Favorites = _Context.Favorites.Where(a => a.UserId == dt.Id).ToList();
-            dto.Followers = _Context.Folowers.Where(a => a.Folowers == dt.Id).ToList();
+            if (dt != null)
+            {
+                dto.Address = dt.Address;
+                dto.Name = dt.Name;
+                dto.Date = dt.Date;
+                dto.Email = dt.Email;
+                dto.Id = dt.Id;
+                dto.IdImage = dt.IdImage;
+                dto.Image = dt.Image;
+                dto.IsDeleted = dt.IsDeleted;
+                dto.IsVerified = dt.IsVerified;
+                dto.LoginType = dt.LoginType;
+                dto.MemberSince = dt.MemberSince;
+                dto.MunicipalityId = dt.MunicipalityId;
+                dto.Number = dt.Number;
+                dto.Password = dt.Password;
+                dto.Rate = dt.Rate;
+                dto.VerificationSent = dt.VerificationSent;
+                dto.ProvinceId = dt.ProvinceId;
+                dto.Status = dt.Status;
+                dto.UniqueId = dt.UniqueId;
+                dto.Subscriptions = dt.Subscriptions;
+                dto.Ratintg = await _Context.Ratings.Where(a => a.UidTo == dt.Id).ToListAsync();
+                dto.Favorites = _Context.Favorites.Where(a => a.UserId == dt.Id).ToList();
+                dto.Followers = _Context.Folowers.Where(a => a.Folowers == dt.Id).ToList();
+            }
             return dto;
         }
         public async Task<string> Login(User user)

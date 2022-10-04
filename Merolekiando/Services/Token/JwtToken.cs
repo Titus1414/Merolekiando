@@ -35,7 +35,7 @@ namespace Merolekando.Services.Token
             {
                 Subject = new ClaimsIdentity(claims),
                 //Expires = CommonMethods.EstDateTime().AddDays(5),
-                Expires = DateTime.Now.AddDays(5),
+                Expires = DateTime.Now.AddDays(950),
                 SigningCredentials = creds
             };
             var tokenHandler = new JwtSecurityTokenHandler();

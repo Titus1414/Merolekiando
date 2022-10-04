@@ -25,6 +25,10 @@ namespace Merolekiando.Controllers
             }
             return RedirectToAction("Login", "Home");
         }
+        public IActionResult Product(int Id)
+        {
+            return View();
+        }
         public IActionResult SubCategories(int id)
         {
             var UsId = HttpContext.Session.GetInt32("userId");

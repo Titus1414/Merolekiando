@@ -760,12 +760,21 @@ namespace Merolekando.Services.Extra
                 var usr = _Context.Users.Where(a => a.Id == item.RecieverId).FirstOrDefault();
                 if (usr != null)
                 {
-                    var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id).Max(a => a.Id);
-                    if (chatId == null)
+                    var chatIdCheck = _Context.Chats.Where(a => a.SenderId == usr.Id).FirstOrDefault();
+                    int CheckChatId = 0;
+                    if (chatIdCheck != null)
                     {
-                        chatId = _Context.Chats.Where(a => a.RecieverId == usr.Id).Max(a => a.Id);
+                        var chatId = _Context.Chats.Where(a => a.SenderId == usr.Id).Max(a => a.Id);
+                        CheckChatId = chatId;
                     }
-                    var chat = _Context.Chats.Where(a => a.Id == chatId).FirstOrDefault();
+                    else
+                    {
+                        var chatId = _Context.Chats.Where(a => a.RecieverId == usr.Id).Max(a => a.Id);
+                        CheckChatId = chatId;
+                    }
+
+                    
+                    var chat = _Context.Chats.Where(a => a.Id == CheckChatId).FirstOrDefault();
                     if (chat != null)
                     {
                         var dx = _Context.Messages.Where(a => a.From == item.SenderId && a.To == item.RecieverId).ToList();
