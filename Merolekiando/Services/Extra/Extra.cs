@@ -669,7 +669,7 @@ namespace Merolekando.Services.Extra
                        join t2 in _Context.Products on t1.Pid equals t2.Id
                        join t3 in _Context.Users on t1.Uid equals t3.Id
                        join t4 in _Context.Municipalities on t3.MunicipalityId equals t4.Id
-                       join t5 in _Context.Folowers on t3.Id equals t5.Fuser
+                       join t5 in _Context.Folowers on t3.Id equals t5.Folowers
                        where t5.Fuser == id && t1.IsRead != true
                        select new { t3.Name, Uid = t3.Id, t2, t3.MunicipalityId, t3.ProvinceId, t1.Id };
 
@@ -749,7 +749,7 @@ namespace Merolekando.Services.Extra
             }
             return lst;
         }
-
+        
         public async Task<List<MessagesDto>> GetChatsByProduct(int id, int uid)
         {
             //var data = await _Context.Messages.Where(a => a.ProductId == id && a.From != null && a.To != null && a.From != uid).ToListAsync();
@@ -894,6 +894,12 @@ namespace Merolekando.Services.Extra
                 return user.Subscriptions;
             }
             return DateTimeOffset.Now.AddDays(1).ToUnixTimeMilliseconds();
+        }
+
+        public async Task<List<MsgNotification>> GetMSgNotify(int id)
+        {
+            var lst = await _Context.MsgNotifications.Where(a => a.Uid == id && a.IsRead != true).ToListAsync();
+            return lst;
         }
     }
 }

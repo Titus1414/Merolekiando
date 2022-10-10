@@ -595,6 +595,24 @@ namespace Merolekando.Controllers
             return Unauthorized();
         }
         [HttpGet]
+        [Route("GetMSgNotification")]
+        public async Task<IActionResult> GetMsgNotification()
+        {
+            var identity = User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
+                if (name != null)
+                {
+                    var result = _extra.GetMSgNotify(Convert.ToInt32(name));
+                    return Ok(new { result.Result });
+                }
+                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
+            }
+            return Unauthorized();
+        }
+        [HttpGet]
         [Route("AllInfo")]
         public async Task<IActionResult> AllInfo()
         {

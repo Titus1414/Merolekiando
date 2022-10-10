@@ -35,6 +35,7 @@ namespace Merolekando.Services.Extra
         public Task<UserDto> Follow(Folower dto);
         public Task<string> Notify(int Id, int Pid);
         public Task<List<NotificationDto>> GetNotify(int id);
+        public Task<List<MsgNotification>> GetMSgNotify(int id);
         public Task<ContactDto> AllIfon();
         public Task<long?> CheckSubs(int id);
     }

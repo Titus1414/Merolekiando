@@ -25,6 +25,7 @@ namespace Merolekiando.Models
         public virtual DbSet<Favorite> Favorites { get; set; }
         public virtual DbSet<Folower> Folowers { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
+        public virtual DbSet<MsgNotification> MsgNotifications { get; set; }
         public virtual DbSet<Municipality> Municipalities { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<ProdImage> ProdImages { get; set; }
@@ -230,6 +231,20 @@ namespace Merolekiando.Models
                     .WithMany(p => p.Messages)
                     .HasForeignKey(d => d.To)
                     .HasConstraintName("FK_Messages_Users");
+            });
+
+            modelBuilder.Entity<MsgNotification>(entity =>
+            {
+                entity.Property(e => e.Fid).HasColumnName("FId");
+
+                entity.Property(e => e.Fname)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("FName");
+
+                entity.Property(e => e.Message).IsUnicode(false);
+
+                entity.Property(e => e.Uid).HasColumnName("UId");
             });
 
             modelBuilder.Entity<Municipality>(entity =>

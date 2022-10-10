@@ -310,6 +310,16 @@ namespace Merolekiando.Hubs
                 _Context.SaveChanges();
             }
 
+            MsgNotification msgNotification = new();
+            msgNotification.Date = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            msgNotification.Message = message;
+            msgNotification.Fid = Convert.ToInt32(from);
+            msgNotification.Uid = Convert.ToInt32(userId);
+            msgNotification.IsRead = false;
+            var ausra = _Context.Users.Where(a => a.Id == Convert.ToInt32(from)).FirstOrDefault();
+            msgNotification.Fname = ausra.Name;
+            _Context.MsgNotifications.Add(msgNotification);
+            _Context.SaveChanges();
 
             await Clients.Clients(dto.ConnTo).SendAsync(method: "ReceiveMessage", message, Context.ConnectionId, UserNameRMsg, DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString(), json);
             await Clients.Clients(Context.ConnectionId).SendAsync("OwnMessage", message, Context.ConnectionId, connectIdUser, DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString(), json);
