@@ -1,6 +1,14 @@
 ﻿using Merolekando.Common;
+using Merolekando.Models.Dtos;
+using Merolekando.Services.Auth;
+using Merolekando.Services.Product;
 using Merolekiando.Models;
 using Merolekiando.Models.Dtos;
+using Merolekiando.Models.WebDtos;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +27,257 @@ namespace Merolekiando.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly MerolikandoDBContext _Context;
         public static IWebHostEnvironment? _environment;
-        public HomeController(ILogger<HomeController> logger, MerolikandoDBContext Context, IWebHostEnvironment? environment)
+        private readonly IProductService _productService;
+        private readonly IAuth _auth;
+        public static string flag = "";
+        public HomeController(ILogger<HomeController> logger, MerolikandoDBContext Context, IWebHostEnvironment? environment, IProductService productService, IAuth auth)
         {
             _logger = logger;
             _Context = Context;
             _environment = environment;
+            _productService = productService;
+            _auth = auth;
+        }
+        public async Task WebLogin(string flg)
+        {
+            if (flg == "goog")
+            {
+                await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties()
+                {
+                    RedirectUri = Url.Action("GoogleResponse")
+                });
+            }
+            else if (flg == "face")
+            {
+                await HttpContext.ChallengeAsync(FacebookDefaults.AuthenticationScheme, new AuthenticationProperties()
+                {
+                    RedirectUri = Url.Action("FacebookResponse")
+                });
+            }
+        }
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var claim = result.Principal.Identities
+                .FirstOrDefault().Claims
+                .Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                }
+                );
+            User usr = new();
+            usr.LoginType = "Google";
+            foreach (var item in claim)
+            {
+                if (item.Type.Contains("/nameidentifier"))
+                {
+                    usr.UniqueId = item.Value;
+                }
+                else if (item.Type.Contains("/name"))
+                {
+                    usr.Name = item.Value;
+                }
+                else if (item.Type.Contains("/emailaddress"))
+                {
+                    usr.Email = item.Value;
+                }
+            }
+            return RedirectToAction("WebLoginT",usr);
+        }
+        public async Task<IActionResult> FacebookResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var claim = result.Principal.Identities
+                .FirstOrDefault().Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                });
+            User usr = new();
+            usr.LoginType = "Facebook";
+            foreach (var item in claim)
+            {
+                if (item.Type.Contains("/nameidentifier"))
+                {
+                    usr.UniqueId = item.Value;
+                }
+                else if (item.Type.Contains("/name"))
+                {
+                    usr.Name = item.Value;
+                }
+                
+            }
+            return RedirectToAction("WebLoginT", usr);
+        }
+        public async Task<IActionResult> WebLogout()
+        {
+            HttpContext.Session.Remove("WebUserId");
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("");
+        }
+        [HttpGet]
+        public IActionResult WebLoginT(User user)
+        {
+            if (user.LoginType != null)
+            {
+                if (user.LoginType == "Custom")
+                {
+                    var us = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted != true).FirstOrDefault();
+                    if (us != null)
+                    {
+                        var usera = _Context.Users.Where(a => a.Id == us.Id).FirstOrDefault();
+                        if (usera.IsBlock == true)
+                        {
+                            flag = "Tu cuenta ha sido bloqueada";
+                            return RedirectToAction("WebIndex");
+                        }
+                    }
+                }
+                else
+                {
+                    var us = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted != true && a.UniqueId == user.UniqueId).FirstOrDefault();
+                    if (us != null)
+                    {
+                        var usera = _Context.Users.Where(a => a.Id == us.Id).FirstOrDefault();
+                        if (usera.IsBlock == true)
+                        {
+                            flag = "Tu cuenta ha sido bloqueada";
+                            return RedirectToAction("WebIndex");
+                        }
+                    }
+                }
+
+                var res = _auth.Login(user);
+                if (res.Result == "Success")
+                {
+                    var usr = _Context.Users.Where(a => a.Email == user.Email && a.IsDeleted != true && a.LoginType == user.LoginType).FirstOrDefault();
+                    if (user.LoginType != "Custom")
+                    {
+                        usr = _Context.Users.Where(a => a.UniqueId == user.UniqueId && a.IsDeleted != true && a.LoginType == user.LoginType).FirstOrDefault();
+                    }
+                    if (usr == null)
+                    {
+                        flag = "Error";
+                        return RedirectToAction("WebIndex");
+                    }
+                    HttpContext.Session.SetInt32("WebUserId", usr.Id);
+                    flag = "Success";
+                    return RedirectToAction("WebIndex");
+                }
+                else if (res.Result == "Invalid credentials")
+                {
+                    flag = "credenciales no válidas";
+                    return RedirectToAction("WebIndex");
+                }
+                else
+                {
+                    flag = "Error";
+                    return RedirectToAction("WebIndex");
+                }
+            }
+            return View();
+        }
+        public IActionResult GetProductDetails(int id)
+        {
+            var result = _productService.GetProductId(id);
+            Productdto dto = new();
+            if (result.Result != null)
+            {
+
+                dto = result.Result;
+                //return Ok(new { result.Result });
+            }
+
+            return PartialView("~/Views/Home/_ProductDetails.cshtml", dto);
+        }
+        public IActionResult GetProductsByCat(string id)
+        {
+            var catid = _Context.Categories.Where(a => a.Name == id).FirstOrDefault();
+
+            var prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       where t1.IsActive == true && t1.CategoryId == catid.Id
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+            List<ProductCard> lst = new();
+            foreach (var item in prod)
+            {
+                ProductCard product = new();
+                product.Id = item.Id;
+                product.Name = item.Title;
+                product.Price = item.Price;
+                product.Image = item.Image;
+                product.Category = item.Name;
+                product.IsPromot = item.IsPromoted;
+                lst.Add(product);
+            }
+            ViewBag.Promoted = lst;
+            ViewBag.CountProducts = lst.Count;
+
+            return PartialView("~/Views/Home/_ProductsView.cshtml");
+        }
+        public IActionResult GetProductsBySubCat(string id)
+        {
+            var catid = _Context.SubCategories.Where(a => a.Name == id).FirstOrDefault();
+
+            var prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       where t1.IsActive == true && t1.SubCategoryId == catid.Id
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+            List<ProductCard> lst = new();
+            foreach (var item in prod)
+            {
+                ProductCard product = new();
+                product.Id = item.Id;
+                product.Name = item.Title;
+                product.Price = item.Price;
+                product.Image = item.Image;
+                product.Category = item.Name;
+                product.IsPromot = item.IsPromoted;
+                lst.Add(product);
+            }
+            ViewBag.Promoted = lst;
+            ViewBag.CountProducts = lst.Count;
+
+            return PartialView("~/Views/Home/_ProductsView.cshtml");
+        }
+        public IActionResult WebIndex()
+        {
+            var banners = _Context.Banners.Where(a => a.IsActive == true).ToList();
+            ViewBag.Banners = banners;
+
+            var prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       where t1.IsActive == true
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+            List<ProductCard> lst = new();
+            foreach (var item in prod)
+            {
+                ProductCard product = new();
+                product.Id = item.Id;
+                product.Name = item.Title;
+                product.Price = item.Price;
+                product.Image = item.Image;
+                product.Category = item.Name;
+                product.IsPromot = item.IsPromoted;
+                lst.Add(product);
+            }
+            ViewBag.Promoted = lst;
+            ViewBag.CountProducts = lst.Count;
+            ViewBag.alert = flag;
+            return View();
         }
         public IActionResult User()
         {

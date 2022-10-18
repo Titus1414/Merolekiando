@@ -1,0 +1,211 @@
+﻿@using Merolekando.Common
+@{
+    Layout = "~/Views/Shared/_WebLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/all.min.css">
+<link rel="stylesheet" href="~/css/bootstrap.min.css">
+<!--   ALL CSS GOSE HEAR  -->
+<!--   ALL CSS GOSE HEAR  -->
+<link rel="stylesheet" href="~/css/style.css">
+<style>
+    .tag {
+        float: left;
+        position: absolute;
+        /*left: 74px;
+            top: 5px;*/
+        z-index: 1000;
+        background-color: #00000059;
+        padding: 5px;
+        color: #FFFFFF;
+        padding-left: 25px;
+        padding-right: 25px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        border-radius: 9px;
+        margin-left: 100.5px;
+        margin-top: 5px;
+    }
+</style>
+@if (ViewBag.alert == "Success" || ViewBag.alert == "")
+{
+    @*<div class="alert" id="alertExample" role="alert" data-mdb-color="success">
+        Hello! I am a simple alert
+    </div>*@
+}
+else
+{
+    <div class="alert" id="alertExample" role="alert" data-mdb-color="danger">
+        <p>@ViewBag.alert</p>
+        <button type="button" style="float:right; margin-top:-4%" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+
+@*
+    <div id="carouselBasicExample" class="carousel slide carousel-fade" data-mdb-ride="carousel">
+    <!-- Indicators -->
+
+    <div class="carousel-indicators">
+    @{
+    int slide = 0;
+    int labe = 1;
+    @foreach (var item in ViewBag.Banners)
+    {
+    <button type="button"
+    data-mdb-target="#carouselBasicExample"
+    data-mdb-slide-to="@slide"
+    aria-current="true"
+    aria-label="Slide @labe"></button>
+    slide++;
+    labe++;
+    }
+    }
+    </div>
+    <!-- Inner -->
+    <div class="carousel-inner" style="height:250px">
+
+    @{
+    var baseur = "https://localhost:44303/";/* Methods.baseurl;*/
+
+    @foreach (var item in ViewBag.Banners)
+    {
+    <div class="carousel-item active">
+    <img src="@baseur@item.Image" class="d-block w-100" alt="Sunset Over the City" />
+    <div class="carousel-caption d-none d-md-block">
+    <h5>@item.Name</h5>
+    <p>@item.Description</p>
+    </div>
+    </div>
+    }
+    }
+
+    </div>
+    <!-- Inner -->
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-mdb-target="#carouselBasicExample" data-mdb-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-mdb-target="#carouselBasicExample" data-mdb-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+    </button>
+    </div>
+*@
+<div class="container">
+    <div id="ProductsPartials">
+        @{
+            Html.RenderPartial("_ProductsView");
+        }
+    </div>
+    <div id="load-more"> load more </div>
+</div>
+<br />
+@*<div class="container">
+    <div class="row">
+    @foreach (var item in ViewBag.Promoted)
+    {
+    var baseur = "https://localhost:44303/";/* Methods.baseurl;*/
+
+    <div class="col-md-3">
+
+    <div class="card">
+
+    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+    <div>
+    @if (@item.IsPromot == true )
+    {
+    <div class="tag">Promoted</div>
+    }
+
+    <img src="@baseur@item.Image" style="width:100%; height:200px" class="img-fluid" />
+    </div>
+    <a href="#!">
+    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+    </a>
+    </div>
+    <div class="card-body">
+    <h5 class="card-title">@item.Name</h5>
+    <h6 class="card-title">@item.Price</h6>
+    <p class="card-text">Category: @item.Category</p>
+    </div>
+
+    </div>
+
+    </div>
+    }
+    </div>
+    </div>
+*@
+
+
+<script src="~/dash/js/jquery1-3.4.1.min.js"></script>
+<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
+<script>
+
+        $("#load-more").css({"display":"inline-block",});
+
+            let loadMoreBtn = document.querySelector('#load-more');
+            let currentItem = 3;
+            //$(window).scroll = () => {
+            loadMoreBtn.onclick = () =>{
+                debugger
+                var sd = $("#CountProducts").val();
+                if(sd != "0" || sd != ""){
+                    loadMoreBtn.style.display = 'inline-block';
+                    let boxes = [...document.querySelectorAll('.container .box-container .box')];
+                    for (var i = currentItem; i < currentItem + 3; i++){
+                       boxes[i].style.display = 'inline-block';
+                    }
+                    currentItem += 3;
+
+                    if(currentItem >= boxes.length){
+                       loadMoreBtn.style.display = 'none';
+                       currentItem = 3;
+                    }
+                }
+            }
+
+            $(document).on("click", "#imgClick", function () {
+                var val = $(this).attr("data-target");
+                //location.href = '@Url.Action("GetProductDetails", "Home")?id=' + val;
+
+                 $.ajax({
+                    type: 'get',
+                    url: '@Url.Action("GetProductDetails", "Home")',
+                    data: { 'id': val },
+                    success: function (data) {
+                        $("#ProductsPartials").html("");
+                        $("#ProductsPartials").html(data);
+                        debugger
+                        $("#load-more").css({"display":"none",});
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                })
+
+                //$.ajax({
+                //type: 'GET',
+                //url: '/Home/GetProductDetails?id=' + val,
+                //dataType: 'json',
+                //success: function (data) {
+                //    //$("#tbl > tr").remove();
+                //    //$.each(data, function (index, val) {
+                //    //    $('#tbl').append('<tr><td>' + val.Title + '</td><td>' + val.Author.Name + '</td></tr>')
+                //    //});
+                //}
+                //});
+            });
+
+
+      mdb.Alert.getInstance(document.getElementById("alertExample")).update({
+      position: "top-right",
+      delay: 2000,
+      autohide: true,
+      width: "600px",
+      offset: 20,
+      stacking: true,
+      appendToBody: false,
+    });
+</script>

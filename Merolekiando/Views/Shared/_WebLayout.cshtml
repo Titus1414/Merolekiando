@@ -1,0 +1,420 @@
+﻿@using Merolekiando.Models.WebDtos
+@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Merolekiando</title>
+    <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap">
+    <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/css/mdb.min.css">
+    <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/css/all.min.css">
+    @*<link rel="stylesheet" href="~/css/mdb.min.css" />*@
+
+    <style>
+        .navbar-dark .nav-item .nav-link {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <!--Main Navigation-->
+    <header>
+        <!-- Jumbotron -->
+        @*p-3 text-center bg-white border-bottom*@
+        <div class="">
+            <div class="container">
+                <div class="row">
+                    <!-- Left elements -->
+                    <div class="col-md-2 d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
+                        <a href="#!" class="ms-md-2">
+                            <img src="~/dash/Images/logo.png" height="35" />
+                        </a>
+                    </div>
+                    <!-- Left elements -->
+                    <!-- Center elements -->
+                    <div class="col-md-6">
+                        <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
+                            <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" />
+                            <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
+                        </form>
+                    </div>
+                    <!-- Center elements -->
+                    <!-- Right elements -->
+                    <div class="col-md-4 d-flex justify-content-center justify-content-md-end align-items-center">
+                        <div class="d-flex">
+                            <!-- Cart -->
+                            @*<a class="text-reset me-3" href="#">
+                                <span><i class="fas fa-shopping-cart"></i></span>
+                                <span class="badge rounded-pill badge-notification bg-danger">1</span>
+                                </a>*@
+
+                            <!-- Notification -->
+                            <div class="dropdown">
+                                <a class="text-reset me-3 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink"
+                                   role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-bell"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                                    <li><a class="dropdown-item" href="#">Some news</a></li>
+                                    <li><a class="dropdown-item" href="#">Another news</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Languages -->
+                            <div class="dropdown">
+                                <a class="text-reset dropdown-toggle me-3 hidden-arrow" href="#" id="navbarDropdown" role="button"
+                                   data-mdb-toggle="dropdown" aria-expanded="false">
+                                    <i class="united kingdom flag m-0"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+
+                                            <i class="united kingdom flag"></i>English
+                                            <i class="fa fa-check text-success ms-2"></i>
+
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#"><i class="poland flag"></i>Polski</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#"><i class="china flag"></i>中文</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#"><i class="japan flag"></i>日本語</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#"><i class="germany flag"></i>Deutsch</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#"><i class="france flag"></i>Français</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#"><i class="spain flag"></i>Español</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#"><i class="russia flag"></i>Русский</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#"><i class="portugal flag"></i>Português</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            @{
+
+                                var x = Context.Session.GetInt32("WebUserId");
+                            }
+                            @if (!string.IsNullOrEmpty(x.ToString()))
+                            {
+                                <!-- User -->
+                                <div class="dropdown">
+                                    <a class="text-reset dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+                                   id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                                        <img src="https://mdbootstrap.com/img/Photos/Avatars/img (31).jpg" class="rounded-circle" height="22"
+                                         alt="" loading="lazy" />
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                                        <li><a class="dropdown-item" href="#">My profile</a></li>
+                                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                                        <li><a class="dropdown-item" href="#">Logout</a></li>
+                                    </ul>
+                                </div>
+                            }
+                            else
+                            {
+
+                                <button type="button" class="btn btn-outline-secondary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+                                    Sign in
+                                </button>
+                            }
+
+
+                        </div>
+                    </div>
+                    <!-- Right elements -->
+                </div>
+            </div>
+        </div>
+        <!-- Jumbotron -->
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <!-- Container wrapper -->
+            <div class="container justify-content-center justify-content-md-between">
+                <!-- Left links -->
+                <ul class="navbar-nav flex-row">
+                    <li class="nav-item me-2 me-lg-0">
+                        <a class="nav-link" href="#" role="button" data-mdb-toggle="sidenav" data-mdb-target="#sidenav-1"
+                           class="btn shadow-0 p-0 me-3" aria-controls="#sidenav-1" aria-haspopup="true">
+                            <i class="fas fa-bars me-1"></i>
+                            <span>Categories</span>
+                        </a>
+                    </li>
+                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                        <a class="nav-link" href="#">Bestsellers</a>
+                    </li>
+                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                        <a class="nav-link" href="#">Inspirations</a>
+                    </li>
+                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                        <a class="nav-link" href="#">Blog</a>
+                    </li>
+                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+                <!-- Left links -->
+
+                <button class="btn btn-outline-primary" data-mdb-ripple-color="dark" type="button">
+                    Download app<i class="fas fa-download ms-2"></i>
+                </button>
+            </div>
+            <!-- Container wrapper -->
+        </nav>
+        <!-- Navbar -->
+        <!-- Sidenav -->
+        <div id="sidenav-1" class="sidenav" role="navigation" data-mdb-hidden="true" data-mdb-accordion="true">
+            <ul class="sidenav-menu">
+                @{
+                    MerolikandoDBContext _Context = new();
+
+                    var cat = _Context.Categories.ToList();
+                    var code = "";
+                    foreach (var itm in cat)
+                    {
+                        code += "<li class='sidenav-item'>";
+
+                        var subCat = _Context.SubCategories.Where(a => a.CatId == itm.Id).ToList();
+
+                        if (subCat.Count == 1)
+                        {
+                            //asp-route-id='" + itm.Name + "'
+                            code += "<a class='sidenav-link' data-target='" + itm.Name + "' id='SubCat'><i class='fas fa-layer-group pe-3'></i><span>" + itm.Name + "</span></a>";
+                        }
+                        else if (subCat.Count > 1)
+                        {
+                            code += "<a class='sidenav-link' data-target='" + itm.Name + "' id='SubCat'><i class='fas fa-layer-group pe-3'></i><span>" + itm.Name + "</span></a>";
+
+                            code += "<ul class='sidenav-collapse show'>";
+                            foreach (var item in subCat)
+                            {
+                                code += "<li class='sidenav-item'>";
+                                //asp-route-id='" + item.Name + "'
+                                code += "<a class='sidenav-link' data-target='" + item.Name + "' id='CatId'>" + item.Name + "</a>";
+                                code += "</li>";
+                            }
+                            code += "</ul>";
+                        }
+                        code += "</li>";
+                    }
+                }
+                @Html.Raw(code)
+
+            </ul>
+        </div>
+        <!-- Sidenav -->
+
+    </header>
+    <!--Main Navigation-->
+    <!--Main Navigation-->
+
+    <div class="main_content_iner ">
+        @RenderBody()
+    </div>
+    <script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
+    <script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>
+    <!-- Custom scripts -->@*
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
+    <script type="text/javascript">
+
+          $(document).on("click", "#SubCat", function () {
+            var val = $(this).attr("data-target");
+             $.ajax({
+                type: 'post',
+                url: '@Url.Action("GetProductsByCat", "Home")',
+                data: { 'id': val },
+                success: function (data) {
+                    debugger
+                    //$('#WinningModalLong').modal('show');
+                    $("#ProductsPartials").html("");
+                    $("#ProductsPartials").html(data);
+                    debugger
+                    $("#load-more").css({"display":"inline-block",});
+                    //var sd = @Html.Raw(@ViewBag.CountProducts)
+                    // //var sd = $("#CountProducts").val();
+                    //    if(sd != 0)
+                    //    {
+                    //        $("#load-more").css({"display":"none",});
+
+                    //    }
+                    //    else
+                    //    {
+                    //        $("#load-more").css({"display":"inline-block",});
+                    //    }
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+            })
+        });
+
+        $(document).on("click", "#CatId", function () {
+            var val = $(this).attr("data-target");
+             $.ajax({
+                type: 'post',
+                url: '@Url.Action("GetProductsBySubCat", "Home")',
+                data: { 'id': val },
+                success: function (data) {
+                    debugger
+                    $("#ProductsPartials").html("");
+                    $("#ProductsPartials").html(data);
+                    debugger
+                    $("#load-more").css({"display":"inline-block",});
+                    //var sd = @Html.Raw(@ViewBag.CountProducts)
+                    // //var sd = $("#CountProducts").val();
+                    //    if(sd != 0)
+                    //    {
+                    //        $("#load-more").css({"display":"none",});
+                    //    }
+                    //    else
+                    //    {
+                    //        $("#load-more").css({"display":"inline-block",});
+                    //    }
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+            })
+        });
+
+    </script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                @*<div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>*@
+                <div class="modal-body">
+                    <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active"
+                               id="ex1-tab-1"
+                               data-mdb-toggle="tab"
+                               href="#ex1-tabs-1"
+                               role="tab"
+                               aria-controls="ex1-tabs-1"
+                               aria-selected="true">Sign in</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link"
+                               id="ex1-tab-2"
+                               data-mdb-toggle="tab"
+                               href="#ex1-tabs-2"
+                               role="tab"
+                               aria-controls="ex1-tabs-2"
+                               aria-selected="false">Sign up</a>
+                        </li>
+                    </ul>
+                    <!-- Tabs navs -->
+                    <!-- Tabs content -->
+                    <div class="tab-content" id="ex1-content">
+                        <div class="tab-pane fade show active"
+                             id="ex1-tabs-1"
+                             role="tabpanel"
+                             aria-labelledby="ex1-tab-1">
+                            <form method="get" asp-action="WebLoginT" asp-controller="Home">
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" name="LoginType" value="Custom" hidden />
+                                    <input type="email" name="Email" id="form1Example1" class="form-control" />
+                                    <label class="form-label" for="form1Example1">Email address</label>
+                                </div>
+
+                                <!-- Password input -->
+                                <div class="form-outline mb-4">
+                                    <input type="password" name="Password" id="form1Example2" class="form-control" />
+                                    <label class="form-label" for="form1Example2">Password</label>
+                                </div>
+
+                                <!-- 2 column grid layout for inline styling -->
+                                <div class="row mb-4">
+                                    <div class="col d-flex justify-content-center">
+                                        <!-- Checkbox -->
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
+                                            <label class="form-check-label" for="form1Example3"> Remember me </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+                                        <!-- Simple link -->
+                                        <a href="#!">Forgot password?</a>
+                                    </div>
+                                </div>
+
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-outline-secondary btn-block">Sign in</button>
+                            </form>
+                            <br />
+                            <div style="text-align:center">
+                                <a class="btn text-white" style="background-color: #3b5998;" href="/Home/WebLogin?flg=face" role="button">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a class="btn text-white" style="background-color: #dd4b39;" href="/Home/WebLogin?flg=goog" role="button">
+                                    <i class="fab fa-google"></i>
+                                </a>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
+                            <form method="get" asp-action="WebLoginT" asp-controller="Home">
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form0Example0" name="Name" class="form-control" />
+                                    <input type="text" name="LoginType" value="Custom" hidden />
+                                    <label class="form-label" for="form0Example0">Name</label>
+                                </div>
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input type="email" id="form1Example1" name="Email" class="form-control" />
+                                    <label class="form-label" for="form1Example1">Email address</label>
+                                </div>
+
+                                <!-- Password input -->
+                                <div class="form-outline mb-4">
+                                    <input type="password" id="form1Example2" name="Password" class="form-control" />
+                                    <label class="form-label" for="form1Example2">Password</label>
+                                </div>
+
+                                <!-- 2 column grid layout for inline styling -->
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-outline-secondary btn-block">Sign up</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+                @*<div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+﻿@using Merolekando.Common
+@{
+    Layout = null;
+}
+
+   <link rel="stylesheet" href="~/js/loadmore/css/style.css">
+ 
+   <input value="@ViewBag.CountProducts" hidden id="CountProducts" />
+   
+
+   @*<h1 class="heading">our daily posts</h1>*@
+
+   <div class="box-container">
+       @foreach (var item in ViewBag.Promoted)
+       {
+           var baseur =  Methods.baseurl;
+            <div class="box">
+             <div class="image" id="imgClick" data-target="@item.Id">
+                 @if (@item.IsPromot == true )
+                 {
+                     <div class="tag">Promoted</div>
+                 }
+                <img src="@baseur@item.Image" alt="">
+             </div>
+             <div class="content">
+                <h3>@item.Name</h3>
+                <p>@item.Price</p>
+                <p>Category: @item.Category</p>
+                @*<a href="#" class="btn">read more</a>*@
+                @*<div class="icons">
+                   <span> <i class="fas fa-calendar"></i> 21st may, 2022 </span>
+                   <span> <i class="fas fa-user"></i> by admin </span>
+                </div>*@
+             </div>
+            </div>
+            
+      }
+
+   </div>

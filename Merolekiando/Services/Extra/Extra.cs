@@ -899,6 +899,13 @@ namespace Merolekando.Services.Extra
         public async Task<List<MsgNotification>> GetMSgNotify(int id)
         {
             var lst = await _Context.MsgNotifications.Where(a => a.Uid == id && a.IsRead != true).ToListAsync();
+
+            foreach (var item in lst)
+            {
+                item.IsRead = true;
+                _Context.MsgNotifications.Update(item);
+                _Context.SaveChanges();
+            }
             return lst;
         }
     }

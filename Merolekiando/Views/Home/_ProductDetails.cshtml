@@ -1,0 +1,77 @@
+﻿@using Merolekando.Common
+@model Merolekando.Models.Dtos.Productdto
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap">
+<link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/css/mdb.min.css">
+<link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/css/all.min.css">
+<link rel="stylesheet" href="~/js/loadmore/css/style.css">
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="ecommerce-gallery" data-mdb-zoom-effect="true" data-mdb-auto-height="true">
+            <div class="row py-3 shadow-5">
+
+                @{
+                    int glry = 1;
+                }
+                @foreach (var item in @Model.ProdImages)
+                {
+                    var baseur = Methods.baseurl;
+
+                    if (glry == 1)
+                    {
+                        <div class="col-12 mb-1">
+                            <div class="lightbox">
+                                <img src="@baseur@item.Image" class="ecommerce-gallery-main-img active w-100" />
+                            </div>
+                        </div>
+                    }
+
+                    <div class="col-3 mt-1">
+                        <img src="@baseur@item.Image"
+                         data-mdb-img="@baseur@item.Image"
+                         alt="Gallery image @glry"
+                         class="active w-100" />
+                    </div>
+                    glry++;
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h3 style="float: left;">@Model.Title</h3>
+        <br />
+        <br />
+        <h4 style="float: left; margin-top: 4px;">@Model.Price</h4>
+        <br />
+        <br />
+        <h5 style="float: left; margin-top: 4px;">Condition: @Model.Condition</h5>
+        <br />
+        <br />
+        @*<ul class="mb-0 d-flex justify-content-center list-unstyled" style="float: left;margin-left: -68%;margin-top: 4px;">
+            <li><i class="fas fa-star fa-sm text-primary"></i></li>
+            <li><i class="fas fa-star fa-sm text-primary"></i></li>
+            <li><i class="fas fa-star fa-sm text-primary"></i></li>
+            <li><i class="fas fa-star fa-sm text-primary"></i></li>
+            <li><i class="far fa-star fa-sm text-primary"></i></li>
+        </ul>*@
+        <p style="float: left;">@Model.Description</p>
+        <br />
+        <br />
+        @*<h5 style="float: left; margin-top: 4px;">+92 301 2324342</h5>*@
+        <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Fav</button>
+        <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Share</button>
+        <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Report</button>
+        <br />
+        <br />
+        <div class="d-grid gap-2">
+            <button type="button" class="btn btn-outline-success" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Chat</button>
+        </div>
+        @*<h6>@Model.ChatCount</h6>*@
+    </div>
+</div>
+
+<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
+<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>
