@@ -100,8 +100,50 @@ namespace Merolekiando.Controllers
         {
             var userid = HttpContext.Session.GetInt32("WebUserId");
             var result = await _auth.SetFavProduct(Convert.ToInt32(userid), pid);
-            
-            return RedirectToAction("WebIndex", "Home");
+            var res = await _productService.GetProductId(pid);
+
+
+            Productdto dto = new();
+            if (res != null)
+            {
+                dto = res;
+                //return Ok(new { result.Result });
+            }
+            if (userid != null)
+            {
+                ViewBag.UserIdSession = userid;
+            }
+            else
+            {
+                ViewBag.UserIdSession = null;
+            }
+            bool favCheck = false;
+            var s = _Context.Favorites.Where(a => a.Pid == pid && a.UserId == userid).FirstOrDefault();
+            if (s != null)
+            {
+                favCheck = true;
+            }
+
+            ViewBag.FavCheck = favCheck;
+            if (userid != null)
+            {
+                var ress = _extra.GetChatsByProduct((int)dto.Id, (int)userid);
+
+                ViewBag.InboxYep = ress.Result;
+            }
+
+
+
+            var results = _auth.GetUserById((int)dto.SellerId);
+
+            ViewBag.UserbyId = results.Result;
+            ViewBag.ToId = (int)dto.SellerId;
+            ViewBag.ProdId = pid;
+
+            ViewBag.UserIdBtnId = (int)dto.SellerId;
+
+
+            return PartialView("~/Views/Home/_ProductDetails.cshtml", res);
         }
         public async Task<IActionResult> SetReportProd(int pid)
         {
@@ -114,27 +156,74 @@ namespace Merolekiando.Controllers
                 _Context.Products.Update(sd);
                 _Context.SaveChanges();
             }
+            var res = await _productService.GetProductId(pid);
 
-            return RedirectToAction("WebIndex", "Home");
+            Productdto dto = new();
+            if (res != null)
+            {
+                dto = res;
+                //return Ok(new { result.Result });
+            }
+            if (userid != null)
+            {
+                ViewBag.UserIdSession = userid;
+            }
+            else
+            {
+                ViewBag.UserIdSession = null;
+            }
+            bool favCheck = false;
+            var s = _Context.Favorites.Where(a => a.Pid == pid && a.UserId == userid).FirstOrDefault();
+            if (s != null)
+            {
+                favCheck = true;
+            }
+
+            ViewBag.FavCheck = favCheck;
+            if (userid != null)
+            {
+                var ress = _extra.GetChatsByProduct((int)dto.Id, (int)userid);
+
+                ViewBag.InboxYep = ress.Result;
+            }
+
+            var results = _auth.GetUserById((int)dto.SellerId);
+
+            ViewBag.UserbyId = results.Result;
+            ViewBag.ToId = (int)dto.SellerId;
+            ViewBag.ProdId = pid;
+
+            ViewBag.UserIdBtnId = (int)dto.SellerId;
+
+            return PartialView("~/Views/Home/_ProductDetails.cshtml", res);
         }
         public async Task<IActionResult> Chats()
         {
-            var userid = HttpContext.Session.GetInt32("WebUserId");
+            try
+            {
+                var userid = HttpContext.Session.GetInt32("WebUserId");
 
-            var res = await _extra.GetChatUsers(Convert.ToInt32(userid));
-            ViewBag.Inbox = res;
+                var res = await _extra.GetChatUsers(Convert.ToInt32(userid));
+                ViewBag.Inbox = res;
 
+
+                //ViewBag.alert = flag;
+
+                var resa = _extra.GetCategories();
+
+                ViewBag.GetCategories = resa.Result;
+                ViewBag.SubCategories = _Context.SubCategories.ToList();
+                var rs = _extra.GetProvinces();
+                ViewBag.GetProvnces = rs.Result;
+                ViewBag.SessionValue = HttpContext.Session.GetInt32("WebUserId");
+                return PartialView("~/Views/Web/_Chatpage.cshtml");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             
-            //ViewBag.alert = flag;
-
-            var resa = _extra.GetCategories();
-
-            ViewBag.GetCategories = resa.Result;
-            ViewBag.SubCategories = _Context.SubCategories.ToList();
-            var rs = _extra.GetProvinces();
-            ViewBag.GetProvnces = rs.Result;
-            ViewBag.SessionValue = HttpContext.Session.GetInt32("WebUserId");
-            return PartialView("~/Views/Web/_Chatpage.cshtml");
             //return View();
         }
 
@@ -142,9 +231,9 @@ namespace Merolekiando.Controllers
         {
             var userid = HttpContext.Session.GetInt32("WebUserId");
 
-            var s = _Context.Folowers.Where(a => a.Fuser == id && a.Folowers == (int)userid).FirstOrDefault();
+            var s = _Context.Folowers.Where(a => a.Folowers == id && a.Fuser == (int)userid).FirstOrDefault();
             bool isfolow;
-            if (s != null)
+            if (s == null)
             {
                 isfolow = true;
             }else

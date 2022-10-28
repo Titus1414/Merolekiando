@@ -23,7 +23,7 @@
                         @*<p class="text-muted mb-1">Full Stack Developer</p>*@
                         <p class="text-muted mb-4">@Model.Address</p>
                         <div class="d-flex justify-content-center mb-2">
-                            @if (@ViewBag.IsFollow != true)
+                            @if (@ViewBag.IsFollow == true)
                             {
                                 <button type="button" data-target="@Model.Id" id="FollowBtn" class="btn btn-outline-primary ms-1">Unfollow</button>
                             }
@@ -94,7 +94,6 @@
                                 type: 'post',
                                 async : true,
                                 beforeSend: function(){
-                                    debugger
                                     $('.ajax-loader').css("visibility", "visible");
                                 },
                                 url: '@Url.Action("FollowUser", "Web")',

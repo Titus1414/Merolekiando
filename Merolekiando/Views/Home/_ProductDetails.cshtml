@@ -107,11 +107,11 @@
             {
                 if (ViewBag.FavCheck == true)
                 {
-                    <a type="button" asp-action="SetFavProd" asp-controller="Web" asp-route-pid="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Unfav</a>
+                    <a type="button" id="SetFavProdId" data-target="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Unfav</a>
                 }
                 else
                 {
-                    <a type="button" asp-action="SetFavProd" asp-controller="Web" asp-route-pid="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Fav</a>
+                    <a type="button" id="SetFavProdId" data-target="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Fav</a>
                 }
             }
 
@@ -119,7 +119,7 @@
             <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Share</button>
             if (@ViewBag.UserIdSession != ViewBag.ToId)
             {
-                <a type="button" asp-action="SetReportProd" asp-controller="Web" asp-route-pid="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Report</a>
+                <a type="button" id="SetReportProdId" data-target="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Report</a>
                 <br />
                 <br />
                 <div class="d-grid gap-2">
@@ -218,15 +218,47 @@
 
     
 <script>
+    
 
-    //$('select').selectpicker();
-
-    $(document).on("click", "#getUserbyId", function () {
+     $("#SetReportProdId").unbind().click(function() {
+    //$(document).on("click", "#SetReportProdId", function () {
         var val = $(this).attr("data-target");
                          $.ajax({
                             type: 'get',
-                            url: '@Url.Action("UserProfile", "Web")',
-                            data: { 'id': val },
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
+                            url: '@Url.Action("SetReportProd", "Web")',
+                            data: { 'pid': val },
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"none",});
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+    
+        $("#SetFavProdId").unbind().click(function() {
+    //$(document).on("click", "#SetFavProdId", function () {
+        var val = $(this).attr("data-target");
+                         $.ajax({
+                            type: 'get',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
+                            url: '@Url.Action("SetFavProd", "Web")',
+                            data: { 'pid': val },
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                             success: function (data) {
                                 debugger
                                 $("#ProductsPartials").html("");
@@ -240,15 +272,50 @@
                         })
                     });
 
-    $(document).on("click", "#GetChatSec", function () {
+
+    //$('select').selectpicker();
+        $("#getUserbyId").unbind().click(function() {
+    //$(document).on("click", "#getUserbyId", function () {
+        var val = $(this).attr("data-target");
+                         $.ajax({
+                            type: 'get',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
+                            url: '@Url.Action("UserProfile", "Web")',
+                            data: { 'id': val },
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"none",});
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+
+                    $("#GetChatSec").unbind().click(function() {
+    //$(document).on("click", "#GetChatSec", function () {
 
         var from = @ViewBag.UserIdSession;
         var to = @ViewBag.ToId;
         var pid = @ViewBag.ProdId;
              $.ajax({
                 type: 'get',
+                beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
                 url: '@Url.Action("GetChatbyProdId", "Web")',
                 data: { 'from': from,'to':to,'pid':pid },
+                complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                 success: function (data) {
                     $("#chatmdl").html("");
                     $("#chatmdl").html(data);
@@ -303,14 +370,20 @@
         document.getElementById('chatmdl').scrollTop = document.getElementById('chatmdl').scrollHeight;
     });
 
-
-    $(document).on("click", "#DeleteProd", function () {
+    $("#DeleteProd").unbind().click(function() {
+    //$(document).on("click", "#DeleteProd", function () {
         var val = $(this).attr("data-target");
                         $("#currentitemCnt").val(3);
                          $.ajax({
                             type: 'post',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
                             url: '@Url.Action("DeleteProduct", "Home")',
                             data: { 'id': val },
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                             success: function (data) {
                                 debugger
                                 $("#ProductsPartials").html("");
@@ -323,13 +396,19 @@
                             }
                         })
                     });
-
-         $(document).on("click", "#EditProd", function () {
+                    $("#EditProd").unbind().click(function() {
+         //$(document).on("click", "#EditProd", function () {
             var val = $(this).attr("data-target");
                          $.ajax({
                             type: 'post',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
                             url: '@Url.Action("GetProdDetails", "Web")',
                             data: { 'id': val },
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                             success: function (data) {
                                 debugger
                                 $("#GetProdHere").html("");

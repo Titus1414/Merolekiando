@@ -298,13 +298,19 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
     <script type="text/javascript">
-
+        //$("#navbarDropdownMenuLink").unbind().click(function() {
         $(document).on("click", "#navbarDropdownMenuLink", function () {
                         var val = $("#SessidWeb").val();
                          $.ajax({
                             type: 'GET',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
                             url: '@Url.Action("EditUser", "Web")',
                             data: { 'id': val },
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                             success: function (data) {
                                 debugger
                                 $("#ProductsPartials").html("");
@@ -318,12 +324,19 @@
                         })
                     });
 
-                      $(document).on("click", "#SubCat", function () {
+                    $("#SubCat").unbind().click(function() {
+                      //$(document).on("click", "#SubCat", function () {
                         var val = $(this).attr("data-target");
                          $.ajax({
                             type: 'post',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
                             url: '@Url.Action("GetProductsByCat", "Home")',
                             data: { 'id': val },
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                             success: function (data) {
                                 debugger
                                 //$('#WinningModalLong').modal('show');
@@ -349,12 +362,19 @@
                         })
                     });
 
-                    $(document).on("click", "#CatId", function () {
+                    $("#CatId").unbind().click(function() {
+                    //$(document).on("click", "#CatId", function () {
                         var val = $(this).attr("data-target");
                          $.ajax({
                             type: 'post',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
                             url: '@Url.Action("GetProductsBySubCat", "Home")',
                             data: { 'id': val },
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                             success: function (data) {
                                 debugger
                                 $("#ProductsPartials").html("");
@@ -377,11 +397,19 @@
                             }
                         })
                     });
-                    $(document).on("click", "#MyProds", function () {
+
+                    $("#MyProds").unbind().click(function() {
+                    //$(document).on("click", "#MyProds", function () {
                         $("#currentitemCnt").val(3);
                          $.ajax({
                             type: 'post',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
                             url: '@Url.Action("GetMyProducts", "Home")',
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                             success: function (data) {
                                 debugger
                                 $("#ProductsPartials").html("");
@@ -395,10 +423,17 @@
                         })
                     });
 
-                    $(document).on("click", "#ChatPageid", function () {
+                    $("#ChatPageid").unbind().click(function() {
+                    //$(document).on("click", "#ChatPageid", function () {
                          $.ajax({
                             type: 'post',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
                             url: '@Url.Action("Chats", "Web")',
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                             success: function (data) {
                                 debugger
                                 $("#ProductsPartials").html("");
@@ -411,11 +446,19 @@
                             }
                         })
                     });
-                    $(document).on("click", "#MyFavProds", function () {
+
+                    $("#MyFavProds").unbind().click(function() {
+                    //$(document).on("click", "#MyFavProds", function () {
                         $("#currentitemCnt").val(3);
                          $.ajax({
                             type: 'post',
+                            beforeSend: function(){
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
                             url: '@Url.Action("GetMyFavProducts", "Home")',
+                            complete: function(){
+                                    $('.ajax-loader').css("visibility", "hidden");
+                                },
                             success: function (data) {
                                 debugger
                                 $("#ProductsPartials").html("");
