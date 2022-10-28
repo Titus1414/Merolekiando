@@ -3,37 +3,129 @@
     Layout = null;
 }
 
-   <link rel="stylesheet" href="~/js/loadmore/css/style.css">
- 
-   <input value="@ViewBag.CountProducts" hidden id="CountProducts" />
-   
+<link rel="stylesheet" href="~/js/loadmore/css/style.css">
 
-   @*<h1 class="heading">our daily posts</h1>*@
+<input value="@ViewBag.CountProducts" hidden id="CountProducts" />
 
-   <div class="box-container">
-       @foreach (var item in ViewBag.Promoted)
-       {
-           var baseur =  Methods.baseurl;
-            <div class="box">
-             <div class="image" id="imgClick" data-target="@item.Id">
-                 @if (@item.IsPromot == true )
-                 {
-                     <div class="tag">Promoted</div>
-                 }
+
+@*<h1 class="heading">our daily posts</h1>*@
+<input hidden id="currentitemCnt" value="3" />
+
+@if (@ViewBag.Flg == true)
+{
+    <div style="display:flex; margin-bottom:1%; margin-top:1%;">
+        <input class="form-check-input" type="checkbox" id="selectall" />
+        <label class="form-check-label" for="selectall">Select All</label>
+    </div>
+
+    <button type="button" style="margin-top:-7%; margin-left:-73%;" class="btn btn-outline-danger" id="DeleteProduct" data-mdb-ripple-color="dark"><i class="far fa-trash-alt"></i></button>
+}
+
+
+<div class="box-container">
+    @foreach (var item in ViewBag.Promoted)
+    {
+        var baseur = Methods.baseurl;
+        <div class="box">
+            @if (@ViewBag.Flg == true)
+            {
+                @if (item.sellerid == @ViewBag.SessUserId)
+                {
+                    <div style="float: left;margin-top: -5.5%;margin-left: -4.5%;">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox" value="@item.Id" />
+                    </div>
+                }
+            }
+
+            <div class="image" id="imgClick" data-target="@item.Id">
+                @if (@item.IsPromot == true)
+                {
+                    <div class="tag">Promoted</div>
+                }
                 <img src="@baseur@item.Image" alt="">
-             </div>
-             <div class="content">
+            </div>
+            <div class="content">
                 <h3>@item.Name</h3>
                 <p>@item.Price</p>
                 <p>Category: @item.Category</p>
                 @*<a href="#" class="btn">read more</a>*@
                 @*<div class="icons">
-                   <span> <i class="fas fa-calendar"></i> 21st may, 2022 </span>
-                   <span> <i class="fas fa-user"></i> by admin </span>
-                </div>*@
-             </div>
+                    <span> <i class="fas fa-calendar"></i> 21st may, 2022 </span>
+                    <span> <i class="fas fa-user"></i> by admin </span>
+                    </div>*@
             </div>
-            
-      }
+        </div>
 
-   </div>
+    }
+
+</div>
+
+<script src="~/js/jquery-1.12.4.min.js"></script>
+<script>
+    $("#DeleteProduct").css({"display":"none",});
+    var searchIDs = [];
+    $("#selectall").click(function(){
+        $('input:checkbox').not(this).prop('checked', this.checked);
+        searchIDs = $("input:checkbox:checked").map(function(){
+          return $(this).val();
+        }).get();
+        searchIDs.splice( $.inArray('',searchIDs) ,1 );
+        searchIDs.splice( $.inArray('on',searchIDs) ,1 );
+        searchIDs.splice( $.inArray('',searchIDs) ,1 );
+        searchIDs.splice( $.inArray('on',searchIDs) ,1 );
+
+        if(jQuery.isEmptyObject(searchIDs))
+        {
+            $("#DeleteProduct").css({"display":"none",});
+            
+        }else
+        {
+            $("#DeleteProduct").css({"display":"inline-block",});
+        }
+
+        console.log(searchIDs);
+    });
+
+    $("input:checkbox").click(function(){
+        if(this.checked)
+        { 
+            searchIDs.push($(this).val());
+        }
+        else
+        {
+            searchIDs.splice( $.inArray($(this).val(),searchIDs) ,1 );
+            searchIDs.splice( $.inArray('',searchIDs) ,1 );
+            searchIDs.splice( $.inArray('on',searchIDs) ,1 );
+        }
+        if(jQuery.isEmptyObject(searchIDs))
+        {
+            $("#DeleteProduct").css({"display":"none",});
+            
+        }else
+        {
+            $("#DeleteProduct").css({"display":"inline-block",});
+        }
+        console.log(searchIDs);
+    })
+
+
+    $(document).on("click", "#DeleteProduct", function () {
+                        $("#currentitemCnt").val(3);
+                         $.ajax({
+                            type: 'post',
+                            url: '@Url.Action("DeleteProduct", "Home")',
+                            data: { 'id': searchIDs },
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"inline-block",});
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+
+</script>

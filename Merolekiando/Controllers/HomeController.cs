@@ -1,6 +1,7 @@
 ﻿using Merolekando.Common;
 using Merolekando.Models.Dtos;
 using Merolekando.Services.Auth;
+using Merolekando.Services.Extra;
 using Merolekando.Services.Product;
 using Merolekiando.Models;
 using Merolekiando.Models.Dtos;
@@ -28,15 +29,17 @@ namespace Merolekiando.Controllers
         private readonly MerolikandoDBContext _Context;
         public static IWebHostEnvironment? _environment;
         private readonly IProductService _productService;
+        private readonly IExtra _extra;
         private readonly IAuth _auth;
         public static string flag = "";
-        public HomeController(ILogger<HomeController> logger, MerolikandoDBContext Context, IWebHostEnvironment? environment, IProductService productService, IAuth auth)
+        public HomeController(ILogger<HomeController> logger, MerolikandoDBContext Context, IWebHostEnvironment? environment, IProductService productService, IAuth auth, IExtra extra)
         {
             _logger = logger;
             _Context = Context;
             _environment = environment;
             _productService = productService;
             _auth = auth;
+            _extra = extra;
         }
         public async Task WebLogin(string flg)
         {
@@ -120,7 +123,7 @@ namespace Merolekiando.Controllers
         {
             HttpContext.Session.Remove("WebUserId");
             await HttpContext.SignOutAsync();
-            return RedirectToAction("");
+            return RedirectToAction("WebIndex");
         }
         [HttpGet]
         public IActionResult WebLoginT(User user)
@@ -190,10 +193,41 @@ namespace Merolekiando.Controllers
             Productdto dto = new();
             if (result.Result != null)
             {
-
                 dto = result.Result;
                 //return Ok(new { result.Result });
             }
+            var userid = HttpContext.Session.GetInt32("WebUserId");
+            if (userid != null)
+            {
+                ViewBag.UserIdSession = userid;
+            }else
+            {
+                ViewBag.UserIdSession = null;
+            }
+            bool favCheck = false;
+            var s = _Context.Favorites.Where(a => a.Pid == id && a.UserId == userid).FirstOrDefault();
+            if (s != null)
+            {
+                favCheck = true;
+            }
+
+            ViewBag.FavCheck = favCheck;
+            if (userid != null)
+            {
+                var res = _extra.GetChatsByProduct((int)dto.Id, (int)userid);
+
+                ViewBag.InboxYep = res.Result;
+            }
+            
+
+            var results = _auth.GetUserById((int)dto.SellerId);
+
+            ViewBag.UserbyId = results.Result;
+            ViewBag.ToId = (int)dto.SellerId;
+            ViewBag.ProdId = id;
+
+            ViewBag.UserIdBtnId = dto.SellerId;
+
 
             return PartialView("~/Views/Home/_ProductDetails.cshtml", dto);
         }
@@ -206,7 +240,7 @@ namespace Merolekiando.Controllers
                        from pi in f.DefaultIfEmpty()
                        join t3 in _Context.Categories on t1.CategoryId equals t3.Id
                        where t1.IsActive == true && t1.CategoryId == catid.Id
-                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted, t1.SellerId };
             List<ProductCard> lst = new();
             foreach (var item in prod)
             {
@@ -217,10 +251,13 @@ namespace Merolekiando.Controllers
                 product.Image = item.Image;
                 product.Category = item.Name;
                 product.IsPromot = item.IsPromoted;
+                product.sellerid = item.SellerId;
                 lst.Add(product);
             }
             ViewBag.Promoted = lst;
             ViewBag.CountProducts = lst.Count;
+            var userid = HttpContext.Session.GetInt32("WebUserId");
+            ViewBag.SessUserId = userid;
 
             return PartialView("~/Views/Home/_ProductsView.cshtml");
         }
@@ -246,6 +283,102 @@ namespace Merolekiando.Controllers
                 product.IsPromot = item.IsPromoted;
                 lst.Add(product);
             }
+            ViewBag.Promoted = lst;
+            ViewBag.CountProducts = lst.Count;
+
+            return PartialView("~/Views/Home/_ProductsView.cshtml");
+        }
+
+        public async Task<IActionResult> DeleteProduct(List<string> id)
+        {
+            foreach (var item in id)
+            {
+                if (!string.IsNullOrEmpty(item) || item != "on")
+                {
+                    var res = await _productService.DeleteProduct(Convert.ToInt32(item));
+                }
+            }
+
+            var userid = HttpContext.Session.GetInt32("WebUserId");
+
+            var prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       where t1.IsActive == true && t1.SellerId == userid
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+            List<ProductCard> lst = new();
+            foreach (var item in prod)
+            {
+                ProductCard product = new();
+                product.Id = item.Id;
+                product.Name = item.Title;
+                product.Price = item.Price;
+                product.Image = item.Image;
+                product.Category = item.Name;
+                product.IsPromot = item.IsPromoted;
+                lst.Add(product);
+            }
+            ViewBag.Promoted = lst;
+            ViewBag.CountProducts = lst.Count;
+            ViewBag.Flg = true;
+
+            return PartialView("~/Views/Home/_ProductsView.cshtml");
+        }
+
+        public IActionResult GetMyProducts()
+        {
+            var userid = HttpContext.Session.GetInt32("WebUserId");
+
+            var prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       where t1.IsActive == true && t1.SellerId == userid
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+            List<ProductCard> lst = new();
+            foreach (var item in prod)
+            {
+                ProductCard product = new();
+                product.Id = item.Id;
+                product.Name = item.Title;
+                product.Price = item.Price;
+                product.Image = item.Image;
+                product.Category = item.Name;
+                product.IsPromot = item.IsPromoted;
+                lst.Add(product);
+            }
+            ViewBag.Promoted = lst;
+            ViewBag.CountProducts = lst.Count;
+            ViewBag.Flg = true;
+
+            return PartialView("~/Views/Home/_ProductsView.cshtml");
+        }
+        public async Task<IActionResult> GetMyFavProducts()
+        {
+            var userid = HttpContext.Session.GetInt32("WebUserId");
+
+            var prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       join t4 in _Context.Favorites on t1.Id equals t4.Pid
+                       where t1.IsActive == true && t4.UserId == userid
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+            List<ProductCard> lst = new();
+            foreach (var item in prod)
+            {
+                ProductCard product = new();
+                product.Id = item.Id;
+                product.Name = item.Title;
+                product.Price = item.Price;
+                product.Image = item.Image;
+                product.Category = item.Name;
+                product.IsPromot = item.IsPromoted;
+                lst.Add(product);
+            }
+
+            //var result = await _productService.GetFavProducts(Convert.ToInt32(userid));
             ViewBag.Promoted = lst;
             ViewBag.CountProducts = lst.Count;
 
@@ -277,6 +410,15 @@ namespace Merolekiando.Controllers
             ViewBag.Promoted = lst;
             ViewBag.CountProducts = lst.Count;
             ViewBag.alert = flag;
+
+            var res = _extra.GetCategories();
+            
+            ViewBag.GetCategories = res.Result;
+            ViewBag.SubCategories = _Context.SubCategories.ToList();
+            var rs = _extra.GetProvinces();
+            ViewBag.GetProvnces = rs.Result;
+
+            ViewBag.SessionValue = HttpContext.Session.GetInt32("WebUserId");
             return View();
         }
         public IActionResult User()

@@ -95,9 +95,9 @@ namespace Merolekiando
             services.AddScoped<ChatHub>();
 
             services.AddSignalR();
-            //#if DEBUG
-            //            services.AddRazorPages().AddRazorRuntimeCompilation();
-            //#endif
+#if DEBUG
+            services.AddRazorPages().AddRazorRuntimeCompilation();
+#endif
 
             services.AddSwaggerGen(c =>
             {
@@ -117,7 +117,7 @@ namespace Merolekiando
             services.AddMvc();
             services.AddDistributedMemoryCache();
             services.AddSession(options => {
-                options.IdleTimeout = System.TimeSpan.FromMinutes(10.01);
+                options.IdleTimeout = System.TimeSpan.FromDays(10);
             });
             //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             //    .AddJwtBearer(options =>

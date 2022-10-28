@@ -8,5 +8,6 @@
         public string Category { get; set; }
         public decimal? Price { get; set; }
         public bool? IsPromot { get; set; }
+        public int? sellerid { get; set; }
     }
 }

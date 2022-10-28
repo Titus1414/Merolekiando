@@ -1,4 +1,5 @@
 ﻿@using Merolekando.Common
+@using Microsoft.AspNetCore.Http
 @model Merolekando.Models.Dtos.Productdto
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -6,6 +7,11 @@
 <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/css/mdb.min.css">
 <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/css/all.min.css">
 <link rel="stylesheet" href="~/js/loadmore/css/style.css">
+@{
+    string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dist/browser/signalr.min.js";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+
 
 <div class="row">
     <div class="col-md-6">
@@ -23,17 +29,30 @@
                     {
                         <div class="col-12 mb-1">
                             <div class="lightbox">
-                                <img src="@baseur@item.Image" class="ecommerce-gallery-main-img active w-100" />
+                                <img src="@baseur@item.Image" height="450px" class="ecommerce-gallery-main-img active w-100" />
                             </div>
+                        </div>
+
+                        <div class="col-3 mt-1">
+                            <img src="@baseur@item.Image"
+                         data-mdb-img="@baseur@item.Image"
+                         alt="Gallery image @glry"
+                         style="height:100px !important"
+                         class="active w-100" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-3 mt-1">
+                            <img src="@baseur@item.Image"
+                         data-mdb-img="@baseur@item.Image"
+                         alt="Gallery image @glry"
+                         style="height:100px !important"
+                         class="w-100" />
                         </div>
                     }
 
-                    <div class="col-3 mt-1">
-                        <img src="@baseur@item.Image"
-                         data-mdb-img="@baseur@item.Image"
-                         alt="Gallery image @glry"
-                         class="active w-100" />
-                    </div>
+
                     glry++;
                 }
 
@@ -56,22 +75,291 @@
             <li><i class="fas fa-star fa-sm text-primary"></i></li>
             <li><i class="fas fa-star fa-sm text-primary"></i></li>
             <li><i class="far fa-star fa-sm text-primary"></i></li>
-        </ul>*@
+            </ul>*@
         <p style="float: left;">@Model.Description</p>
         <br />
         <br />
         @*<h5 style="float: left; margin-top: 4px;">+92 301 2324342</h5>*@
-        <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Fav</button>
-        <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Share</button>
-        <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Report</button>
-        <br />
-        <br />
-        <div class="d-grid gap-2">
-            <button type="button" class="btn btn-outline-success" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Chat</button>
-        </div>
+        @if (@ViewBag.UserIdSession != null)
+        {
+            if (@ViewBag.UserIdSession == ViewBag.ToId)
+            {
+                <a type="button" style="float: left;" id="DeleteProd" data-target="@Model.Id" class="btn btn-lg btn-outline-danger">
+                    <i class="far fa-trash-alt"></i>
+                </a>
+                <a type="button" style="float: left;margin-left: 2%;" id="EditProd" data-target="@Model.Id" class="btn btn-lg btn-outline-secondary">
+                    <i class="fas fa-edit"></i>
+                </a>
+            }
+            else
+            {
+                <a type="button" style="float: left;" id="getUserbyId" data-target="@ViewBag.UserIdBtnId" class="btn btn-lg btn-outline-dark" data-mdb-ripple-color="dark">
+                    <i class="far fa-user"></i>
+                    @ViewBag.UserbyId.Name
+                </a>
+            }
+
+
+            <br />
+            <br />
+            <br />
+            if (@ViewBag.UserIdSession != ViewBag.ToId)
+            {
+                if (ViewBag.FavCheck == true)
+                {
+                    <a type="button" asp-action="SetFavProd" asp-controller="Web" asp-route-pid="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Unfav</a>
+                }
+                else
+                {
+                    <a type="button" asp-action="SetFavProd" asp-controller="Web" asp-route-pid="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Fav</a>
+                }
+            }
+
+
+            <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Share</button>
+            if (@ViewBag.UserIdSession != ViewBag.ToId)
+            {
+                <a type="button" asp-action="SetReportProd" asp-controller="Web" asp-route-pid="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Report</a>
+                <br />
+                <br />
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-outline-success" id="GetChatSec" @*data-mdb-toggle="modal" data-mdb-target="#ChatModal"*@ style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Chat</button>
+                </div>
+            }
+            <br />
+            if (@ViewBag.UserIdSession == ViewBag.ToId)
+            {
+                <div data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+                    <ul class="list-unstyled mb-0">
+                        @foreach (var item in ViewBag.InboxYep)
+                        {
+                            <li class="p-2 border-bottom">
+                                <a href="#" data-target="@item.From" id="GetChatid" class="d-flex justify-content-between">
+                                    <div class="d-flex flex-row">
+                                        <div class="pt-1">
+                                            <p class="fw-bold mb-0">@item.Name</p>
+                                            <p class="small text-muted">@item.LastMessage</p>
+                                        </div>
+                                    </div>
+                                    <div class="pt-1">
+                                        <p class="small text-muted mb-1">@item.LastMessgeTime</p>
+                                    </div>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+        }
+
         @*<h6>@Model.ChatCount</h6>*@
     </div>
 </div>
 
+<div class="modal fade" id="ChatModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div>
+                <section>
+                    <div>
+                        <div>
+                            <div class="col-md-12">
+                                <div class="card" id="chat2">
+                                    <div class="card-header d-flex justify-content-between align-items-center p-3">
+                                        <h5 class="mb-0">Chat</h5>
+                                        @*<button type="button" class="btn btn-primary btn-sm" data-mdb-ripple-color="dark">
+                                            Let's Chat
+                                            App
+                                            </button>*@
+                                    </div>
+                                    <div class="card-body" id="chatmdl" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+                                    </div>
+                                    <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
+                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
+                                             alt="avatar 3" style="width: 40px; height: 100%;">
+                                        <input type="text" class="form-control form-control-lg" id="MsgInput"
+                                               placeholder="Type message">
+                                        <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+                                        @*<a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>*@
+                                        <a id="MessageSendId" class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="EditProdModal" tabindex="-1" aria-labelledby="AddNewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="GetProdHere">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
 <script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
 <script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>
+
+    
+<script>
+
+    //$('select').selectpicker();
+
+    $(document).on("click", "#getUserbyId", function () {
+        var val = $(this).attr("data-target");
+                         $.ajax({
+                            type: 'get',
+                            url: '@Url.Action("UserProfile", "Web")',
+                            data: { 'id': val },
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"none",});
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+
+    $(document).on("click", "#GetChatSec", function () {
+
+        var from = @ViewBag.UserIdSession;
+        var to = @ViewBag.ToId;
+        var pid = @ViewBag.ProdId;
+             $.ajax({
+                type: 'get',
+                url: '@Url.Action("GetChatbyProdId", "Web")',
+                data: { 'from': from,'to':to,'pid':pid },
+                success: function (data) {
+                    $("#chatmdl").html("");
+                    $("#chatmdl").html(data);
+                    $('#ChatModal').modal('show');
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+            })
+        });
+
+
+        const options = {
+        accessTokenFactory: getToken
+    };
+    var sess = $("#SessionValue").val();
+        var connection = new signalR.HubConnectionBuilder()
+        .configureLogging(signalR.LogLevel.Debug)
+        //.withUrl('https://localhost:44303/Chat', options)
+        .withUrl("https://localhost:44303/Chat?token="+sess+"")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+    connection.start().then(() => {
+    });
+
+
+     var sendMessage = function () {
+        var message = document.getElementById("MsgInput").value;
+        var sess = @ViewBag.UserIdSession;
+        var toid = @ViewBag.ToId;
+        var pid = @ViewBag.ProdId;
+        var d = new Date(new Date().getTime()).toLocaleTimeString();
+        var time = d;//(d.getHours() + d.getMinutes() + d.getSeconds()).tostring();
+        connection.invoke("SendMessage", message.toString(), toid.toString(), pid.toString(), sess.toString()).then((result) => {
+            var mySecondDiv=$('<div class="d-flex flex-row justify-content-end"> <div> <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">'+message+' </p> <p class="small me-3 mb-3 rounded-3 text-muted">' + time + '</p> </div> </div>');
+            $('#chatmdl').append(mySecondDiv);
+            document.getElementById('chatmdl').scrollTop = document.getElementById('chatmdl').scrollHeight;
+            $("#MsgInput").val("");
+
+        }).catch(err => console.error(err.toString()));
+        event.preventDefault();
+    }
+    document.getElementById("MessageSendId").addEventListener("click", event => {
+        sendMessage();
+        document.getElementById("MsgInput").value = "";
+    });
+
+    connection.on("ReceiveMessage", (message, senderId, UserId, time,json) => {
+
+        var mySecondDiv=$('<div class="d-flex flex-row justify-content-start"><div> <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;"> '+message+' </p> <p class="small ms-3 mb-3 rounded-3 text-muted float-end">'+time+'</p></div></div>');
+        $('#chatmdl').append(mySecondDiv);
+        document.getElementById('chatmdl').scrollTop = document.getElementById('chatmdl').scrollHeight;
+    });
+
+
+    $(document).on("click", "#DeleteProd", function () {
+        var val = $(this).attr("data-target");
+                        $("#currentitemCnt").val(3);
+                         $.ajax({
+                            type: 'post',
+                            url: '@Url.Action("DeleteProduct", "Home")',
+                            data: { 'id': val },
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"inline-block",});
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+
+         $(document).on("click", "#EditProd", function () {
+            var val = $(this).attr("data-target");
+                         $.ajax({
+                            type: 'post',
+                            url: '@Url.Action("GetProdDetails", "Web")',
+                            data: { 'id': val },
+                            success: function (data) {
+                                debugger
+                                $("#GetProdHere").html("");
+                                $("#GetProdHere").html(data);
+                                $('#EditProdModal').modal('show');
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+
+
+                    $('select#PrvncSelects').change(function () {
+                    var val = $('select#PrvncSelects').val();
+                        $.ajax({
+                                    type: 'post',
+                                    data: { 'id': val },
+                                    url: '@Url.Action("PrvncDropdown", "Web")',
+                                    success: function (data) {
+                                        debugger
+                                        $('select#mncSelects').html('');
+                                        $('select#mncSelects').append(data);
+                                        $("select#mncSelects").multiselect("rebuild");
+                                    },
+                                    error: function (xhr) {
+                                        alert('error');
+                                    }
+                                })
+                })
+</script>
+
+

@@ -69,7 +69,7 @@ namespace Merolekiando.Hubs
                 if (img != null)
                 {
                     img.Link = img.Link.Replace("/wwwroot", "");
-                    connectIdUser = Context.User.Claims.FirstOrDefault().Value;
+                    //connectIdUser = Context.User.Claims.FirstOrDefault().Value;
                     usrid = Convert.ToInt32(from);
                     dto.SenderId = usrid;
                     UserNameRMsg = _Context.Users.AsQueryable().Where(a => a.Id == usrid).Select(a => a.Name).FirstOrDefault();
@@ -81,7 +81,7 @@ namespace Merolekiando.Hubs
             }
             else
             {
-                connectIdUser = Context.User.Claims.FirstOrDefault().Value;
+                //connectIdUser = Context.User.Claims.FirstOrDefault().Value;
                 usrid = Convert.ToInt32(from);
                 dto.SenderId = usrid;
                 UserNameRMsg = _Context.Users.AsQueryable().Where(a => a.Id == usrid).Select(a => a.Name).FirstOrDefault();
@@ -329,6 +329,7 @@ namespace Merolekiando.Hubs
         {
             var connectionId = Context.ConnectionId;
             var connectIdUserasdf = Context.User.Claims.FirstOrDefault();
+            var group = Context.GetHttpContext().Request.Query["token"].FirstOrDefault();
             if (connectIdUserasdf != null)
             {
                 var connectIdUser = Context.User.Claims.FirstOrDefault().Value;
@@ -377,7 +378,7 @@ namespace Merolekiando.Hubs
                     }
                 }
                 var lsts = await _Context.Messages.AsQueryable().Where(a => a.From == Convert.ToInt32(connectIdUser)).ToListAsync();
-                foreach (var item in lsts) 
+                foreach (var item in lsts)
                 {
                     item.ConnId = connectionId;
                     _Context.Messages.Update(item);
@@ -407,6 +408,84 @@ namespace Merolekiando.Hubs
 
                 }
 
+            }
+            else if(!string.IsNullOrEmpty(group) && connectIdUserasdf == null)
+            {
+                //var connectIdUser = Context.User.Claims.FirstOrDefault().Value;
+                var dt = await _Context.Messages.AsQueryable().Where(a => a.From == Convert.ToInt32(group)).FirstOrDefaultAsync();
+
+                if (dt != null)
+                {
+                    var sd = _Context.Chats.AsQueryable().Where(a => a.ConnId == dt.ConnId).ToList();
+                    if (sd.Count > 0)
+                    {
+                        foreach (var item in sd)
+                        {
+                            item.ConnId = connectionId;
+                            _Context.Chats.Update(item);
+                            _Context.SaveChanges();
+                        }
+                    }
+                }
+
+                if (dt != null)
+                {
+                    var sd = await _Context.Chats.AsQueryable().Where(a => a.ConnFrom == dt.ConnId).ToListAsync();
+                    if (sd.Count > 0)
+                    {
+                        foreach (var item in sd)
+                        {
+                            item.ConnFrom = connectionId;
+                            _Context.Chats.Update(item);
+                            _Context.SaveChanges();
+                        }
+                    }
+                }
+
+                var dt1 = await _Context.Messages.AsQueryable().Where(a => a.From == Convert.ToInt32(group)).FirstOrDefaultAsync();
+                if (dt1 != null)
+                {
+                    var sd1 = await _Context.Chats.AsQueryable().Where(a => a.ConnTo == dt1.ConnId).ToListAsync();
+                    if (sd1.Count > 0)
+                    {
+                        foreach (var item in sd1)
+                        {
+                            item.ConnTo = connectionId;
+                            _Context.Chats.Update(item);
+                            _Context.SaveChanges();
+                        }
+                    }
+                }
+                var lsts = await _Context.Messages.AsQueryable().Where(a => a.From == Convert.ToInt32(group)).ToListAsync();
+                foreach (var item in lsts)
+                {
+                    item.ConnId = connectionId;
+                    _Context.Messages.Update(item);
+                    _Context.SaveChanges();
+                }
+
+                if (dt != null)
+                {
+
+
+                    //dt.ConnId = connectionId;
+                    //dt.From = Convert.ToInt32(connectIdUser);
+                    ////var user = _Context.Users.Where(a => a.Id == Convert.ToInt32(connectIdUser)).FirstOrDefault();
+                    ////dt.Name = user.Name;
+                    //_Context.Messages.Update(dt);
+                    //_Context.SaveChanges();
+                }
+                else
+                {
+                    Message lstd = new();
+                    lstd.ConnId = connectionId;
+                    lstd.From = Convert.ToInt32(group);
+                    //var user = _Context.Users.Where(a => a.Id == Convert.ToInt32(connectIdUser)).FirstOrDefault();
+                    //lstd.Name = user.Name;
+                    _Context.Messages.Add(lstd);
+                    _Context.SaveChanges();
+
+                }
             }
 
             _ = Clients.All.SendAsync("OnlineUserList", connectionId);

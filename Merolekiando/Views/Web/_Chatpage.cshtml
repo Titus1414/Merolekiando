@@ -1,0 +1,195 @@
+﻿@{
+string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dist/browser/signalr.min.js";
+}
+<link rel="stylesheet" href="~/css/all.min.css">
+<link rel="stylesheet" href="~/css/bootstrap.min.css">
+<!--   ALL CSS GOSE HEAR  -->
+<!--   ALL CSS GOSE HEAR  -->
+<link rel="stylesheet" href="~/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+<link rel="stylesheet" href="~/js/loadmore/css/style.css">
+<style>
+        #chat3 .form-control {
+    border-color: transparent;
+    }
+
+    #chat3 .form-control:focus {
+    border-color: transparent;
+    box-shadow: inset 0px 0px 0px 1px transparent;
+    }
+
+    .badge-dot {
+    border-radius: 50%;
+    height: 10px;
+    width: 10px;
+    margin-left: 2.9rem;
+    margin-top: -.75rem;
+    }
+</style>
+<input id="SessionValue" hidden value="@ViewBag.SessionValue" />
+<input id="ToIdVal" hidden />
+
+<section style="background-color: #eff5ee;">
+    <div class="container py-5">
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="card" id="chat3" style="border-radius: 15px;">
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
+
+                                <div class="p-3">
+
+                                    <div class="input-group rounded mb-3">
+                                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+                                               aria-describedby="search-addon" />
+                                        <span class="input-group-text border-0" id="search-addon">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                    </div>
+
+                                    <div data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+                                        <ul class="list-unstyled mb-0">
+                                            @foreach (var item in ViewBag.Inbox)
+                                            {
+                                                <li class="p-2 border-bottom">
+                                                    <a href="#" data-target="@item.From" id="GetChatid" class="d-flex justify-content-between">
+                                                        <div class="d-flex flex-row">
+                                                            <div>
+                                                                @*<img
+                                                                    src="@item.ProductImage"
+                                                                    alt="avatar" class="d-flex align-self-center me-3" width="60">*@
+                                                                <span class="badge bg-success badge-dot"></span>
+                                                            </div>
+                                                            <div class="pt-1">
+                                                                <p class="fw-bold mb-0">@item.Name</p>
+                                                                <p class="small text-muted">@item.LastMessage</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="pt-1">
+                                                            <p class="small text-muted mb-1">@item.LastMessgeTime</p>
+                                                            @*<span class="badge bg-danger rounded-pill float-end">3</span>*@
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-7 col-xl-8">
+
+                                <div class="pt-3 pe-3" data-mdb-perfect-scrollbar="true"
+                                     style="position: relative; height: 400px" id="MessagesId">
+                                </div>
+
+                                <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                                         alt="avatar 3" style="width: 40px; height: 100%;">
+                                    <input type="text" id="MessageSended" class="form-control form-control-lg" id="exampleFormControlInput2"
+                                           placeholder="Type message">
+                                    <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+                                    @*<a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>*@
+                                    <a class="ms-3" id="btnSend" href="#!"><i class="fas fa-paper-plane"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
+<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>
+<script src="~/js/jquery-1.12.4.min.js"></script>
+<script src="~/dash/js/bootstrap1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+<script src="@url"></script>
+
+<script>
+    $(document).on("click", "#GetChatid", function () {
+                            var val = $(this).attr("data-target");
+                            $("#ToIdVal").val(val);
+                             $.ajax({
+                                type: 'get',
+                                url: '@Url.Action("GetChat", "Web")',
+                                data: { 'fromid': val },
+                                success: function (data) {
+                                    debugger
+                                    $("#MessagesId").html("");
+                                    $("#MessagesId").html(data);
+                                },
+                                error: function (xhr) {
+                                    alert('error');
+                                }
+                            })
+                        });
+
+                        
+        function getToken() {
+        debugger
+        const xhr = new XMLHttpRequest();
+        return new Promise((resolve, reject) => {
+            xhr.onreadystatechange = function () {
+                if (this.readyState !== 4) return;
+                if (this.status == 200) {
+                    resolve(this.responseText);
+                } else {
+                    reject(this.statusText);
+                }
+            };
+            xhr.open("GET", "/Web/Gettoken");
+            xhr.send();
+        });
+    }
+
+    const options = {
+        accessTokenFactory: getToken
+    };
+
+    var sess = $("#SessionValue").val();
+
+var connection = new signalR.HubConnectionBuilder()
+        .configureLogging(signalR.LogLevel.Debug)
+        .withUrl("https://localhost:44303/Chat?token="+sess+"")
+        //.withUrl('https://localhost:44303/Chat', options)
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+    connection.start().then(() => {
+    });
+
+    var sendMessage = function () {
+        var message = document.getElementById("MessageSended").value;
+        var sess = $("#SessionValue").val();
+        var toid = $("#ToIdVal").val();
+        var d = new Date(new Date().getTime()).toLocaleTimeString();
+        var time = d;//(d.getHours() + d.getMinutes() + d.getSeconds()).tostring();
+        connection.invoke("SendMessage", message, toid, "", sess).then((result) => {
+            var mySecondDiv=$('<div class="d-flex flex-row justify-content-end"> <div> <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">'+message+' </p> <p class="small me-3 mb-3 rounded-3 text-muted">' + time + '</p> </div> </div>');
+            $('#MessagesId').append(mySecondDiv);
+            document.getElementById('MessagesId').scrollTop = document.getElementById('MessagesId').scrollHeight;
+            $("#MessageSended").val("");
+
+        }).catch(err => console.error(err.toString()));
+        event.preventDefault();
+    }
+    document.getElementById("btnSend").addEventListener("click", event => {
+        sendMessage();
+        document.getElementById("MessageSended").value = "";
+    });
+
+    connection.on("ReceiveMessage", (message, senderId, UserId, time,json) => {
+
+        var mySecondDiv=$('<div class="d-flex flex-row justify-content-start"><div> <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;"> '+message+' </p> <p class="small ms-3 mb-3 rounded-3 text-muted float-end">'+time+'</p></div></div>');
+        $('#MessagesId').append(mySecondDiv);
+        document.getElementById('MessagesId').scrollTop = document.getElementById('MessagesId').scrollHeight;
+    });
+
+</script>

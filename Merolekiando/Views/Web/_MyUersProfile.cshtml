@@ -1,0 +1,125 @@
+﻿@model Merolekando.Models.Dtos.UserDto
+@using Merolekando.Common
+@{
+    var baseur = Methods.baseurl;
+}
+<link rel="stylesheet" href="~/css/all.min.css">
+<link rel="stylesheet" href="~/css/bootstrap.min.css">
+<!--   ALL CSS GOSE HEAR  -->
+<!--   ALL CSS GOSE HEAR  -->
+<link rel="stylesheet" href="~/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+<link rel="stylesheet" href="~/js/loadmore/css/style.css">
+
+<section style="background-color: #eff5ee;">
+    <div class="container py-5">
+        <form method="post" action="~/Web/EditUser" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-body text-center">
+                            <img src="@baseur@Model.Image" alt="avatar"
+                                 class="rounded-circle img-fluid" style="width: 150px;">
+                            <h5 class="my-3">@Model.Name</h5>
+                            <p class="text-muted mb-4">@Model.Address</p>
+                            <div class="d-flex justify-content-center mb-2">
+                                <input type="file" name="Imagess" class="dimmy" id="image-input" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Full Name</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input hidden name="Id" value="@Model.Id" />
+                                    <input class="form-control" type="text" name="Name" value="@Model.Name" />
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Email</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="Email" value="@Model.Email" />
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Phone</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="Number" value="@Model.Number" />
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Address</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="Address" value="@Model.Address" />
+                                </div>
+                            </div>
+                            @if (@Model.LoginType == "Custom")
+                            {
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Address</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <input class="form-control" type="text" name="Passwrod" value="@Model.Password" />
+                                    </div>
+                                </div>
+                            }
+                            <hr>
+                            <button type="submit" class="btn btn-outline-success" data-mdb-ripple-color="dark">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
+<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>
+<script src="~/js/jquery-1.12.4.min.js"></script>
+
+<script>
+    //$(document).ready(function ($) {
+    $("#FollowBtn").unbind().click(function() {
+    //$(document).on("click", "#FollowBtn", function () {
+                            var val = $(this).attr("data-target");
+                             $.ajax({
+                                type: 'post',
+                                async : true,
+                                beforeSend: function(){
+                                    debugger
+                                    $('.ajax-loader').css("visibility", "visible");
+                                },
+                                url: '@Url.Action("FollowUser", "Web")',
+                                data: { 'id': val },
+                                complete: function(){
+                                    //$('.ajax-loader').css("visibility", "hidden");
+                                },
+                                success: function (data) {
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                $("#load-more").css({"display":"none",});
+                                },
+                                error: function (xhr) {
+                                    //alert('error');
+                                }
+                            })
+                        });
+                         //});
+</script>

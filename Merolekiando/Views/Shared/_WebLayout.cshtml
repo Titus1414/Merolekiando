@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="Content-Language" content="en,hu">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Merolekiando</title>
     <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
@@ -18,10 +19,33 @@
         .navbar-dark .nav-item .nav-link {
             color: #fff;
         }
+
+        .ajax-loader {
+            visibility: hidden;
+            background-color: rgba(255,255,255,0.7);
+            position: absolute;
+            z-index: +100 !important;
+            width: 100%;
+            height: 100%;
+        }
+
+            .ajax-loader img {
+                position: relative;
+                top: 50%;
+                left: 50%;
+            }
+
+        .form-check-input:checked[type=checkbox] {
+            background-image: url() !important;
+        }
+
     </style>
 </head>
 
 <body>
+    <div class="ajax-loader">
+        <img src="~/img/ZKZx.gif" style="width: 30px;" class="img-responsive" />
+    </div>
     <!--Main Navigation-->
     <header>
         <!-- Jumbotron -->
@@ -31,7 +55,11 @@
                 <div class="row">
                     <!-- Left elements -->
                     <div class="col-md-2 d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
-                        <a href="#!" class="ms-md-2">
+                        @{
+                            var sessVal = Context.Session.GetInt32("WebUserId");
+                        }
+                        <input hidden value="@sessVal" id="SessidWeb" />
+                        <a href="#" id="MyProfileId" class="ms-md-2">
                             <img src="~/dash/Images/logo.png" height="35" />
                         </a>
                     </div>
@@ -72,7 +100,8 @@
                             <div class="dropdown">
                                 <a class="text-reset dropdown-toggle me-3 hidden-arrow" href="#" id="navbarDropdown" role="button"
                                    data-mdb-toggle="dropdown" aria-expanded="false">
-                                    <i class="united kingdom flag m-0"></i>
+                                    <MDBIcon fas icon="globe" />
+                                    <i class="fas fa-globe"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <li>
@@ -118,6 +147,10 @@
                             }
                             @if (!string.IsNullOrEmpty(x.ToString()))
                             {
+                                <a class="text-reset me-3 dropdown-toggle hidden-arrow" href="/Home/WebLogout" aria-expanded="false">
+                                    @*<MDBIcon fas icon="sign-out-alt" />*@
+                                    <i class="fas fa-sign-out"></i>
+                                </a>
                                 <!-- User -->
                                 <div class="dropdown">
                                     <a class="text-reset dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
@@ -125,11 +158,11 @@
                                         <img src="https://mdbootstrap.com/img/Photos/Avatars/img (31).jpg" class="rounded-circle" height="22"
                                          alt="" loading="lazy" />
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                                    @*<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                                         <li><a class="dropdown-item" href="#">My profile</a></li>
                                         <li><a class="dropdown-item" href="#">Settings</a></li>
-                                        <li><a class="dropdown-item" href="#">Logout</a></li>
-                                    </ul>
+                                        <li><a class="dropdown-item" href="/Home/WebLogout">Logout</a></li>
+                                        </ul>*@
                                 </div>
                             }
                             else
@@ -162,17 +195,28 @@
                         </a>
                     </li>
                     <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                        <a class="nav-link" href="#">Bestsellers</a>
+                        <a class="nav-link" id="HomeProds" href="/Home/WebIndex">Home</a>
                     </li>
-                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                        <a class="nav-link" href="#">Inspirations</a>
-                    </li>
-                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                        <a class="nav-link" href="#">Blog</a>
-                    </li>
-                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
+                    @if (!string.IsNullOrEmpty(x.ToString()))
+                    {
+                        <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                            <a class="nav-link" id="MyProds" href="#">My Products</a>
+                        </li>
+                        <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                            <a class="nav-link" id="MyFavProds" href="#">My Favorites</a>
+                        </li>
+                        <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                            <a class="nav-link" id="ChatPageid" href="#">Chat</a>
+                        </li>
+                        <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                            <a class="nav-link" href="#">Contact</a>
+                        </li>
+
+                        <button class="btn btn-outline-success" data-mdb-toggle="modal" data-mdb-target="#AddNewModal" data-mdb-ripple-color="dark" type="button">
+                            Add New<i class="fas fa-upload ms-2"></i>
+                        </button>
+                    }
+
                 </ul>
                 <!-- Left links -->
 
@@ -226,10 +270,26 @@
         <!-- Sidenav -->
 
     </header>
+
+    @if (ViewBag.alert == "Success" || ViewBag.alert == "")
+    {
+        @*<div class="alert" id="alertExample" role="alert" data-mdb-color="success">
+            Hello! I am a simple alert
+            </div>*@
+    }
+    else
+    {
+        <div class="alert" style="margin-left: 22.5%;" id="alertExample" role="alert" data-mdb-color="danger">
+            <p>@ViewBag.alert</p>
+            <button type="button" style="float:right; margin-top:-4%" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
     <!--Main Navigation-->
     <!--Main Navigation-->
 
     <div class="main_content_iner ">
+
+
         @RenderBody()
     </div>
     <script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
@@ -239,67 +299,178 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
     <script type="text/javascript">
 
-          $(document).on("click", "#SubCat", function () {
-            var val = $(this).attr("data-target");
-             $.ajax({
-                type: 'post',
-                url: '@Url.Action("GetProductsByCat", "Home")',
-                data: { 'id': val },
-                success: function (data) {
-                    debugger
-                    //$('#WinningModalLong').modal('show');
-                    $("#ProductsPartials").html("");
-                    $("#ProductsPartials").html(data);
-                    debugger
-                    $("#load-more").css({"display":"inline-block",});
-                    //var sd = @Html.Raw(@ViewBag.CountProducts)
-                    // //var sd = $("#CountProducts").val();
-                    //    if(sd != 0)
-                    //    {
-                    //        $("#load-more").css({"display":"none",});
+        $(document).on("click", "#navbarDropdownMenuLink", function () {
+                        var val = $("#SessidWeb").val();
+                         $.ajax({
+                            type: 'GET',
+                            url: '@Url.Action("EditUser", "Web")',
+                            data: { 'id': val },
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"none",});
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
 
-                    //    }
-                    //    else
-                    //    {
-                    //        $("#load-more").css({"display":"inline-block",});
-                    //    }
-                },
-                error: function (xhr) {
-                    alert('error');
-                }
-            })
-        });
+                      $(document).on("click", "#SubCat", function () {
+                        var val = $(this).attr("data-target");
+                         $.ajax({
+                            type: 'post',
+                            url: '@Url.Action("GetProductsByCat", "Home")',
+                            data: { 'id': val },
+                            success: function (data) {
+                                debugger
+                                //$('#WinningModalLong').modal('show');
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"inline-block",});
+                                //var sd = @Html.Raw(@ViewBag.CountProducts)
+                                // //var sd = $("#CountProducts").val();
+                                //    if(sd != 0)
+                                //    {
+                                //        $("#load-more").css({"display":"none",});
 
-        $(document).on("click", "#CatId", function () {
-            var val = $(this).attr("data-target");
-             $.ajax({
-                type: 'post',
-                url: '@Url.Action("GetProductsBySubCat", "Home")',
-                data: { 'id': val },
-                success: function (data) {
-                    debugger
-                    $("#ProductsPartials").html("");
-                    $("#ProductsPartials").html(data);
-                    debugger
-                    $("#load-more").css({"display":"inline-block",});
-                    //var sd = @Html.Raw(@ViewBag.CountProducts)
-                    // //var sd = $("#CountProducts").val();
-                    //    if(sd != 0)
-                    //    {
-                    //        $("#load-more").css({"display":"none",});
-                    //    }
-                    //    else
-                    //    {
-                    //        $("#load-more").css({"display":"inline-block",});
-                    //    }
-                },
-                error: function (xhr) {
-                    alert('error');
-                }
-            })
-        });
+                                //    }
+                                //    else
+                                //    {
+                                //        $("#load-more").css({"display":"inline-block",});
+                                //    }
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
 
+                    $(document).on("click", "#CatId", function () {
+                        var val = $(this).attr("data-target");
+                         $.ajax({
+                            type: 'post',
+                            url: '@Url.Action("GetProductsBySubCat", "Home")',
+                            data: { 'id': val },
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"inline-block",});
+                                //var sd = @Html.Raw(@ViewBag.CountProducts)
+                                // //var sd = $("#CountProducts").val();
+                                //    if(sd != 0)
+                                //    {
+                                //        $("#load-more").css({"display":"none",});
+                                //    }
+                                //    else
+                                //    {
+                                //        $("#load-more").css({"display":"inline-block",});
+                                //    }
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+                    $(document).on("click", "#MyProds", function () {
+                        $("#currentitemCnt").val(3);
+                         $.ajax({
+                            type: 'post',
+                            url: '@Url.Action("GetMyProducts", "Home")',
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"inline-block",});
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+
+                    $(document).on("click", "#ChatPageid", function () {
+                         $.ajax({
+                            type: 'post',
+                            url: '@Url.Action("Chats", "Web")',
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"none",});
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+                    $(document).on("click", "#MyFavProds", function () {
+                        $("#currentitemCnt").val(3);
+                         $.ajax({
+                            type: 'post',
+                            url: '@Url.Action("GetMyFavProducts", "Home")',
+                            success: function (data) {
+                                debugger
+                                $("#ProductsPartials").html("");
+                                $("#ProductsPartials").html(data);
+                                debugger
+                                $("#load-more").css({"display":"inline-block",});
+                            },
+                            error: function (xhr) {
+                                alert('error');
+                            }
+                        })
+                    });
+
+
+
+                  mdb.Alert.getInstance(document.getElementById("alertExample")).update({
+                  position: "top-right",
+                  delay: 2000,
+                  autohide: true,
+                  width: "600px",
+                  offset: 20,
+                  stacking: true,
+                  appendToBody: false,
+                });
+                $('select').selectpicker();
+
+                function doalert(checkboxElem) {
+          if (checkboxElem.checked) {
+              $("#formIsDelivering5").val(true);
+          } else {
+            $("#formIsDelivering5").val(false);
+          }
+        }
+        function doalert1(checkboxElem) {
+          if (checkboxElem.checked) {
+              $("#formIsPickup6").val(true);
+          } else {
+            $("#formIsPickup6").val(false);
+          }
+        }
     </script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <script src="~/js/jquery-1.12.4.min.js"></script>
+    <script src="~/dash/js/bootstrap1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">*@
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -347,7 +518,7 @@
 
                                 <!-- Password input -->
                                 <div class="form-outline mb-4">
-                                    <input type="password" name="Password" id="form1Example2" class="form-control" />
+                                    <input type="password" name="Password" required id="form1Example2" class="form-control" />
                                     <label class="form-label" for="form1Example2">Password</label>
                                 </div>
 
@@ -356,7 +527,7 @@
                                     <div class="col d-flex justify-content-center">
                                         <!-- Checkbox -->
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
+                                            <input class="form-check-input" required type="checkbox" value="" id="form1Example3" checked />
                                             <label class="form-check-label" for="form1Example3"> Remember me </label>
                                         </div>
                                     </div>
@@ -385,19 +556,19 @@
                             <form method="get" asp-action="WebLoginT" asp-controller="Home">
                                 <!-- Email input -->
                                 <div class="form-outline mb-4">
-                                    <input type="text" id="form0Example0" name="Name" class="form-control" />
+                                    <input type="text" id="form0Example0" required name="Name" class="form-control" />
                                     <input type="text" name="LoginType" value="Custom" hidden />
                                     <label class="form-label" for="form0Example0">Name</label>
                                 </div>
                                 <!-- Email input -->
                                 <div class="form-outline mb-4">
-                                    <input type="email" id="form1Example1" name="Email" class="form-control" />
+                                    <input type="email" id="form1Example1" required name="Email" class="form-control" />
                                     <label class="form-label" for="form1Example1">Email address</label>
                                 </div>
 
                                 <!-- Password input -->
                                 <div class="form-outline mb-4">
-                                    <input type="password" id="form1Example2" name="Password" class="form-control" />
+                                    <input type="password" id="form1Example2" required name="Password" class="form-control" />
                                     <label class="form-label" for="form1Example2">Password</label>
                                 </div>
 
@@ -416,5 +587,170 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="AddNewModal" tabindex="-1" aria-labelledby="AddNewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="~/Web/ManageProduct" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="col-12">
+                            <label class="visually-hidden" for="inlineFormInputGroupUsername">Title</label>
+                            <div class="input-group">
+                                @*<div class="input-group-text">a</div>*@
+                                <input type="text" class="form-control" name="Title" id="inlineFormInputGroupUsername" placeholder="Title" />
+                            </div>
+                        </div>
+
+                        <br />
+
+                        <select name="CategoryId" class="form-select" aria-label="Default select example">
+                            <option selected>Select Category</option>
+                            @foreach (var item in @ViewBag.GetCategories)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+
+                        <br />
+
+                        <select name="SubCategoryId" class="form-select" aria-label="Default select example">
+                            <option selected>Select Sub Category</option>
+                            @foreach (var item in @ViewBag.SubCategories)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+
+                        <br />
+
+                        <select name="Condition" class="form-select" aria-label="Default select example">
+                            <option selected>Select Condition</option>
+                            <option value="New">New</option>
+                            <option value="Used">Used</option>
+                        </select>
+
+                        <br />
+
+                        <div class="col-12">
+                            <label class="visually-hidden" for="inlineFormInputGroupUsername">Description</label>
+                            <div class="input-group">
+                                <textarea class="form-control" name="Description" id="inlineFormInputGroupUsername" placeholder="Description"></textarea>
+                            </div>
+                        </div>
+
+                        <br />
+
+                        <div class="col-12">
+                            <label class="visually-hidden" for="inlineFormInputGroupUsername">Price</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="Price" id="inlineFormInputGroupUsername" placeholder="Price" />
+                            </div>
+                        </div>
+
+                        <br />
+                        @*//Province*@
+                        <select name="prvnc" id="PrvncSelects" class="selectpicker form-control" multiple data-live-search="true">
+                            @foreach (var item in @ViewBag.GetProvnces)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+
+                        <br />
+                        <br />
+                        @*//Muncipility*@
+                        <select name="mnclst" id="mncSelects" class="form-control" multiple data-live-search="true">
+                            @*<option value="1">Mustard</option>
+                                <option value="2">Ketchup</option>
+                                <option value="3">Relish</option>*@
+                        </select>
+                        <br />
+                        <div class="col-auto">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="form11Example4" checked />
+                                <label class="form-check-label" for="form11Example4">
+                                    Firme en el percio
+                                </label>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-auto">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" onchange="doalert(this)" name="IsDelivering" value="" type="checkbox" id="formIsDelivering5" />
+                                <label class="form-check-label" for="formIsDelivering5">
+                                    Delivery
+                                </label>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-auto">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" value="" name="IsPickup" onchange="doalert1(this)" type="checkbox" id="formIsPickup6" />
+                                <label class="form-check-label" for="formIsPickup6">
+                                    Pickup
+                                </label>
+                            </div>
+                        </div>
+                        <br />
+                        <input type="file" name="images" class="dimmy" id="image-input" multiple />
+                        <div class="preview-area"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        //$('select#PrvncSelects').change(function(e) {
+        //        alert("asdfef");
+        //    });
+
+            $('select#PrvncSelects').change(function () {
+                    var val = $('select#PrvncSelects').val();
+                        $.ajax({
+                                    type: 'post',
+                                    data: { 'id': val },
+                                    url: '@Url.Action("PrvncDropdown", "Web")',
+                                    success: function (data) {
+                                        debugger
+                                        $('select#mncSelects').html('');
+                                        $('select#mncSelects').append(data);
+                                        $("select#mncSelects").multiselect("rebuild");
+                                    },
+                                    error: function (xhr) {
+                                        alert('error');
+                                    }
+                                })
+                })
+
+                //$(document).on("click", "#MyProfileId", function () {
+                //        debugger
+                //        alert("sdfse");
+                //        //var val = $("#SessidWeb").val();
+                //        // $.ajax({
+                //        //    type: 'GET',
+                //        //    url: '@Url.Action("EditUser", "Web")',
+                //        //    data: { 'id': val },
+                //        //    success: function (data) {
+                //        //        debugger
+                //        //        $("#ProductsPartials").html("");
+                //        //        $("#ProductsPartials").html(data);
+                //        //        debugger
+                //        //        $("#load-more").css({"display":"none",});
+                //        //    },
+                //        //    error: function (xhr) {
+                //        //        alert('error');
+                //        //    }
+                //        //})
+                //    });
+
+    </script>
 </body>
 </html>
