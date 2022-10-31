@@ -6,6 +6,7 @@ using Merolekando.Services.Product;
 using Merolekando.Services.Token;
 using Merolekiando.Models;
 using Merolekiando.Models.Dtos;
+using Merolekiando.Models.WebDtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -52,11 +53,49 @@ namespace Merolekiando.Controllers
         }
         public IActionResult PrvncDropdown(List<int> id)
         {
-            var sd = from t1 in _Context.SubCategories
-                     where id.Contains((int)t1.CatId)
+            var sd = from t1 in _Context.Municipalities
+                     where id.Contains((int)t1.PrvId)
+
                      select t1;
 
             return PartialView("~/Views/Web/_DropdownMncs.cshtml", sd.ToList());
+        }
+        public IActionResult PrvncDropdownMain(List<int> id, List<int> mncVal, string search, string CatId, string SubcateId)
+        {
+            var cat = _Context.Categories.Where(a => a.Name == CatId).FirstOrDefault();
+            var subcat = _Context.SubCategories.Where(a => a.Name == SubcateId).FirstOrDefault();
+
+            var dt = from t1 in _Context.Products
+                     join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                     from pi in f.DefaultIfEmpty()
+                     join t3 in _Context.ProdProvinces on t1.Id equals t3.Pid
+                     join t4 in _Context.ProdMunicipalities on t1.Id equals t4.Pid
+                     join t5 in _Context.Categories on t1.CategoryId equals t5.Id into a
+                     from a1 in a.DefaultIfEmpty()
+                     join t6 in _Context.SubCategories on t1.SubCategoryId equals t6.Id into ab
+                     from a2 in ab.DefaultIfEmpty()
+                     where id.Contains((int)t3.Id) || mncVal.Contains(t4.Id) || search.Contains(t1.Title) || search.Contains(t1.Description) && t1.IsActive == true && t1.IsSold != true
+                     select new { t1.Id, t1.Title, t1.Price, pi.Image, a1.Name, t1.IsPromoted, t1.SellerId };
+
+            List<ProductCard> lst = new();
+            foreach (var item in dt)
+            {
+                ProductCard product = new();
+                product.Id = item.Id;
+                product.Name = item.Title;
+                product.Price = item.Price;
+                product.Image = item.Image;
+                product.Category = item.Name;
+                product.IsPromot = item.IsPromoted;
+                product.sellerid = item.SellerId;
+                lst.Add(product);
+            }
+            ViewBag.Promoted = lst;
+            ViewBag.CountProducts = lst.Count;
+            var userid = HttpContext.Session.GetInt32("WebUserId");
+            ViewBag.SessUserId = userid;
+
+            return PartialView("~/Views/Home/_ProductsView.cshtml");
         }
         [HttpPost]
         public async Task<IActionResult> ManageProduct([FromForm] Productdto user, List<int> prvnc, List<int> mnclst)

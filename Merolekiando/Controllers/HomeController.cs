@@ -417,7 +417,8 @@ namespace Merolekiando.Controllers
             ViewBag.SubCategories = _Context.SubCategories.ToList();
             var rs = _extra.GetProvinces();
             ViewBag.GetProvnces = rs.Result;
-
+            var sdd = _extra.GetMunicipalities();
+            ViewBag.GetMunicipilies = sdd.Result;
             ViewBag.SessionValue = HttpContext.Session.GetInt32("WebUserId");
             return View();
         }

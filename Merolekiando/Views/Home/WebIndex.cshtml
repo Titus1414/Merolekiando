@@ -166,7 +166,7 @@
         var connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Debug)
         //.withUrl('https://localhost:44303/Chat', options)
-        .withUrl("https://localhost:44303/Chat?token="+sess+"")
+        .withUrl("http://64.20.48.40/Chat?token="+sess+"")
         .configureLogging(signalR.LogLevel.Information)
         .build();
     connection.start().then(() => {

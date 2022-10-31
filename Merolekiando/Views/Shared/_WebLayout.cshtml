@@ -67,7 +67,21 @@
                     <!-- Center elements -->
                     <div class="col-md-6">
                         <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
-                            <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" />
+
+
+                            <select name="prvnc" id="PrvncSelectsMain" class="selectpicker form-control" multiple data-live-search="true">
+                                @foreach (var item in @ViewBag.GetProvnces)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                            <select name="prvnc" id="MncSelectsMain" class="form-control" multiple data-live-search="true">
+                                @*@foreach (var item in @ViewBag.GetMunicipilies)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }*@
+                            </select>
+                            <input autocomplete="off" type="search" id="SearchMain" class="form-control rounded" placeholder="Search" />
                             <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
                         </form>
                     </div>
@@ -241,7 +255,7 @@
 
                         var subCat = _Context.SubCategories.Where(a => a.CatId == itm.Id).ToList();
 
-                        if (subCat.Count == 1)
+                        if (subCat.Count == 1 || subCat.Count == 0)
                         {
                             //asp-route-id='" + itm.Name + "'
                             code += "<a class='sidenav-link' data-target='" + itm.Name + "' id='SubCat'><i class='fas fa-layer-group pe-3'></i><span>" + itm.Name + "</span></a>";
@@ -324,8 +338,8 @@
                         })
                     });
 
-                    $("#SubCat").unbind().click(function() {
-                      //$(document).on("click", "#SubCat", function () {
+                    //$("#SubCat").unbind().click(function() {
+                      $(document).on("click", "#SubCat", function () {
                         var val = $(this).attr("data-target");
                          $.ajax({
                             type: 'post',
@@ -362,8 +376,8 @@
                         })
                     });
 
-                    $("#CatId").unbind().click(function() {
-                    //$(document).on("click", "#CatId", function () {
+                    //$("#CatId").unbind().click(function() {
+                    $(document).on("click", "#CatId", function () {
                         var val = $(this).attr("data-target");
                          $.ajax({
                             type: 'post',
@@ -751,48 +765,161 @@
         </div>
     </div>
     <script>
-        //$('select#PrvncSelects').change(function(e) {
-        //        alert("asdfef");
-        //    });
-
-            $('select#PrvncSelects').change(function () {
-                    var val = $('select#PrvncSelects').val();
-                        $.ajax({
-                                    type: 'post',
-                                    data: { 'id': val },
-                                    url: '@Url.Action("PrvncDropdown", "Web")',
-                                    success: function (data) {
-                                        debugger
-                                        $('select#mncSelects').html('');
-                                        $('select#mncSelects').append(data);
-                                        $("select#mncSelects").multiselect("rebuild");
-                                    },
-                                    error: function (xhr) {
-                                        alert('error');
-                                    }
-                                })
-                })
-
-                //$(document).on("click", "#MyProfileId", function () {
-                //        debugger
-                //        alert("sdfse");
-                //        //var val = $("#SessidWeb").val();
-                //        // $.ajax({
-                //        //    type: 'GET',
-                //        //    url: '@Url.Action("EditUser", "Web")',
-                //        //    data: { 'id': val },
-                //        //    success: function (data) {
-                //        //        debugger
-                //        //        $("#ProductsPartials").html("");
-                //        //        $("#ProductsPartials").html(data);
-                //        //        debugger
-                //        //        $("#load-more").css({"display":"none",});
-                //        //    },
-                //        //    error: function (xhr) {
-                //        //        alert('error');
-                //        //    }
-                //        //})
+                //$('select#PrvncSelects').change(function(e) {
+                //        alert("asdfef");
                 //    });
+
+                    $('select#PrvncSelects').change(function () {
+                            var val = $('select#PrvncSelects').val();
+                                $.ajax({
+                                            type: 'post',
+                                            data: { 'id': val },
+                                            url: '@Url.Action("PrvncDropdown", "Web")',
+                                            success: function (data) {
+                                                $('select#mncSelects').html('');
+                                                $('select#mncSelects').append(data);
+                                                $("select#mncSelects").multiselect("rebuild");
+                                            },
+                                            error: function (xhr) {
+                                                alert('error');
+                                            }
+                                        })
+                        })
+
+                        $('select#PrvncSelectsMain').change(function () {
+                            var val = $('select#PrvncSelectsMain').val();
+                                $.ajax({
+                                            type: 'post',
+                                            data: { 'id': val },
+                                            url: '@Url.Action("PrvncDropdown", "Web")',
+                                            success: function (data) {
+                                                debugger
+                                                $('select#MncSelectsMain').html('');
+                                                $('select#MncSelectsMain').append(data);
+                                                $("select#MncSelectsMain").multiselect("rebuild");
+                                            },
+                                            error: function (xhr) {
+                                                alert('error');
+                                            }
+                                        })
+                        })
+
+                         $('select#PrvncSelectsMain').change(function () {
+                             $("#currentitemCnt").val(3);
+                            var val = $('select#PrvncSelectsMain').val();
+                            var mncVal = $('select#MncSelectsMain').val();
+                            var search = $('#SearchMain').val();
+                            var SubCat = $('#SubCat').attr("data-target");
+                            var CatId = $('#CatId').attr("data-target");
+                                $.ajax({
+                                            type: 'post',
+                                            data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                            url: '@Url.Action("PrvncDropdownMain", "Web")',
+                                            success: function (data) {
+                                                $("#ProductsPartials").html("");
+                                                $("#ProductsPartials").html(data);
+                                                $("#load-more").css({"display":"inline-block",});
+                                            },
+                                            error: function (xhr) {
+                                                alert('error');
+                                            }
+                                        })
+                        })
+
+                        $('select#MncSelectsMain').change(function () {
+                            $("#currentitemCnt").val(3);
+                            var val = $('select#PrvncSelectsMain').val();
+                            var mncVal = $('select#MncSelectsMain').val();
+                            var search = $('#SearchMain').val();
+                            var SubCat = $('#SubCat').attr("data-target");
+                            var CatId = $('#CatId').attr("data-target");
+                                $.ajax({
+                                            type: 'post',
+                                            data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                            url: '@Url.Action("PrvncDropdownMain", "Web")',
+                                            success: function (data) {
+                                                $("#ProductsPartials").html("");
+                                                $("#ProductsPartials").html(data);
+                                                $("#load-more").css({"display":"inline-block",});
+                                            },
+                                            error: function (xhr) {
+                                                alert('error');
+                                            }
+                                        })
+                        })
+
+
+                        $('#SearchMain').change(function () {
+                            $("#currentitemCnt").val(3);
+                            var val = $('select#PrvncSelectsMain').val();
+                            var mncVal = $('select#MncSelectsMain').val();
+                            var search = $('#SearchMain').val();
+                            var SubCat = $('#SubCat').attr("data-target");
+                            var CatId = $('#CatId').attr("data-target");
+                                $.ajax({
+                                            type: 'post',
+                                            data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                            url: '@Url.Action("PrvncDropdownMain", "Web")',
+                                            success: function (data) {
+                                                $("#ProductsPartials").html("");
+                                                $("#ProductsPartials").html(data);
+                                                $("#load-more").css({"display":"inline-block",});
+                                            },
+                                            error: function (xhr) {
+                                                alert('error');
+                                            }
+                                        })
+                        })
+
+                        $('#SearchMain').bind("enterKey",function(e){
+                            //alert("sdf");
+                            $("#currentitemCnt").val(3);
+                             var val = $('select#PrvncSelectsMain').val();
+                            var mncVal = $('select#MncSelectsMain').val();
+                            var search = $('#SearchMain').val();
+                            var SubCat = $('#SubCat').attr("data-target");
+                            var CatId = $('#CatId').attr("data-target");
+                                $.ajax({
+                                            type: 'post',
+                                            data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                            url: '@Url.Action("PrvncDropdownMain", "Web")',
+                                            success: function (data) {
+                                                $("#ProductsPartials").html("");
+                                                $("#ProductsPartials").html(data);
+                                                $("#load-more").css({"display":"inline-block",});
+                                            },
+                                            error: function (xhr) {
+                                                alert('error');
+                                            }
+                                        })
+                        });
+                        $('#SearchMain').keyup(function(e){
+                            if(e.keyCode == 13)
+                            {
+                              $(this).trigger("enterKey");
+                            }
+                        });
+
+                        //$(document).on("click", "#MyProfileId", function () {
+                        //        debugger
+                        //        alert("sdfse");
+                        //        //var val = $("#SessidWeb").val();
+                        //        // $.ajax({
+                        //        //    type: 'GET',
+                        //        //    url: '@Url.Action("EditUser", "Web")',
+                        //        //    data: { 'id': val },
+                        //        //    success: function (data) {
+                        //        //        debugger
+                        //        //        $("#ProductsPartials").html("");
+                        //        //        $("#ProductsPartials").html(data);
+                        //        //        debugger
+                        //        //        $("#load-more").css({"display":"none",});
+                        //        //    },
+                        //        //    error: function (xhr) {
+                        //        //        alert('error');
+                        //        //    }
+                        //        //})
+                        //    });
 
     </script>
 </body>

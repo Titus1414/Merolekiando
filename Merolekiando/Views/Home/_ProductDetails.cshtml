@@ -201,7 +201,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Prooduct</h5>
                     <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id="GetProdHere">
@@ -335,7 +335,7 @@
         var connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Debug)
         //.withUrl('https://localhost:44303/Chat', options)
-        .withUrl("https://localhost:44303/Chat?token="+sess+"")
+        .withUrl("http://64.20.48.40/Chat?token="+sess+"")
         .configureLogging(signalR.LogLevel.Information)
         .build();
     connection.start().then(() => {
