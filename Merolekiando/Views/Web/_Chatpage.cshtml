@@ -1,13 +1,10 @@
 ﻿@{
 string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dist/browser/signalr.min.js";
 }
-<link rel="stylesheet" href="~/css/all.min.css">
-<link rel="stylesheet" href="~/css/bootstrap.min.css">
-<!--   ALL CSS GOSE HEAR  -->
-<!--   ALL CSS GOSE HEAR  -->
-<link rel="stylesheet" href="~/css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+
 <link rel="stylesheet" href="~/js/loadmore/css/style.css">
+
+
 <style>
         #chat3 .form-control {
     border-color: transparent;
@@ -47,7 +44,7 @@ string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dis
                                         <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
                                                aria-describedby="search-addon" />
                                         <span class="input-group-text border-0" id="search-addon">
-                                            <i class="fas fa-search"></i>
+                                            <i class="fa fa-search"></i>
                                         </span>
                                     </div>
 
@@ -83,7 +80,7 @@ string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dis
 
                             <div class="col-md-6 col-lg-7 col-xl-8">
 
-                                <div class="pt-3 pe-3" data-mdb-perfect-scrollbar="true"
+                                <div class="pt-3 pe-3" data-perfect-scrollbar="true"
                                      style="position: relative; height: 400px" id="MessagesId">
                                 </div>
 
@@ -92,9 +89,9 @@ string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dis
                                          alt="avatar 3" style="width: 40px; height: 100%;">
                                     <input type="text" id="MessageSended" class="form-control form-control-lg" id="exampleFormControlInput2"
                                            placeholder="Type message">
-                                    <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+                                    <a class="ms-1 text-muted" href="#!"><i class="fa fa-paperclip"></i></a>
                                     @*<a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>*@
-                                    <a class="ms-3" id="btnSend" href="#!"><i class="fas fa-paper-plane"></i></a>
+                                    <a class="ms-3" id="btnSend" href="#!"><i class="fa fa-paper-plane"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -104,9 +101,10 @@ string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dis
         </div>
     </div>
 </section>
-
-<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
-<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>
+<script type="text/javascript" src="~/js/mdb.min.js"> </script>
+@*<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>*@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></script>
+@*<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>*@
 <script src="~/js/jquery-1.12.4.min.js"></script>
 <script src="~/dash/js/bootstrap1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>

@@ -9,11 +9,23 @@
     <title>@ViewData["Title"] - Merolekiando</title>
     <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap">
-    <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/css/mdb.min.css">
-    <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/css/all.min.css">
+    @*<link rel="stylesheet" href="~/mdbcsjs/all.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap">
+        <link rel="stylesheet" href="~/mdbcsjs/mdb.min.css">
+        <link rel="stylesheet" href="~/mdbcsjs/mdball.min.css">*@
+
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap">
+        <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/css/mdb.min.css">
+        <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/css/all.min.css">*@
     @*<link rel="stylesheet" href="~/css/mdb.min.css" />*@
+
+    <link rel="stylesheet" href="~/colojscs/font-awesome.min.css">
+    <link rel="stylesheet" href="~/colojscs/style.css">
+    <script nonce="dd2a0761-05f0-4a35-ab9e-3c3342e66e69">(function(w,d){!function(Z,_,ba,bb){Z.zarazData=Z.zarazData||{};Z.zarazData.executed=[];Z.zaraz={deferred:[],listeners:[]};Z.zaraz.q=[];Z.zaraz._f=function(bc){return function(){var bd=Array.prototype.slice.call(arguments);Z.zaraz.q.push({m:bc,a:bd})}};for(const be of["track","set","debug"])Z.zaraz[be]=Z.zaraz._f(be);Z.zaraz.init=()=>{var bf=_.getElementsByTagName(bb)[0],bg=_.createElement(bb),bh=_.getElementsByTagName("title")[0];bh&&(Z.zarazData.t=_.getElementsByTagName("title")[0].text);Z.zarazData.x=Math.random();Z.zarazData.w=Z.screen.width;Z.zarazData.h=Z.screen.height;Z.zarazData.j=Z.innerHeight;Z.zarazData.e=Z.innerWidth;Z.zarazData.l=Z.location.href;Z.zarazData.r=_.referrer;Z.zarazData.k=Z.screen.colorDepth;Z.zarazData.n=_.characterSet;Z.zarazData.o=(new Date).getTimezoneOffset();Z.zarazData.q=[];for(;Z.zaraz.q.length;){const bl=Z.zaraz.q.shift();Z.zarazData.q.push(bl)}bg.defer=!0;for(const bm of[localStorage,sessionStorage])Object.keys(bm||{}).filter((bo=>bo.startsWith("_zaraz_"))).forEach((bn=>{try{Z.zarazData["z_"+bn.slice(7)]=JSON.parse(bm.getItem(bn))}catch{Z.zarazData["z_"+bn.slice(7)]=bm.getItem(bn)}}));bg.referrerPolicy="origin";bg.src="../../../cdn-cgi/zaraz/sd0d9.js?z="+btoa(encodeURIComponent(JSON.stringify(Z.zarazData)));bf.parentNode.insertBefore(bg,bf)};["complete","interactive"].includes(_.readyState)?zaraz.init():Z.addEventListener("DOMContentLoaded",zaraz.init)}(w,d,0,"script");})(window,document);</script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 
     <style>
         .navbar-dark .nav-item .nav-link {
@@ -39,888 +51,970 @@
             background-image: url() !important;
         }
 
+        .dropdown-item {
+            color: black !important;
+        }
+        input {
+        text-transform: none;
+        }
     </style>
+
 </head>
 
 <body>
-    <div class="ajax-loader">
-        <img src="~/img/ZKZx.gif" style="width: 30px;" class="img-responsive" />
-    </div>
-    <!--Main Navigation-->
-    <header>
-        <!-- Jumbotron -->
-        @*p-3 text-center bg-white border-bottom*@
-        <div class="">
-            <div class="container">
-                <div class="row">
-                    <!-- Left elements -->
-                    <div class="col-md-2 d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
-                        @{
-                            var sessVal = Context.Session.GetInt32("WebUserId");
+    <div class="wrapper d-flex align-items-stretch">
+        <div class="ajax-loader">
+            <img src="~/img/ZKZx.gif" style="width: 30px;" class="img-responsive" />
+        </div>
+        @{
+            var sessVal = Context.Session.GetInt32("WebUserId");
+        }
+        <input hidden value="@sessVal" id="SessidWeb" />
+        <input hidden value="" id="Catinput" />
+        <input hidden value="" id="Subcatinput" />
+        <nav id="sidebar">
+            <div class="p-4 pt-5">
+                <a href="#" class="img logo rounded-circle mb-5">
+                    <img src="~/img/WebLogo2.png" style="max-width:100%" />
+                </a>
+
+                <select name="prvnc" id="PrvncSelectsMain" class="form-control">
+                <option selected>Choose Province</option>
+                    @foreach (var item in ViewBag.GetProvnces)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+                <br />
+                <select name="mnclst" id="MncSelectsMain" class="form-control">
+                
+                </select>
+                <br />
+                <input autocomplete="off" type="search" id="SearchMain" class="form-control rounded" placeholder="Search" />
+                <br />
+                <ul class="list-unstyled components mb-5">
+
+                    @{
+                        MerolikandoDBContext _Context = new();
+
+                        var cat = _Context.Categories.ToList();
+                        var code = "";
+                        foreach (var itm in cat)
+                        {
+                            code += "<li>";
+
+                            var subCat = _Context.SubCategories.Where(a => a.CatId == itm.Id).ToList();
+
+                            if (subCat.Count == 1 || subCat.Count == 0)
+                            {
+                                //asp-route-id='" + itm.Name + "'
+                                code += "<a data-target='" + itm.Name + "' id='SubCat'>" + itm.Name + "</a>";
+                            }
+                            else if (subCat.Count > 1)
+                            {
+                                code += "<a href='#homeSubmenu" + itm.Name + "' data-toggle='collapse' class='dropdown-toggle' aria-expanded='true' data-target='" + itm.Name + "' id='SubCat'>" + itm.Name + "</a>";
+
+                                code += "<ul class='collapse list-unstyled' id='homeSubmenu" + itm.Name.Replace(" ","") + "' style='list-style-type: none;'>";
+                                foreach (var item in subCat)
+                                {
+                                    code += "<li>";
+                                    //asp-route-id='" + item.Name + "'
+                                    code += "<a data-target='" + item.Name + "' id='CatId'>" + item.Name + "</a>";
+                                    code += "</li>";
+                                }
+                                code += "</ul>";
+                            }
+                            code += "</li>";
                         }
-                        <input hidden value="@sessVal" id="SessidWeb" />
-                        <a href="#" id="MyProfileId" class="ms-md-2">
-                            <img src="~/dash/Images/logo.png" height="35" />
+                    }
+                    @Html.Raw(code)
+
+
+                </ul>
+
+            </div>
+        </nav>
+
+        <!-- Jumbotron -->
+        <!-- Navbar -->
+        @*<nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <!-- Container wrapper -->
+            <div class="container justify-content-center justify-content-md-between">
+            <!-- Left links -->
+            <ul class="navbar-nav flex-row">
+            <li class="nav-item me-2 me-lg-0">
+            <a class="nav-link" href="#" role="button" data-mdb-toggle="sidenav" data-mdb-target="#sidenav-1"
+            class="btn shadow-0 p-0 me-3" aria-controls="#sidenav-1" aria-haspopup="true">
+            <i class="fas fa-bars me-1"></i>
+            <span>Categories</span>
+            </a>
+            </li>
+            <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+            <a class="nav-link" id="HomeProds" href="/Home/WebIndex">Home</a>
+            </li>
+            @if (!string.IsNullOrEmpty(x.ToString()))
+            {
+            <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+            <a class="nav-link" id="MyProds" href="#">My Products</a>
+            </li>
+            <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+            <a class="nav-link" id="MyFavProds" href="#">My Favorites</a>
+            </li>
+            <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+            <a class="nav-link" id="ChatPageid" href="#">Chat</a>
+            </li>
+            <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+            <a class="nav-link" href="#">Contact</a>
+            </li>
+
+            <button class="btn btn-outline-success" data-mdb-toggle="modal" data-mdb-target="#AddNewModal" data-mdb-ripple-color="dark" type="button">
+            Add New<i class="fas fa-upload ms-2"></i>
+            </button>
+            }
+
+            </ul>
+            <!-- Left links -->
+
+            <button class="btn btn-outline-primary" data-mdb-ripple-color="dark" type="button">
+            Download app<i class="fas fa-download ms-2"></i>
+            </button>
+            </div>
+            <!-- Container wrapper -->
+            </nav>
+            <!-- Navbar -->
+            <!-- Sidenav -->
+            <div id="sidenav-1" class="sidenav" role="navigation" data-mdb-hidden="true" data-mdb-accordion="true">
+            <ul class="sidenav-menu">
+            @{
+            MerolikandoDBContext _Context = new();
+
+            var cat = _Context.Categories.ToList();
+            var code = "";
+            foreach (var itm in cat)
+            {
+            code += "<li class='sidenav-item'>";
+
+            var subCat = _Context.SubCategories.Where(a => a.CatId == itm.Id).ToList();
+
+            if (subCat.Count == 1 || subCat.Count == 0)
+            {
+            //asp-route-id='" + itm.Name + "'
+            code += "<a class='sidenav-link' data-target='" + itm.Name + "' id='SubCat'><i class='fas fa-layer-group pe-3'></i><span>" + itm.Name + "</span></a>";
+            }
+            else if (subCat.Count > 1)
+            {
+            code += "<a class='sidenav-link' data-target='" + itm.Name + "' id='SubCat'><i class='fas fa-layer-group pe-3'></i><span>" + itm.Name + "</span></a>";
+
+            code += "<ul class='sidenav-collapse show'>";
+            foreach (var item in subCat)
+            {
+            code += "<li class='sidenav-item'>";
+            //asp-route-id='" + item.Name + "'
+            code += "<a class='sidenav-link' data-target='" + item.Name + "' id='CatId'>" + item.Name + "</a>";
+            code += "</li>";
+            }
+            code += "</ul>";
+            }
+            code += "</li>";
+            }
+            }
+            @Html.Raw(code)
+
+            </ul>
+            </div>*@
+        <!-- Sidenav -->
+        @*</header>*@
+
+
+        <!--Main Navigation-->
+        <!--Main Navigation-->
+
+        <div id="content" class="p-4 p-md-5">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                        <i class="fa fa-bars"></i>
+                        <span class="sr-only">Toggle Menu</span>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    @{
+
+                        var x = Context.Session.GetInt32("WebUserId");
+                    }
+                    @if (!string.IsNullOrEmpty(x.ToString()))
+                    {
+                        <a class="text-reset" style="margin-left:1%;" href="/Home/WebLogout" aria-expanded="false">
+                            @*<MDBIcon fas icon="sign-out-alt" />*@
+                            <i class="fa fa-sign-out"></i>
                         </a>
+                        <!-- User -->
+                        //<div class="dropdown">
+                        //<a class="text-reset d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+                        //    <img src="https://mdbootstrap.com/img/Photos/Avatars/img (31).jpg" class="rounded-circle" height="22" alt="" loading="lazy" />
+                        //</a>
+                        @*<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">My profile</a></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="/Home/WebLogout">Logout</a></li>
+                            </ul>*@
+                        //</div>
+                    }
+                    else
+                    {
+
+                        <button type="button" style="margin-left:1%;" class="btn btn-outline-secondary" data-toggle="modal" data-target="#exampleModal">
+                            Sign in
+                        </button>
+                    }
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Home/WebIndex">Home</a>
+                            </li>
+
+                            @if (!string.IsNullOrEmpty(x.ToString()))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" id="MyProds" href="#">My Products</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="MyFavProds" href="#">My Favorites</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="navbarDropdownMenuLink" href="#">My Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="ChatPageid" href="#">Chat</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="ContactPageId" href="#">Contact</a>
+                                </li>
+
+                                <button class="btn btn-outline-success" data-toggle="modal" data-target="#AddNewModal" data-ripple-color="dark" type="button">
+                                    Add New<i class="fa fa-upload ms-2"></i>
+                                </button>
+                            }
+                        </ul>
                     </div>
-                    <!-- Left elements -->
-                    <!-- Center elements -->
-                    <div class="col-md-6">
-                        <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
+                </div>
+            </nav>
+
+            @if (ViewBag.alert == "Success" || ViewBag.alert == "")
+            {
+                @*<div class="alert" id="alertExample" role="alert" data-mdb-color="success">
+                    Hello! I am a simple alert
+                    </div>*@
+            }
+            else
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error !</strong> @ViewBag.alert
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+        @*    <script type="text/javascript" src="~/mdbcsjs/mdb.min.js"></script>
+            <script type="text/javascript" src="~/mdbcsjs/all.min.js"></script>*@
+        @*<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
+            <script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>*@
+
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="~/colojscs/popper.js"></script>
+        <script src="~/colojscs/bootstrap.min.js"></script>
+        <script src="~/colojscs/main.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+        <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vaafb692b2aea4879b33c060e79fe94621666317369993" integrity="sha512-0ahDYl866UMhKuYcW078ScMalXqtFJggm7TmlUtp0UlD4eQk0Ixfnm5ykXKvGJNFjLMoortdseTfsRT8oCfgGA==" data-cf-beacon='{"rayId":"7633b22079dbc919","token":"cd0b4b3a733644fc843ef0b185f98241","version":"2022.10.3","si":100}' crossorigin="anonymous"></script>
+
+        <script type="text/javascript">
+
+        $(document).ready(function(){
+            $(".dropdown").removeClass("dropdown bootstrap-select form-control");
+            $(".btn.dropdown-toggle").remove();
+        });
+        
+            $(document).on("click", "#navbarDropdownMenuLink", function () {
+                            var val = $("#SessidWeb").val();
+                             $.ajax({
+                                type: 'GET',
+                                beforeSend: function(){
+                                        $('.ajax-loader').css("visibility", "visible");
+                                    },
+                                url: '@Url.Action("EditUser", "Web")',
+                                data: { 'id': val },
+                                complete: function(){
+                                        $('.ajax-loader').css("visibility", "hidden");
+                                    },
+                                success: function (data) {
+                                    debugger
+                                    $("#ProductsPartials").html("");
+                                    $("#ProductsPartials").html(data);
+                                    debugger
+                                    $("#load-more").css({"display":"none",});
+                                },
+                                error: function (xhr) {
+                                    alert('error');
+                                }
+                            })
+                        });
+                        //$("#SubCat").unbind().click(function() {
+                          $(document).on("click", "#SubCat", function () {
+                              var val1 = $(this).attr("data-target");
+                              $("#Subcatinput").val(val1);
+                              $("#Catinput").val('');
+                              $("#currentitemCnt").val(3);
+                                var val = $('select#PrvncSelectsMain').val();
+                                var mncVal = $('select#MncSelectsMain').val();
+                                var search = $('#SearchMain').val();
+                                var SubCat = $('#Subcatinput').val();
+                                var CatId = $('#Catinput').val();
+
+                              $("ul li #homeSubmenu"+val1.replace(/\s/g, '')).toggleClass('list-unstyled collapse show');
+                            $.ajax({
+                                type: 'post',
+                                beforeSend: function(){
+                                        $('.ajax-loader').css("visibility", "visible");
+                                    },
+
+                                    data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                    url: '@Url.Action("PrvncDropdownMain", "Web")',
+
+                                //url: '@Url.Action("GetProductsByCat", "Home")',
+                                //data: { 'id': val },
+                                complete: function(){
+                                        $('.ajax-loader').css("visibility", "hidden");
+                                    },
+                                success: function (data) {
+                                    debugger
+                                    //$('#WinningModalLong').modal('show');
+                                    $("#ProductsPartials").html("");
+                                    $("#ProductsPartials").html(data);
+                                    debugger
+                                    $("#load-more").css({"display":"inline-block",});
+                                    //var sd = @Html.Raw(@ViewBag.CountProducts)
+                                    // //var sd = $("#CountProducts").val();
+                                    //    if(sd != 0)
+                                    //    {
+                                    //        $("#load-more").css({"display":"none",});
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        $("#load-more").css({"display":"inline-block",});
+                                    //    }
+                                },
+                                error: function (xhr) {
+                                    alert('error');
+                                }
+                            })
+                        });
+                        //$("#CatId").unbind().click(function() {
+                        $(document).on("click", "#CatId", function () {
+                            var val = $(this).attr("data-target");
+                            $("#Catinput").val(val);
+
+                            $("#currentitemCnt").val(3);
+                                var val = $('select#PrvncSelectsMain').val();
+                                var mncVal = $('select#MncSelectsMain').val();
+                                var search = $('#SearchMain').val();
+                                var SubCat = $('#Subcatinput').val();
+                                var CatId = $('#Catinput').val();
+
+                             $.ajax({
+                                type: 'post',
+                                beforeSend: function(){
+                                        $('.ajax-loader').css("visibility", "visible");
+                                    },
+
+                                     data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                    url: '@Url.Action("PrvncDropdownMain", "Web")',
+
+                                //url: '@Url.Action("GetProductsBySubCat", "Home")',
+                                //data: { 'id': val },
+                                complete: function(){
+                                        $('.ajax-loader').css("visibility", "hidden");
+                                    },
+                                success: function (data) {
+                                    debugger
+                                    $("#ProductsPartials").html("");
+                                    $("#ProductsPartials").html(data);
+                                    debugger
+                                    $("#load-more").css({"display":"inline-block",});
+                                    //var sd = @Html.Raw(@ViewBag.CountProducts)
+                                    // //var sd = $("#CountProducts").val();
+                                    //    if(sd != 0)
+                                    //    {
+                                    //        $("#load-more").css({"display":"none",});
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        $("#load-more").css({"display":"inline-block",});
+                                    //    }
+                                },
+                                error: function (xhr) {
+                                    alert('error');
+                                }
+                            })
+                        });
+                        $("#MyProds").unbind().click(function() {
+                        //$(document).on("click", "#MyProds", function () {
+                            $("#currentitemCnt").val(3);
+                             $.ajax({
+                                type: 'post',
+                                beforeSend: function(){
+                                        $('.ajax-loader').css("visibility", "visible");
+                                    },
+                                url: '@Url.Action("GetMyProducts", "Home")',
+                                complete: function(){
+                                        $('.ajax-loader').css("visibility", "hidden");
+                                    },
+                                success: function (data) {
+                                    debugger
+                                    $("#ProductsPartials").html("");
+                                    $("#ProductsPartials").html(data);
+                                    debugger
+                                    $("#load-more").css({"display":"inline-block",});
+                                },
+                                error: function (xhr) {
+                                    alert('error');
+                                }
+                            })
+                        });
+                        $("#ContactPageId").unbind().click(function() {
+                        //$(document).on("click", "#ChatPageid", function () {
+                             $.ajax({
+                                type: 'post',
+                                beforeSend: function(){
+                                        $('.ajax-loader').css("visibility", "visible");
+                                    },
+                                url: '@Url.Action("Contact", "Web")',
+                                complete: function(){
+                                        $('.ajax-loader').css("visibility", "hidden");
+                                    },
+                                success: function (data) {
+                                    debugger
+                                    $("#ProductsPartials").html("");
+                                    $("#ProductsPartials").html(data);
+                                    debugger
+                                    $("#load-more").css({"display":"none",});
+                                },
+                                error: function (xhr) {
+                                    alert('error');
+                                }
+                            })
+                        });
+
+                        $("#ChatPageid").unbind().click(function() {
+                        //$(document).on("click", "#ChatPageid", function () {
+                             $.ajax({
+                                type: 'post',
+                                beforeSend: function(){
+                                        $('.ajax-loader').css("visibility", "visible");
+                                    },
+                                url: '@Url.Action("Chats", "Web")',
+                                complete: function(){
+                                        $('.ajax-loader').css("visibility", "hidden");
+                                    },
+                                success: function (data) {
+                                    debugger
+                                    $("#ProductsPartials").html("");
+                                    $("#ProductsPartials").html(data);
+                                    debugger
+                                    $("#load-more").css({"display":"none",});
+                                },
+                                error: function (xhr) {
+                                    alert('error');
+                                }
+                            })
+                        });
+                        $("#MyFavProds").unbind().click(function() {
+                        //$(document).on("click", "#MyFavProds", function () {
+                            $("#currentitemCnt").val(3);
+                             $.ajax({
+                                type: 'post',
+                                beforeSend: function(){
+                                        $('.ajax-loader').css("visibility", "visible");
+                                    },
+                                url: '@Url.Action("GetMyFavProducts", "Home")',
+                                complete: function(){
+                                        $('.ajax-loader').css("visibility", "hidden");
+                                    },
+                                success: function (data) {
+                                    debugger
+                                    $("#ProductsPartials").html("");
+                                    $("#ProductsPartials").html(data);
+                                    debugger
+                                    $("#load-more").css({"display":"inline-block",});
+                                },
+                                error: function (xhr) {
+                                    alert('error');
+                                }
+                            })
+                        });
+                      mdb.Alert.getInstance(document.getElementById("alertExample")).update({
+                      position: "top-right",
+                      delay: 2000,
+                      autohide: true,
+                      width: "600px",
+                      offset: 20,
+                      stacking: true,
+                      appendToBody: false,
+                    });
+
+                    function doalert(checkboxElem) {
+              if (checkboxElem.checked) {
+                  $("#formIsDelivering5").val(true);
+              } else {
+                $("#formIsDelivering5").val(false);
+              }
+            }
+            function doalert1(checkboxElem) {
+              if (checkboxElem.checked) {
+                  $("#formIsPickup6").val(true);
+              } else {
+                $("#formIsPickup6").val(false);
+              }
+            }
+        </script>
 
 
-                            <select name="prvnc" id="PrvncSelectsMain" class="selectpicker form-control" multiple data-live-search="true">
-                                @foreach (var item in @ViewBag.GetProvnces)
+
+
+
+        <script type="text/javascript">
+            $('select').selectpicker();
+        </script>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    @*<div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                        </div>*@
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs" id="ex1" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active"
+                                   id="ex1-tab-1"
+                                   data-toggle="tab"
+                                   href="#ex1-tabs-1"
+                                   role="tab"
+                                   aria-controls="ex1-tabs-1"
+                                   aria-selected="true">Sign in</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link"
+                                   id="ex1-tab-2"
+                                   data-toggle="tab"
+                                   href="#ex1-tabs-2"
+                                   role="tab"
+                                   aria-controls="ex1-tabs-2"
+                                   aria-selected="false">Sign up</a>
+                            </li>
+                        </ul>
+                        <!-- Tabs navs -->
+                        <!-- Tabs content -->
+                        <div class="tab-content" id="ex1-content">
+                            <div class="tab-pane fade show active"
+                                 id="ex1-tabs-1"
+                                 role="tabpanel"
+                                 aria-labelledby="ex1-tab-1">
+                                <br />
+                                <form method="get" asp-action="WebLoginT" asp-controller="Home">
+                                    <!-- Email input -->
+                                    <div class="form-outline mb-4">
+                                        <input type="text" name="LoginType" value="Custom" hidden />
+                                        <input type="email" name="Email" id="form1Example1" class="form-control" />
+                                        <label class="form-label" for="form1Example1">Email address</label>
+                                    </div>
+
+                                    <!-- Password input -->
+                                    <div class="form-outline mb-4">
+                                        <input type="password" name="Password" required id="form1Example2" class="form-control" />
+                                        <label class="form-label" for="form1Example2">Password</label>
+                                    </div>
+
+                                    <!-- 2 column grid layout for inline styling -->
+                                    <div class="row mb-4">
+                                        <div class="col d-flex justify-content-center">
+                                            <!-- Checkbox -->
+                                            <div class="form-check">
+                                                <input class="form-check-input" required type="checkbox" value="" id="form1Example3" checked />
+                                                <label class="form-check-label" for="form1Example3"> Remember me </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col">
+                                            <!-- Simple link -->
+                                            <a href="#!">Forgot password?</a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit button -->
+                                    <button type="submit" class="btn btn-outline-secondary btn-block">Sign in</button>
+                                </form>
+                                <br />
+                                <div style="text-align:center">
+                                    <a class="btn text-white" style="background-color: #3b5998;" href="/Home/WebLogin?flg=face" role="button">
+                                        <i class="fa fa-facebook-f"></i>
+                                    </a>
+                                    <a class="btn text-white" style="background-color: #dd4b39;" href="/Home/WebLogin?flg=goog" role="button">
+                                        <i class="fa fa-google"></i>
+                                    </a>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
+                                <br />
+                                <form method="get" asp-action="WebLoginT" asp-controller="Home">
+                                    <!-- Email input -->
+                                    <div class="form-outline mb-4">
+                                        <input type="text" id="form0Example0" required name="Name" class="form-control" />
+                                        <input type="text" name="LoginType" value="Custom" hidden />
+                                        <label class="form-label" for="form0Example0">Name</label>
+                                    </div>
+                                    <!-- Email input -->
+                                    <div class="form-outline mb-4">
+                                        <input type="email" id="form1Example1" required name="Email" class="form-control" />
+                                        <label class="form-label" for="form1Example1">Email address</label>
+                                    </div>
+
+                                    <!-- Password input -->
+                                    <div class="form-outline mb-4">
+                                        <input type="password" id="form1Example2" required name="Password" class="form-control" />
+                                        <label class="form-label" for="form1Example2">Password</label>
+                                    </div>
+
+                                    <!-- 2 column grid layout for inline styling -->
+                                    <!-- Submit button -->
+                                    <button type="submit" class="btn btn-outline-secondary btn-block">Sign up</button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                    @*<div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="AddNewModal" tabindex="-1" aria-labelledby="AddNewModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Upload Product</h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="~/Web/ManageProduct" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <div class="col-12">
+                                <label class="visually-hidden" for="inlineFormInputGroupUsername">Title</label>
+                                <div class="input-group">
+                                    @*<div class="input-group-text">a</div>*@
+                                    <input type="text" class="form-control" name="Title" id="inlineFormInputGroupUsername" placeholder="Title" />
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">Category</label>
+                                </div>
+                                <select name="CategoryId" class="custom-select" id="CategoryId">
+                                    <option selected>Choose...</option>
+                                    @foreach (var item in @ViewBag.GetCategories)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <br />
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">Sub Category</label>
+                                </div>
+                                <select name="SubCategoryId" class="custom-select" id="SubCategoryId">
+                                    <option selected>Choose...</option>
+                                    @foreach (var item in @ViewBag.SubCategories)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                </select>
+                            </div>
+
+
+                            <br />
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">Condition</label>
+                                </div>
+                                <select name="Condition" class="custom-select" id="ConditionId">
+                                    <option selected>Choose...</option>
+                                    <option value="New">New</option>
+                                    <option value="Used">Used</option>
+                                </select>
+                            </div>
+
+                            <br />
+
+                            <div class="col-12">
+                                <label class="visually-hidden" for="inlineFormInputGroupUsername">Description</label>
+                                <div class="input-group">
+                                    <textarea class="form-control" name="Description" id="inlineFormInputGroupUsername" placeholder="Description"></textarea>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <div class="col-12">
+                                <label class="visually-hidden" for="inlineFormInputGroupUsername">Price</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="Price" id="inlineFormInputGroupUsername" placeholder="Price" />
+                                </div>
+                            </div>
+
+                            <br />
+                            @*//Province*@
+                            <select name="prvnc" id="PrvncSelects" class="selectpicker form-control" multiple data-live-search="true">
+                                @foreach (var item in ViewBag.GetProvnces)
                                 {
                                     <option value="@item.Id">@item.Name</option>
                                 }
                             </select>
-                            <select name="prvnc" id="MncSelectsMain" class="form-control" multiple data-live-search="true">
-                                @*@foreach (var item in @ViewBag.GetMunicipilies)
+
+                            <br />
+                            <br />
+                            @*//Muncipility*@
+                            <select name="mnclst" id="mncSelects" class="selectpicker form-control" multiple data-live-search="true">
+                                @foreach (var item in ViewBag.GetMunicipilies)
                                 {
                                     <option value="@item.Id">@item.Name</option>
-                                }*@
+                                }
                             </select>
-                            <input autocomplete="off" type="search" id="SearchMain" class="form-control rounded" placeholder="Search" />
-                            <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
-                        </form>
-                    </div>
-                    <!-- Center elements -->
-                    <!-- Right elements -->
-                    <div class="col-md-4 d-flex justify-content-center justify-content-md-end align-items-center">
-                        <div class="d-flex">
-                            <!-- Cart -->
-                            @*<a class="text-reset me-3" href="#">
-                                <span><i class="fas fa-shopping-cart"></i></span>
-                                <span class="badge rounded-pill badge-notification bg-danger">1</span>
-                                </a>*@
-
-                            <!-- Notification -->
-                            <div class="dropdown">
-                                <a class="text-reset me-3 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink"
-                                   role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-bell"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a class="dropdown-item" href="#">Some news</a></li>
-                                    <li><a class="dropdown-item" href="#">Another news</a></li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">Something else here</a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- Languages -->
-                            <div class="dropdown">
-                                <a class="text-reset dropdown-toggle me-3 hidden-arrow" href="#" id="navbarDropdown" role="button"
-                                   data-mdb-toggle="dropdown" aria-expanded="false">
-                                    <MDBIcon fas icon="globe" />
-                                    <i class="fas fa-globe"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-
-                                            <i class="united kingdom flag"></i>English
-                                            <i class="fa fa-check text-success ms-2"></i>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider" />
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#"><i class="poland flag"></i>Polski</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#"><i class="china flag"></i>中文</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#"><i class="japan flag"></i>日本語</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#"><i class="germany flag"></i>Deutsch</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#"><i class="france flag"></i>Français</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#"><i class="spain flag"></i>Español</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#"><i class="russia flag"></i>Русский</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#"><i class="portugal flag"></i>Português</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            @{
-
-                                var x = Context.Session.GetInt32("WebUserId");
-                            }
-                            @if (!string.IsNullOrEmpty(x.ToString()))
-                            {
-                                <a class="text-reset me-3 dropdown-toggle hidden-arrow" href="/Home/WebLogout" aria-expanded="false">
-                                    @*<MDBIcon fas icon="sign-out-alt" />*@
-                                    <i class="fas fa-sign-out"></i>
-                                </a>
-                                <!-- User -->
-                                <div class="dropdown">
-                                    <a class="text-reset dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
-                                   id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                                        <img src="https://mdbootstrap.com/img/Photos/Avatars/img (31).jpg" class="rounded-circle" height="22"
-                                         alt="" loading="lazy" />
-                                    </a>
-                                    @*<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                                        <li><a class="dropdown-item" href="#">My profile</a></li>
-                                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                                        <li><a class="dropdown-item" href="/Home/WebLogout">Logout</a></li>
-                                        </ul>*@
-                                </div>
-                            }
-                            else
-                            {
-
-                                <button type="button" class="btn btn-outline-secondary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
-                                    Sign in
-                                </button>
-                            }
-
-
-                        </div>
-                    </div>
-                    <!-- Right elements -->
-                </div>
-            </div>
-        </div>
-        <!-- Jumbotron -->
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white">
-            <!-- Container wrapper -->
-            <div class="container justify-content-center justify-content-md-between">
-                <!-- Left links -->
-                <ul class="navbar-nav flex-row">
-                    <li class="nav-item me-2 me-lg-0">
-                        <a class="nav-link" href="#" role="button" data-mdb-toggle="sidenav" data-mdb-target="#sidenav-1"
-                           class="btn shadow-0 p-0 me-3" aria-controls="#sidenav-1" aria-haspopup="true">
-                            <i class="fas fa-bars me-1"></i>
-                            <span>Categories</span>
-                        </a>
-                    </li>
-                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                        <a class="nav-link" id="HomeProds" href="/Home/WebIndex">Home</a>
-                    </li>
-                    @if (!string.IsNullOrEmpty(x.ToString()))
-                    {
-                        <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                            <a class="nav-link" id="MyProds" href="#">My Products</a>
-                        </li>
-                        <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                            <a class="nav-link" id="MyFavProds" href="#">My Favorites</a>
-                        </li>
-                        <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                            <a class="nav-link" id="ChatPageid" href="#">Chat</a>
-                        </li>
-                        <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                            <a class="nav-link" href="#">Contact</a>
-                        </li>
-
-                        <button class="btn btn-outline-success" data-mdb-toggle="modal" data-mdb-target="#AddNewModal" data-mdb-ripple-color="dark" type="button">
-                            Add New<i class="fas fa-upload ms-2"></i>
-                        </button>
-                    }
-
-                </ul>
-                <!-- Left links -->
-
-                <button class="btn btn-outline-primary" data-mdb-ripple-color="dark" type="button">
-                    Download app<i class="fas fa-download ms-2"></i>
-                </button>
-            </div>
-            <!-- Container wrapper -->
-        </nav>
-        <!-- Navbar -->
-        <!-- Sidenav -->
-        <div id="sidenav-1" class="sidenav" role="navigation" data-mdb-hidden="true" data-mdb-accordion="true">
-            <ul class="sidenav-menu">
-                @{
-                    MerolikandoDBContext _Context = new();
-
-                    var cat = _Context.Categories.ToList();
-                    var code = "";
-                    foreach (var itm in cat)
-                    {
-                        code += "<li class='sidenav-item'>";
-
-                        var subCat = _Context.SubCategories.Where(a => a.CatId == itm.Id).ToList();
-
-                        if (subCat.Count == 1 || subCat.Count == 0)
-                        {
-                            //asp-route-id='" + itm.Name + "'
-                            code += "<a class='sidenav-link' data-target='" + itm.Name + "' id='SubCat'><i class='fas fa-layer-group pe-3'></i><span>" + itm.Name + "</span></a>";
-                        }
-                        else if (subCat.Count > 1)
-                        {
-                            code += "<a class='sidenav-link' data-target='" + itm.Name + "' id='SubCat'><i class='fas fa-layer-group pe-3'></i><span>" + itm.Name + "</span></a>";
-
-                            code += "<ul class='sidenav-collapse show'>";
-                            foreach (var item in subCat)
-                            {
-                                code += "<li class='sidenav-item'>";
-                                //asp-route-id='" + item.Name + "'
-                                code += "<a class='sidenav-link' data-target='" + item.Name + "' id='CatId'>" + item.Name + "</a>";
-                                code += "</li>";
-                            }
-                            code += "</ul>";
-                        }
-                        code += "</li>";
-                    }
-                }
-                @Html.Raw(code)
-
-            </ul>
-        </div>
-        <!-- Sidenav -->
-
-    </header>
-
-    @if (ViewBag.alert == "Success" || ViewBag.alert == "")
-    {
-        @*<div class="alert" id="alertExample" role="alert" data-mdb-color="success">
-            Hello! I am a simple alert
-            </div>*@
-    }
-    else
-    {
-        <div class="alert" style="margin-left: 22.5%;" id="alertExample" role="alert" data-mdb-color="danger">
-            <p>@ViewBag.alert</p>
-            <button type="button" style="float:right; margin-top:-4%" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    <!--Main Navigation-->
-    <!--Main Navigation-->
-
-    <div class="main_content_iner ">
-
-
-        @RenderBody()
-    </div>
-    <script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
-    <script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>
-    <!-- Custom scripts -->@*
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
-    <script type="text/javascript">
-        //$("#navbarDropdownMenuLink").unbind().click(function() {
-        $(document).on("click", "#navbarDropdownMenuLink", function () {
-                        var val = $("#SessidWeb").val();
-                         $.ajax({
-                            type: 'GET',
-                            beforeSend: function(){
-                                    $('.ajax-loader').css("visibility", "visible");
-                                },
-                            url: '@Url.Action("EditUser", "Web")',
-                            data: { 'id': val },
-                            complete: function(){
-                                    $('.ajax-loader').css("visibility", "hidden");
-                                },
-                            success: function (data) {
-                                debugger
-                                $("#ProductsPartials").html("");
-                                $("#ProductsPartials").html(data);
-                                debugger
-                                $("#load-more").css({"display":"none",});
-                            },
-                            error: function (xhr) {
-                                alert('error');
-                            }
-                        })
-                    });
-
-                    //$("#SubCat").unbind().click(function() {
-                      $(document).on("click", "#SubCat", function () {
-                        var val = $(this).attr("data-target");
-                         $.ajax({
-                            type: 'post',
-                            beforeSend: function(){
-                                    $('.ajax-loader').css("visibility", "visible");
-                                },
-                            url: '@Url.Action("GetProductsByCat", "Home")',
-                            data: { 'id': val },
-                            complete: function(){
-                                    $('.ajax-loader').css("visibility", "hidden");
-                                },
-                            success: function (data) {
-                                debugger
-                                //$('#WinningModalLong').modal('show');
-                                $("#ProductsPartials").html("");
-                                $("#ProductsPartials").html(data);
-                                debugger
-                                $("#load-more").css({"display":"inline-block",});
-                                //var sd = @Html.Raw(@ViewBag.CountProducts)
-                                // //var sd = $("#CountProducts").val();
-                                //    if(sd != 0)
-                                //    {
-                                //        $("#load-more").css({"display":"none",});
-
-                                //    }
-                                //    else
-                                //    {
-                                //        $("#load-more").css({"display":"inline-block",});
-                                //    }
-                            },
-                            error: function (xhr) {
-                                alert('error');
-                            }
-                        })
-                    });
-
-                    //$("#CatId").unbind().click(function() {
-                    $(document).on("click", "#CatId", function () {
-                        var val = $(this).attr("data-target");
-                         $.ajax({
-                            type: 'post',
-                            beforeSend: function(){
-                                    $('.ajax-loader').css("visibility", "visible");
-                                },
-                            url: '@Url.Action("GetProductsBySubCat", "Home")',
-                            data: { 'id': val },
-                            complete: function(){
-                                    $('.ajax-loader').css("visibility", "hidden");
-                                },
-                            success: function (data) {
-                                debugger
-                                $("#ProductsPartials").html("");
-                                $("#ProductsPartials").html(data);
-                                debugger
-                                $("#load-more").css({"display":"inline-block",});
-                                //var sd = @Html.Raw(@ViewBag.CountProducts)
-                                // //var sd = $("#CountProducts").val();
-                                //    if(sd != 0)
-                                //    {
-                                //        $("#load-more").css({"display":"none",});
-                                //    }
-                                //    else
-                                //    {
-                                //        $("#load-more").css({"display":"inline-block",});
-                                //    }
-                            },
-                            error: function (xhr) {
-                                alert('error');
-                            }
-                        })
-                    });
-
-                    $("#MyProds").unbind().click(function() {
-                    //$(document).on("click", "#MyProds", function () {
-                        $("#currentitemCnt").val(3);
-                         $.ajax({
-                            type: 'post',
-                            beforeSend: function(){
-                                    $('.ajax-loader').css("visibility", "visible");
-                                },
-                            url: '@Url.Action("GetMyProducts", "Home")',
-                            complete: function(){
-                                    $('.ajax-loader').css("visibility", "hidden");
-                                },
-                            success: function (data) {
-                                debugger
-                                $("#ProductsPartials").html("");
-                                $("#ProductsPartials").html(data);
-                                debugger
-                                $("#load-more").css({"display":"inline-block",});
-                            },
-                            error: function (xhr) {
-                                alert('error');
-                            }
-                        })
-                    });
-
-                    $("#ChatPageid").unbind().click(function() {
-                    //$(document).on("click", "#ChatPageid", function () {
-                         $.ajax({
-                            type: 'post',
-                            beforeSend: function(){
-                                    $('.ajax-loader').css("visibility", "visible");
-                                },
-                            url: '@Url.Action("Chats", "Web")',
-                            complete: function(){
-                                    $('.ajax-loader').css("visibility", "hidden");
-                                },
-                            success: function (data) {
-                                debugger
-                                $("#ProductsPartials").html("");
-                                $("#ProductsPartials").html(data);
-                                debugger
-                                $("#load-more").css({"display":"none",});
-                            },
-                            error: function (xhr) {
-                                alert('error');
-                            }
-                        })
-                    });
-
-                    $("#MyFavProds").unbind().click(function() {
-                    //$(document).on("click", "#MyFavProds", function () {
-                        $("#currentitemCnt").val(3);
-                         $.ajax({
-                            type: 'post',
-                            beforeSend: function(){
-                                    $('.ajax-loader').css("visibility", "visible");
-                                },
-                            url: '@Url.Action("GetMyFavProducts", "Home")',
-                            complete: function(){
-                                    $('.ajax-loader').css("visibility", "hidden");
-                                },
-                            success: function (data) {
-                                debugger
-                                $("#ProductsPartials").html("");
-                                $("#ProductsPartials").html(data);
-                                debugger
-                                $("#load-more").css({"display":"inline-block",});
-                            },
-                            error: function (xhr) {
-                                alert('error');
-                            }
-                        })
-                    });
-
-
-
-                  mdb.Alert.getInstance(document.getElementById("alertExample")).update({
-                  position: "top-right",
-                  delay: 2000,
-                  autohide: true,
-                  width: "600px",
-                  offset: 20,
-                  stacking: true,
-                  appendToBody: false,
-                });
-                $('select').selectpicker();
-
-                function doalert(checkboxElem) {
-          if (checkboxElem.checked) {
-              $("#formIsDelivering5").val(true);
-          } else {
-            $("#formIsDelivering5").val(false);
-          }
-        }
-        function doalert1(checkboxElem) {
-          if (checkboxElem.checked) {
-              $("#formIsPickup6").val(true);
-          } else {
-            $("#formIsPickup6").val(false);
-          }
-        }
-    </script>
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
-    <script src="~/js/jquery-1.12.4.min.js"></script>
-    <script src="~/dash/js/bootstrap1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-
-    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">*@
-    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
-
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                @*<div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-                    </div>*@
-                <div class="modal-body">
-                    <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link active"
-                               id="ex1-tab-1"
-                               data-mdb-toggle="tab"
-                               href="#ex1-tabs-1"
-                               role="tab"
-                               aria-controls="ex1-tabs-1"
-                               aria-selected="true">Sign in</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link"
-                               id="ex1-tab-2"
-                               data-mdb-toggle="tab"
-                               href="#ex1-tabs-2"
-                               role="tab"
-                               aria-controls="ex1-tabs-2"
-                               aria-selected="false">Sign up</a>
-                        </li>
-                    </ul>
-                    <!-- Tabs navs -->
-                    <!-- Tabs content -->
-                    <div class="tab-content" id="ex1-content">
-                        <div class="tab-pane fade show active"
-                             id="ex1-tabs-1"
-                             role="tabpanel"
-                             aria-labelledby="ex1-tab-1">
-                            <form method="get" asp-action="WebLoginT" asp-controller="Home">
-                                <!-- Email input -->
-                                <div class="form-outline mb-4">
-                                    <input type="text" name="LoginType" value="Custom" hidden />
-                                    <input type="email" name="Email" id="form1Example1" class="form-control" />
-                                    <label class="form-label" for="form1Example1">Email address</label>
-                                </div>
-
-                                <!-- Password input -->
-                                <div class="form-outline mb-4">
-                                    <input type="password" name="Password" required id="form1Example2" class="form-control" />
-                                    <label class="form-label" for="form1Example2">Password</label>
-                                </div>
-
-                                <!-- 2 column grid layout for inline styling -->
-                                <div class="row mb-4">
-                                    <div class="col d-flex justify-content-center">
-                                        <!-- Checkbox -->
-                                        <div class="form-check">
-                                            <input class="form-check-input" required type="checkbox" value="" id="form1Example3" checked />
-                                            <label class="form-check-label" for="form1Example3"> Remember me </label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col">
-                                        <!-- Simple link -->
-                                        <a href="#!">Forgot password?</a>
-                                    </div>
-                                </div>
-
-                                <!-- Submit button -->
-                                <button type="submit" class="btn btn-outline-secondary btn-block">Sign in</button>
-                            </form>
                             <br />
-                            <div style="text-align:center">
-                                <a class="btn text-white" style="background-color: #3b5998;" href="/Home/WebLogin?flg=face" role="button">
-                                    <i class="fab fa-facebook-f"></i>
-                                </a>
-                                <a class="btn text-white" style="background-color: #dd4b39;" href="/Home/WebLogin?flg=goog" role="button">
-                                    <i class="fab fa-google"></i>
-                                </a>
+                            <div class="col-auto">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="form11Example4" checked />
+                                    <label class="form-check-label" for="form11Example4">
+                                        Firme en el percio
+                                    </label>
+                                </div>
                             </div>
-
+                            <br />
+                            <div class="col-auto">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" onchange="doalert(this)" name="IsDelivering" value="" type="checkbox" id="formIsDelivering5" />
+                                    <label class="form-check-label" for="formIsDelivering5">
+                                        Delivery
+                                    </label>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-auto">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" value="" name="IsPickup" onchange="doalert1(this)" type="checkbox" id="formIsPickup6" />
+                                    <label class="form-check-label" for="formIsPickup6">
+                                        Pickup
+                                    </label>
+                                </div>
+                            </div>
+                            <br />
+                            <input type="file" name="images" class="dimmy" id="image-input" multiple />
+                            <div class="preview-area"></div>
                         </div>
-                        <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
-                            <form method="get" asp-action="WebLoginT" asp-controller="Home">
-                                <!-- Email input -->
-                                <div class="form-outline mb-4">
-                                    <input type="text" id="form0Example0" required name="Name" class="form-control" />
-                                    <input type="text" name="LoginType" value="Custom" hidden />
-                                    <label class="form-label" for="form0Example0">Name</label>
-                                </div>
-                                <!-- Email input -->
-                                <div class="form-outline mb-4">
-                                    <input type="email" id="form1Example1" required name="Email" class="form-control" />
-                                    <label class="form-label" for="form1Example1">Email address</label>
-                                </div>
-
-                                <!-- Password input -->
-                                <div class="form-outline mb-4">
-                                    <input type="password" id="form1Example2" required name="Password" class="form-control" />
-                                    <label class="form-label" for="form1Example2">Password</label>
-                                </div>
-
-                                <!-- 2 column grid layout for inline styling -->
-                                <!-- Submit button -->
-                                <button type="submit" class="btn btn-outline-secondary btn-block">Sign up</button>
-                            </form>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
                         </div>
+                    </form>
 
-                    </div>
                 </div>
-                @*<div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                    </div>*@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="AddNewModal" tabindex="-1" aria-labelledby="AddNewModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="post" action="~/Web/ManageProduct" enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <div class="col-12">
-                            <label class="visually-hidden" for="inlineFormInputGroupUsername">Title</label>
-                            <div class="input-group">
-                                @*<div class="input-group-text">a</div>*@
-                                <input type="text" class="form-control" name="Title" id="inlineFormInputGroupUsername" placeholder="Title" />
-                            </div>
-                        </div>
-
-                        <br />
-
-                        <select name="CategoryId" class="form-select" aria-label="Default select example">
-                            <option selected>Select Category</option>
-                            @foreach (var item in @ViewBag.GetCategories)
-                            {
-                                <option value="@item.Id">@item.Name</option>
-                            }
-                        </select>
-
-                        <br />
-
-                        <select name="SubCategoryId" class="form-select" aria-label="Default select example">
-                            <option selected>Select Sub Category</option>
-                            @foreach (var item in @ViewBag.SubCategories)
-                            {
-                                <option value="@item.Id">@item.Name</option>
-                            }
-                        </select>
-
-                        <br />
-
-                        <select name="Condition" class="form-select" aria-label="Default select example">
-                            <option selected>Select Condition</option>
-                            <option value="New">New</option>
-                            <option value="Used">Used</option>
-                        </select>
-
-                        <br />
-
-                        <div class="col-12">
-                            <label class="visually-hidden" for="inlineFormInputGroupUsername">Description</label>
-                            <div class="input-group">
-                                <textarea class="form-control" name="Description" id="inlineFormInputGroupUsername" placeholder="Description"></textarea>
-                            </div>
-                        </div>
-
-                        <br />
-
-                        <div class="col-12">
-                            <label class="visually-hidden" for="inlineFormInputGroupUsername">Price</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="Price" id="inlineFormInputGroupUsername" placeholder="Price" />
-                            </div>
-                        </div>
-
-                        <br />
-                        @*//Province*@
-                        <select name="prvnc" id="PrvncSelects" class="selectpicker form-control" multiple data-live-search="true">
-                            @foreach (var item in @ViewBag.GetProvnces)
-                            {
-                                <option value="@item.Id">@item.Name</option>
-                            }
-                        </select>
-
-                        <br />
-                        <br />
-                        @*//Muncipility*@
-                        <select name="mnclst" id="mncSelects" class="form-control" multiple data-live-search="true">
-                            @*<option value="1">Mustard</option>
-                                <option value="2">Ketchup</option>
-                                <option value="3">Relish</option>*@
-                        </select>
-                        <br />
-                        <div class="col-auto">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="form11Example4" checked />
-                                <label class="form-check-label" for="form11Example4">
-                                    Firme en el percio
-                                </label>
-                            </div>
-                        </div>
-                        <br />
-                        <div class="col-auto">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" onchange="doalert(this)" name="IsDelivering" value="" type="checkbox" id="formIsDelivering5" />
-                                <label class="form-check-label" for="formIsDelivering5">
-                                    Delivery
-                                </label>
-                            </div>
-                        </div>
-                        <br />
-                        <div class="col-auto">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" value="" name="IsPickup" onchange="doalert1(this)" type="checkbox" id="formIsPickup6" />
-                                <label class="form-check-label" for="formIsPickup6">
-                                    Pickup
-                                </label>
-                            </div>
-                        </div>
-                        <br />
-                        <input type="file" name="images" class="dimmy" id="image-input" multiple />
-                        <div class="preview-area"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-    </div>
+    
     <script>
-                //$('select#PrvncSelects').change(function(e) {
-                //        alert("asdfef");
+        //$('select#PrvncSelects').change(function(e) {
+        //        alert("asdfef");
+        //    });
+            //$('select#PrvncSelects').change(function () {
+            //        var val = $('select#PrvncSelects').val();
+            //            $.ajax({
+            //                        type: 'post',
+            //                        data: { 'id': val },
+            //                        url: '@Url.Action("PrvncDropdown", "Web")',
+            //                        success: function (data) {
+            //                            $('select#mncSelects').html('');
+            //                            $('select#mncSelects').append(data);
+            //                            $("select#mncSelects").multiselect("rebuild");
+            //                        },
+            //                        error: function (xhr) {
+            //                            alert('error');
+            //                        }
+            //                    })
+            //    })
+
+
+                //$('select#PrvncSelectsMain').change(function () {
+                //    var val = $('select#PrvncSelectsMain').val();
+                //        $.ajax({
+                //                    type: 'post',
+                //                    data: { 'id': val },
+                //                    url: '@Url.Action("PrvncDropdown", "Web")',
+                //                    success: function (data) {
+                //                        debugger
+                //                        $('select#MncSelectsMain').html('');
+                //                        $('select#MncSelectsMain').append(data);
+                //                        $("select#MncSelectsMain").multiselect("rebuild");
+                //                    },
+                //                    error: function (xhr) {
+                //                        alert('error');
+                //                    }
+                //                })
+                //})
+                 $('select#PrvncSelectsMain').change(function () {
+                     $("#currentitemCnt").val(3);
+                    var val = $('select#PrvncSelectsMain').val();
+                    var mncVal = $('select#MncSelectsMain').val();
+                    var search = $('#SearchMain').val();
+                    var SubCat = $('#Subcatinput').val();
+                    var CatId = $('#Catinput').val();
+
+                     $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("PrvncDropdown", "Web")',
+                            //dataType: "json",
+                            data: {'id': val},
+                            success: function (data) {
+                                    $("#MncSelectsMain").html("");
+                                    $("#MncSelectsMain").append(data);
+                                   }
+                          });
+
+                        $.ajax({
+                                    type: 'post',
+                                    data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                    url: '@Url.Action("PrvncDropdownMain", "Web")',
+                                    success: function (data) {
+                                        $("#ProductsPartials").html("");
+                                        $("#ProductsPartials").html(data);
+                                        $("#load-more").css({"display":"inline-block",});
+                                    },
+                                    error: function (xhr) {
+                                        alert('error');
+                                    }
+                                })
+                });
+
+
+                $('select#MncSelectsMain').change(function () {
+                    $("#currentitemCnt").val(3);
+                    var val = $('select#PrvncSelectsMain').val();
+                    var mncVal = $('select#MncSelectsMain').val();
+                    var search = $('#SearchMain').val();
+                     var SubCat = $('#Subcatinput').val();
+                    var CatId = $('#Catinput').val();
+                        $.ajax({
+                                    type: 'post',
+                                    data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                    url: '@Url.Action("PrvncDropdownMain", "Web")',
+                                    success: function (data) {
+                                        $("#ProductsPartials").html("");
+                                        $("#ProductsPartials").html(data);
+                                        $("#load-more").css({"display":"inline-block",});
+                                    },
+                                    error: function (xhr) {
+                                        alert('error');
+                                    }
+                                })
+                })
+                $('#SearchMain').change(function () {
+                    $("#currentitemCnt").val(3);
+                    var val = $('select#PrvncSelectsMain').val();
+                    var mncVal = $('select#MncSelectsMain').val();
+                    var search = $('#SearchMain').val();
+                     var SubCat = $('#Subcatinput').val();
+                    var CatId = $('#Catinput').val();
+                        $.ajax({
+                                    type: 'post',
+                                    data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                    url: '@Url.Action("PrvncDropdownMain", "Web")',
+                                    success: function (data) {
+                                        $("#ProductsPartials").html("");
+                                        $("#ProductsPartials").html(data);
+                                        $("#load-more").css({"display":"inline-block",});
+                                        $('#SearchMain').val('');
+                                    },
+                                    error: function (xhr) {
+                                        alert('error');
+                                    }
+                                })
+                })
+                $('#SearchMain').bind("enterKey",function(e){
+                    //alert("sdf");
+                    $("#currentitemCnt").val(3);
+                     var val = $('select#PrvncSelectsMain').val();
+                    var mncVal = $('select#MncSelectsMain').val();
+                    var search = $('#SearchMain').val();
+                     var SubCat = $('#Subcatinput').val();
+                    var CatId = $('#Catinput').val();
+                        $.ajax({
+                                    type: 'post',
+                                    data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
+                                    url: '@Url.Action("PrvncDropdownMain", "Web")',
+                                    success: function (data) {
+                                        $("#ProductsPartials").html("");
+                                        $("#ProductsPartials").html(data);
+                                        $("#load-more").css({"display":"inline-block",});
+                                        $('#SearchMain').val('');
+                                    },
+                                    error: function (xhr) {
+                                        alert('error');
+                                    }
+                                })
+                });
+                $('#SearchMain').keyup(function(e){
+                    if(e.keyCode == 13)
+                    {
+                      $(this).trigger("enterKey");
+                    }
+                });
+                //$(document).on("click", "#MyProfileId", function () {
+                //        debugger
+                //        alert("sdfse");
+                //        //var val = $("#SessidWeb").val();
+                //        // $.ajax({
+                //        //    type: 'GET',
+                //        //    url: '@Url.Action("EditUser", "Web")',
+                //        //    data: { 'id': val },
+                //        //    success: function (data) {
+                //        //        debugger
+                //        //        $("#ProductsPartials").html("");
+                //        //        $("#ProductsPartials").html(data);
+                //        //        debugger
+                //        //        $("#load-more").css({"display":"none",});
+                //        //    },
+                //        //    error: function (xhr) {
+                //        //        alert('error');
+                //        //    }
+                //        //})
                 //    });
-
-                    $('select#PrvncSelects').change(function () {
-                            var val = $('select#PrvncSelects').val();
-                                $.ajax({
-                                            type: 'post',
-                                            data: { 'id': val },
-                                            url: '@Url.Action("PrvncDropdown", "Web")',
-                                            success: function (data) {
-                                                $('select#mncSelects').html('');
-                                                $('select#mncSelects').append(data);
-                                                $("select#mncSelects").multiselect("rebuild");
-                                            },
-                                            error: function (xhr) {
-                                                alert('error');
-                                            }
-                                        })
-                        })
-
-                        $('select#PrvncSelectsMain').change(function () {
-                            var val = $('select#PrvncSelectsMain').val();
-                                $.ajax({
-                                            type: 'post',
-                                            data: { 'id': val },
-                                            url: '@Url.Action("PrvncDropdown", "Web")',
-                                            success: function (data) {
-                                                debugger
-                                                $('select#MncSelectsMain').html('');
-                                                $('select#MncSelectsMain').append(data);
-                                                $("select#MncSelectsMain").multiselect("rebuild");
-                                            },
-                                            error: function (xhr) {
-                                                alert('error');
-                                            }
-                                        })
-                        })
-
-                         $('select#PrvncSelectsMain').change(function () {
-                             $("#currentitemCnt").val(3);
-                            var val = $('select#PrvncSelectsMain').val();
-                            var mncVal = $('select#MncSelectsMain').val();
-                            var search = $('#SearchMain').val();
-                            var SubCat = $('#SubCat').attr("data-target");
-                            var CatId = $('#CatId').attr("data-target");
-                                $.ajax({
-                                            type: 'post',
-                                            data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
-                                            url: '@Url.Action("PrvncDropdownMain", "Web")',
-                                            success: function (data) {
-                                                $("#ProductsPartials").html("");
-                                                $("#ProductsPartials").html(data);
-                                                $("#load-more").css({"display":"inline-block",});
-                                            },
-                                            error: function (xhr) {
-                                                alert('error');
-                                            }
-                                        })
-                        })
-
-                        $('select#MncSelectsMain').change(function () {
-                            $("#currentitemCnt").val(3);
-                            var val = $('select#PrvncSelectsMain').val();
-                            var mncVal = $('select#MncSelectsMain').val();
-                            var search = $('#SearchMain').val();
-                            var SubCat = $('#SubCat').attr("data-target");
-                            var CatId = $('#CatId').attr("data-target");
-                                $.ajax({
-                                            type: 'post',
-                                            data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
-                                            url: '@Url.Action("PrvncDropdownMain", "Web")',
-                                            success: function (data) {
-                                                $("#ProductsPartials").html("");
-                                                $("#ProductsPartials").html(data);
-                                                $("#load-more").css({"display":"inline-block",});
-                                            },
-                                            error: function (xhr) {
-                                                alert('error');
-                                            }
-                                        })
-                        })
-
-
-                        $('#SearchMain').change(function () {
-                            $("#currentitemCnt").val(3);
-                            var val = $('select#PrvncSelectsMain').val();
-                            var mncVal = $('select#MncSelectsMain').val();
-                            var search = $('#SearchMain').val();
-                            var SubCat = $('#SubCat').attr("data-target");
-                            var CatId = $('#CatId').attr("data-target");
-                                $.ajax({
-                                            type: 'post',
-                                            data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
-                                            url: '@Url.Action("PrvncDropdownMain", "Web")',
-                                            success: function (data) {
-                                                $("#ProductsPartials").html("");
-                                                $("#ProductsPartials").html(data);
-                                                $("#load-more").css({"display":"inline-block",});
-                                            },
-                                            error: function (xhr) {
-                                                alert('error');
-                                            }
-                                        })
-                        })
-
-                        $('#SearchMain').bind("enterKey",function(e){
-                            //alert("sdf");
-                            $("#currentitemCnt").val(3);
-                             var val = $('select#PrvncSelectsMain').val();
-                            var mncVal = $('select#MncSelectsMain').val();
-                            var search = $('#SearchMain').val();
-                            var SubCat = $('#SubCat').attr("data-target");
-                            var CatId = $('#CatId').attr("data-target");
-                                $.ajax({
-                                            type: 'post',
-                                            data: { 'id': val, 'mncVal': mncVal, 'search': search,'CatId':CatId,'SubcateId':SubCat },
-                                            url: '@Url.Action("PrvncDropdownMain", "Web")',
-                                            success: function (data) {
-                                                $("#ProductsPartials").html("");
-                                                $("#ProductsPartials").html(data);
-                                                $("#load-more").css({"display":"inline-block",});
-                                            },
-                                            error: function (xhr) {
-                                                alert('error');
-                                            }
-                                        })
-                        });
-                        $('#SearchMain').keyup(function(e){
-                            if(e.keyCode == 13)
-                            {
-                              $(this).trigger("enterKey");
-                            }
-                        });
-
-                        //$(document).on("click", "#MyProfileId", function () {
-                        //        debugger
-                        //        alert("sdfse");
-                        //        //var val = $("#SessidWeb").val();
-                        //        // $.ajax({
-                        //        //    type: 'GET',
-                        //        //    url: '@Url.Action("EditUser", "Web")',
-                        //        //    data: { 'id': val },
-                        //        //    success: function (data) {
-                        //        //        debugger
-                        //        //        $("#ProductsPartials").html("");
-                        //        //        $("#ProductsPartials").html(data);
-                        //        //        debugger
-                        //        //        $("#load-more").css({"display":"none",});
-                        //        //    },
-                        //        //    error: function (xhr) {
-                        //        //        alert('error');
-                        //        //    }
-                        //        //})
-                        //    });
-
     </script>
 </body>
 </html>

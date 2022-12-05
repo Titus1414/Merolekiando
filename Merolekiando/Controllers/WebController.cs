@@ -9,6 +9,7 @@ using Merolekiando.Models.Dtos;
 using Merolekiando.Models.WebDtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,17 @@ namespace Merolekiando.Controllers
             _Context = Context;
             _auth = auth;
             _token = token;
+        }
+        public async Task<IActionResult> Contact() 
+        {
+            var dt = await _Context.Users.Where(a => a.LoginType == "Admin").FirstOrDefaultAsync();
+        
+            return PartialView("~/Views/Web/_Contact.cshtml", dt);
+        }
+        public async Task<IActionResult> Sendverify([FromForm] VerifyDto dto)
+        {
+            var result = _auth.SendVerification(dto);
+            return PartialView("~/Views/Web/_MyUersProfile.cshtml", result.Result);
         }
         public IActionResult Index()
         {
@@ -55,28 +67,217 @@ namespace Merolekiando.Controllers
         {
             var sd = from t1 in _Context.Municipalities
                      where id.Contains((int)t1.PrvId)
+                     select new { t1.Id, t1.Name };
+
+            List<Municipality> lst = new();
+
+            foreach (var item in sd.ToList())
+            {
+                Municipality dt = new();
+                dt.Name = item.Name;
+                dt.Id = item.Id;
+                lst.Add(dt);
+            }
+            //return Json(sd.ToList()); //Content(sd.ToList());
+            return PartialView("~/Views/Web/_DropdownMncs.cshtml", lst);
+        }
+        public IActionResult PrvncDropdownMdl(List<int> id)
+        {
+            var sd = from t1 in _Context.Municipalities
+                     where id.Contains((int)t1.PrvId)
 
                      select t1;
 
-            return PartialView("~/Views/Web/_DropdownMncs.cshtml", sd.ToList());
+            return PartialView("~/Views/Web/_DropdownMncsMdl.cshtml", sd.ToList());
         }
         public IActionResult PrvncDropdownMain(List<int> id, List<int> mncVal, string search, string CatId, string SubcateId)
         {
-            var cat = _Context.Categories.Where(a => a.Name == CatId).FirstOrDefault();
-            var subcat = _Context.SubCategories.Where(a => a.Name == SubcateId).FirstOrDefault();
+            var dt = _Context.Products.Where(a => a.IsActive == true && a.IsSold != true).ToList();
+            if (!string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count > 0)
+            {
+                var res = from t1 in _Context.ProdProvinces
+                          where id.Contains((int)t1.ProvinceId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.Title.Contains(search) || t1.Description.Contains(search)
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (!string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count > 0)
+            {
+                var sd = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
 
-            var dt = from t1 in _Context.Products
-                     join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
-                     from pi in f.DefaultIfEmpty()
-                     join t3 in _Context.ProdProvinces on t1.Id equals t3.Pid
-                     join t4 in _Context.ProdMunicipalities on t1.Id equals t4.Pid
-                     join t5 in _Context.Categories on t1.CategoryId equals t5.Id into a
-                     from a1 in a.DefaultIfEmpty()
-                     join t6 in _Context.SubCategories on t1.SubCategoryId equals t6.Id into ab
-                     from a2 in ab.DefaultIfEmpty()
-                     where id.Contains((int)t3.Id) || mncVal.Contains(t4.Id) || search.Contains(t1.Title) || search.Contains(t1.Description) && t1.IsActive == true && t1.IsSold != true
-                     select new { t1.Id, t1.Title, t1.Price, pi.Image, a1.Name, t1.IsPromoted, t1.SellerId };
+                var res = from t1 in _Context.ProdProvinces
+                          where id.Contains((int)t1.ProvinceId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.CategoryId == sd.Id && t1.Title.Contains(search) || t1.Description.Contains(search)
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count == 0)
+            {
+                var sd = _Context.SubCategories.Where(a => a.Name == CatId).FirstOrDefault();
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                var res = from t1 in _Context.ProdProvinces
+                          where id.Contains((int)t1.ProvinceId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.CategoryId == sda.Id && t1.SubCategoryId == sd.Id && t1.Title.Contains(search) || t1.Description.Contains(search)
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (!string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count > 0)
+            {
+                var sd = _Context.SubCategories.Where(a => a.Name == CatId).FirstOrDefault();
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                var res = from t1 in _Context.ProdMunicipalities
+                          where mncVal.Contains((int)t1.MncId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.SubCategoryId == sd.Id && t1.CategoryId == sda.Id && t1.Title.Contains(search) || t1.Description.Contains(search)
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (!string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count == 0)
+            {
+                var sd = _Context.SubCategories.Where(a => a.Name == CatId).FirstOrDefault();
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
 
+                var res = from t1 in _Context.ProdProvinces
+                          where id.Contains((int)t1.ProvinceId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.CategoryId == sda.Id && t1.SubCategoryId == sd.Id
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (!string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count > 0)
+            {
+                var sd = _Context.SubCategories.Where(a => a.Name == CatId).FirstOrDefault();
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                var res = from t1 in _Context.ProdMunicipalities
+                          where mncVal.Contains((int)t1.MncId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.CategoryId == sd.Id && t1.SubCategoryId == sda.Id
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (!string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count == 0 && mncVal.Count == 0)
+            {
+                var sd = _Context.SubCategories.Where(a => a.Name == CatId).FirstOrDefault();
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                var dts = from t1 in _Context.Products
+                          where t1.IsActive == true && t1.IsSold != true && t1.CategoryId == sda.Id && t1.SubCategoryId == sd.Id && search.Contains(t1.Title) || search.Contains(t1.Description)
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (!string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count == 0 && mncVal.Count == 0)
+            {
+                var sd = _Context.SubCategories.Where(a => a.Name == CatId).FirstOrDefault();
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                dt = _Context.Products.Where(a => a.IsActive == true && a.IsSold != true && a.CategoryId == sd.Id && a.SubCategoryId == sda.Id && (search.Contains(a.Title) || search.Contains(a.Description))).ToList();
+            }
+            else if (!string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(CatId) && string.IsNullOrEmpty(SubcateId) && id.Count == 0 && mncVal.Count == 0)
+            {
+                var sd = _Context.SubCategories.Where(a => a.Name == CatId).FirstOrDefault();
+                dt = _Context.Products.Where(a => a.IsActive == true && a.IsSold != true && a.CategoryId == sd.Id && (search.Contains(a.Title) || search.Contains(a.Description))).ToList();
+            }
+            else if (!string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && string.IsNullOrEmpty(SubcateId) && id.Count == 0 && mncVal.Count == 0)
+            {
+                dt = _Context.Products.Where(a => a.IsActive == true && a.IsSold != true && (search.Contains(a.Title) || search.Contains(a.Description))).ToList();
+            }
+            else if (string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count == 0 && mncVal.Count == 0)
+            {
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                dt = _Context.Products.Where(a => a.IsActive == true && a.IsSold != true && a.CategoryId == sda.Id).ToList();
+            }
+            else if (string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count == 0 && mncVal.Count == 0)
+            {
+                var sd = _Context.SubCategories.Where(a => a.Name == CatId).FirstOrDefault();
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                dt = _Context.Products.Where(a => a.IsActive == true && a.IsSold != true && a.CategoryId == sda.Id && a.SubCategoryId == sd.Id).ToList();
+            }
+            else if (string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count > 0)
+            {
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                var res = from t1 in _Context.ProdMunicipalities
+                          where mncVal.Contains((int)t1.MncId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.CategoryId == sda.Id
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count > 0)
+            {
+                var sd = _Context.SubCategories.Where(a => a.Name == CatId).FirstOrDefault();
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                var res = from t1 in _Context.ProdMunicipalities
+                          where mncVal.Contains((int)t1.MncId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.CategoryId == sda.Id && t1.SubCategoryId == sd.Id
+                          select t1;
+                dt = dts.ToList();
+                //var mncs = _Context.ProdMunicipalities.Where(a => mncVal.Contains(Convert.ToInt32(a.MncId))).ToList();
+                //dt = _Context.Products.Where(a => mncs.Contains(a.Id) && a.IsActive == true && a.IsSold != true && a.CategoryId == sd.Id && a.SubCategoryId == sda.Id).ToList();
+            }
+            else if (string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count == 0)
+            {
+                var res = from t1 in _Context.ProdProvinces
+                          where id.Contains((int)t1.ProvinceId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count == 0)
+            {
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                var res = from t1 in _Context.ProdProvinces
+                          where id.Contains((int)t1.ProvinceId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.CategoryId == sda.Id
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count > 0)
+            {
+                var res = from t1 in _Context.ProdMunicipalities
+                          where id.Contains((int)t1.MncId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true
+                          select t1;
+                dt = dts.ToList();
+            }
+            else if (!string.IsNullOrEmpty(search) && string.IsNullOrEmpty(CatId) && !string.IsNullOrEmpty(SubcateId) && id.Count > 0 && mncVal.Count == 0)
+            {
+                var sda = _Context.Categories.Where(a => a.Name == SubcateId).FirstOrDefault();
+                var res = from t1 in _Context.ProdMunicipalities
+                          where id.Contains((int)t1.MncId)
+                          select t1.Pid;
+                var sa = res.ToList();
+                var dts = from t1 in _Context.Products
+                          where sa.Contains(t1.Id) && t1.IsActive == true && t1.IsSold != true && t1.CategoryId == sda.Id && (search.Contains(t1.Title) || search.Contains(t1.Description))
+                          select t1;
+                dt = dts.ToList();
+            }
             List<ProductCard> lst = new();
             foreach (var item in dt)
             {
@@ -84,8 +285,23 @@ namespace Merolekiando.Controllers
                 product.Id = item.Id;
                 product.Name = item.Title;
                 product.Price = item.Price;
-                product.Image = item.Image;
-                product.Category = item.Name;
+                var img = _Context.ProdImages.Where(a => a.PId == item.Id).FirstOrDefault();
+                if (img != null)
+                {
+                    product.Image = img.Image;
+                }else
+                {
+                    product.Image = null;
+                }
+                var cats = _Context.Categories.Where(a => a.Id == item.CategoryId).FirstOrDefault();
+                if (cats != null)
+                {
+                    product.Category = cats.Name;
+                }
+                else
+                {
+                    product.Category = "";
+                }
                 product.IsPromot = item.IsPromoted;
                 product.sellerid = item.SellerId;
                 lst.Add(product);
@@ -120,7 +336,7 @@ namespace Merolekiando.Controllers
 
             user.provinceDtos = lst;
 
-            var result = _productService.ManageProduct(user);
+            var result = await _productService.ManageProduct(user);
             return RedirectToAction("WebIndex", "Home");
         }
         public async Task<IActionResult> GetProdDetails(int id)
@@ -131,7 +347,8 @@ namespace Merolekiando.Controllers
             ViewBag.SubCategories = _Context.SubCategories.ToList();
             var rs = _extra.GetProvinces();
             ViewBag.GetProvnces = rs.Result;
-
+            var rees = _extra.GetMunicipalities();
+            ViewBag.GetMunicipilies = rees.Result;
             var res = await _productService.GetProductId(id);
             return PartialView("~/Views/Web/_GetProductById.cshtml", res);
         }

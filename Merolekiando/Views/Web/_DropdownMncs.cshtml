@@ -1,6 +1,9 @@
 ﻿@model IEnumerable<Merolekiando.Models.Municipality>
 
-   @foreach (var item in Model)
-   {
-       <option value="@item.Id">@item.Name</option>
-   }
+@*<select name="prvnc" id="MncSelectsMain" class="form-control" multiple data-live-search="true">*@
+    <option selected>Choose Muncipility</option>
+    @foreach (var item in Model)
+    {
+        <option value="@item.Id">@item.Name</option>
+    }
+@*</select>*@

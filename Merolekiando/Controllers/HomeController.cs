@@ -231,7 +231,7 @@ namespace Merolekiando.Controllers
 
             return PartialView("~/Views/Home/_ProductDetails.cshtml", dto);
         }
-        public IActionResult GetProductsByCat(string id)
+        public IActionResult GetProductsByCat(string id, List<int> prvnc, List<int> Mnc)
         {
             var catid = _Context.Categories.Where(a => a.Name == id).FirstOrDefault();
 
@@ -239,8 +239,35 @@ namespace Merolekiando.Controllers
                        join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
                        from pi in f.DefaultIfEmpty()
                        join t3 in _Context.Categories on t1.CategoryId equals t3.Id
-                       where t1.IsActive == true && t1.CategoryId == catid.Id
+                       join t4 in _Context.ProdProvinces on t1.Id equals t4.Pid 
+                       join t5 in _Context.ProdMunicipalities on t1.Id equals t5.Pid
+                       where t1.IsActive == true && t1.CategoryId == catid.Id ///&& prvnc.Contains((int)t4.Id) && Mnc.Contains(t5.Id)
                        select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted, t1.SellerId };
+
+            if (prvnc.Count > 0 && Mnc.Count == 0)
+            {
+                prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       join t4 in _Context.ProdProvinces on t1.Id equals t4.Pid
+                       join t5 in _Context.ProdMunicipalities on t1.Id equals t5.Pid
+                       where t1.IsActive == true && t1.CategoryId == catid.Id && prvnc.Contains((int)t4.Id) //&& Mnc.Contains(t5.Id)
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted, t1.SellerId };
+            }
+            else if (prvnc.Count > 0 && Mnc.Count > 0)
+            {
+                prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       join t4 in _Context.ProdProvinces on t1.Id equals t4.Pid
+                       join t5 in _Context.ProdMunicipalities on t1.Id equals t5.Pid
+                       where t1.IsActive == true && t1.CategoryId == catid.Id && prvnc.Contains((int)t4.Id) && Mnc.Contains(t5.Id)
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted, t1.SellerId };
+            }
+
+
             List<ProductCard> lst = new();
             foreach (var item in prod)
             {
@@ -261,7 +288,7 @@ namespace Merolekiando.Controllers
 
             return PartialView("~/Views/Home/_ProductsView.cshtml");
         }
-        public IActionResult GetProductsBySubCat(string id)
+        public IActionResult GetProductsBySubCat(string id, List<int> prvnc, List<int> Mnc)
         {
             var catid = _Context.SubCategories.Where(a => a.Name == id).FirstOrDefault();
 
@@ -269,8 +296,34 @@ namespace Merolekiando.Controllers
                        join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
                        from pi in f.DefaultIfEmpty()
                        join t3 in _Context.Categories on t1.CategoryId equals t3.Id
-                       where t1.IsActive == true && t1.SubCategoryId == catid.Id
+                       join t4 in _Context.ProdProvinces on t1.Id equals t4.Pid
+                       join t5 in _Context.ProdMunicipalities on t1.Id equals t5.Pid
+                       where t1.IsActive == true && t1.SubCategoryId == catid.Id //&& prvnc.Contains((int)t4.Id) && Mnc.Contains(t5.Id)
                        select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+
+            if (prvnc.Count > 0 && Mnc.Count == 0)
+            {
+                prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       join t4 in _Context.ProdProvinces on t1.Id equals t4.Pid
+                       join t5 in _Context.ProdMunicipalities on t1.Id equals t5.Pid
+                       where t1.IsActive == true && t1.SubCategoryId == catid.Id && prvnc.Contains((int)t4.Id) //&& Mnc.Contains(t5.Id)
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+            }
+            else if (prvnc.Count > 0 && Mnc.Count > 0)
+            {
+                prod = from t1 in _Context.Products
+                       join t2 in _Context.ProdImages on t1.Id equals t2.PId into f
+                       from pi in f.DefaultIfEmpty()
+                       join t3 in _Context.Categories on t1.CategoryId equals t3.Id
+                       join t4 in _Context.ProdProvinces on t1.Id equals t4.Pid
+                       join t5 in _Context.ProdMunicipalities on t1.Id equals t5.Pid
+                       where t1.IsActive == true && t1.SubCategoryId == catid.Id && prvnc.Contains((int)t4.Id) && Mnc.Contains(t5.Id)
+                       select new { t1.Id, t1.Title, t1.Price, pi.Image, t3.Name, t1.IsPromoted };
+            }
+
             List<ProductCard> lst = new();
             foreach (var item in prod)
             {

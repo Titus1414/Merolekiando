@@ -9,8 +9,9 @@ namespace Merolekando.Common
 {
     public class Methods
     {
-        public static string baseurl = "https://localhost:44303/";
+        //public static string baseurl = "https://localhost:44303/";
         //public static string baseurl = "http://64.20.48.40/";
+        public static string baseurl = "http://173.225.99.89/";
         //public static string baseurl = "https://smallyellowbook30.conveyor.cloud/";
         public static string RemoveWhitespace(string str)
         {

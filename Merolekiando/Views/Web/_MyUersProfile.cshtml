@@ -3,12 +3,12 @@
 @{
     var baseur = Methods.baseurl;
 }
-<link rel="stylesheet" href="~/css/all.min.css">
+@*<link rel="stylesheet" href="~/css/all.min.css">
 <link rel="stylesheet" href="~/css/bootstrap.min.css">
 <!--   ALL CSS GOSE HEAR  -->
 <!--   ALL CSS GOSE HEAR  -->
 <link rel="stylesheet" href="~/css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />*@
 <link rel="stylesheet" href="~/js/loadmore/css/style.css">
 
 <section style="background-color: #eff5ee;">
@@ -18,6 +18,7 @@
                 <div class="col-lg-4">
                     <div class="card mb-4">
                         <div class="card-body text-center">
+
                             <img src="@baseur@Model.Image" alt="avatar"
                                  class="rounded-circle img-fluid" style="width: 150px;">
                             <h5 class="my-3">@Model.Name</h5>
@@ -25,6 +26,34 @@
                             <div class="d-flex justify-content-center mb-2">
                                 <input type="file" name="Imagess" class="dimmy" id="image-input" />
                             </div>
+                            @if (Model.IsVerified == true)
+                            {
+                                <label> Verified </label>
+                               <i class="fas fa-check-double"></i>
+                            }
+                            else
+                            {
+                                <button type="button" data-toggle="modal" data-target="#VerifyModal" data-target="@Model.Id" id="VerifyBtn" class="btn btn-primary">Verify</button>
+                            }
+                            @if (Model.Subscriptions >= DateTimeOffset.Now.ToUnixTimeMilliseconds())
+                            {
+                                var s = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                                var t = Model.Subscriptions;
+                                long dt = (long)t-(long)s;
+                                DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(dt);
+                                
+                                var day = dateTimeOffset.ToString("dd ");
+                                var hr = dateTimeOffset.ToString("HH");
+                                var min = dateTimeOffset.ToString("MM");
+                               
+                                <label> Subscribed </label>
+                                <p>@day Days @hr Hrs @min Mins</p>
+                            }
+                            else
+                            {
+                                <button type="button" id="SubscriptionId" class="btn btn-primary">Subscription</button>
+                            }
+                            
                         </div>
                     </div>
                 </div>
@@ -90,36 +119,72 @@
     </div>
 </section>
 
-<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
-<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>
-<script src="~/js/jquery-1.12.4.min.js"></script>
+<div class="modal fade" id="VerifyModal" tabindex="-1" aria-labelledby="AddNewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Verfication</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-<script>
-    //$(document).ready(function ($) {
-    $("#FollowBtn").unbind().click(function() {
-    //$(document).on("click", "#FollowBtn", function () {
-                            var val = $(this).attr("data-target");
+                <form method="post" action="~/Web/Sendverify" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="col-12">
+                            <label class="visually-hidden" for="inlineFormInputGroupUsername">Message</label>
+                            <div class="input-group">
+                                @*<div class="input-group-text">a</div>*@
+                                <input type="text" class="form-control" name="Message" id="inlineFormInputGroupUsername" placeholder="Message" />
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <label>Front Image</label>
+                        <input type="file" name="FImage" class="dimmy" id="image-input" />
+                        <br />
+                        <br />
+                        <label>Back Image</label>
+                        <input type="file" name="BImage" class="dimmy" id="image-input" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+<script src="~/js/jquery-1.12.4.min.js"></script>
+@*<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>*@
+@*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>*@
+
+<script type="text/javascript">
+
+
+                        $("#SubscriptionId").click(function() {
+                        //$(document).on("click", "#ChatPageid", function () {
                              $.ajax({
                                 type: 'post',
-                                async : true,
                                 beforeSend: function(){
-                                    debugger
-                                    $('.ajax-loader').css("visibility", "visible");
-                                },
-                                url: '@Url.Action("FollowUser", "Web")',
-                                data: { 'id': val },
+                                        $('.ajax-loader').css("visibility", "visible");
+                                    },
+                                url: '@Url.Action("Contact", "Web")',
                                 complete: function(){
-                                    //$('.ajax-loader').css("visibility", "hidden");
-                                },
+                                        $('.ajax-loader').css("visibility", "hidden");
+                                    },
                                 success: function (data) {
-                                $("#ProductsPartials").html("");
-                                $("#ProductsPartials").html(data);
-                                $("#load-more").css({"display":"none",});
+                                    debugger
+                                    $("#ProductsPartials").html("");
+                                    $("#ProductsPartials").html(data);
+                                    debugger
+                                    $("#load-more").css({"display":"none",});
                                 },
                                 error: function (xhr) {
-                                    //alert('error');
+                                    alert('error');
                                 }
                             })
                         });
-                         //});
 </script>

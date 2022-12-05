@@ -363,6 +363,7 @@ namespace Merolekando.Controllers
             if (identity != null)
             {
                 IEnumerable<Claim> claims = identity.Claims;
+
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {

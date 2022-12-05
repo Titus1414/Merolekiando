@@ -39,19 +39,20 @@ namespace Merolekiando
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(options =>
+            services.AddAuthentication(
+                options =>
             {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = FacebookDefaults.AuthenticationScheme;
-            })
-                .AddCookie().AddGoogle(GoogleDefaults.AuthenticationScheme, options => {
-                    options.ClientId = Configuration["Authentication:Google:ClientId"];
-                    options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-                    options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
-                })
+                //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+                //options.DefaultForbidScheme = FacebookDefaults.AuthenticationScheme;
+            }
+            )
+                .AddCookie(options => options.SlidingExpiration = true)
                 .AddJwtBearer(options =>
                 {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
@@ -77,7 +78,13 @@ namespace Merolekiando
                             return Task.CompletedTask;
                         }
                     };
-                }).AddFacebook(FacebookDefaults.AuthenticationScheme, options => {
+                    //GoogleDefaults.AuthenticationScheme,
+                }).AddGoogle(options => {
+                    options.ClientId = Configuration["Authentication:Google:ClientId"];
+                    options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                    options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+                    //FacebookDefaults.AuthenticationScheme, 
+                }).AddFacebook(options => {
                     options.AppId = Configuration["Authentication:Facebook:AppId"];
                     options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
                 });
@@ -119,6 +126,8 @@ namespace Merolekiando
             services.AddSession(options => {
                 options.IdleTimeout = System.TimeSpan.FromDays(10);
             });
+
+
             //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             //    .AddJwtBearer(options =>
             //    {
@@ -167,6 +176,7 @@ namespace Merolekiando
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();

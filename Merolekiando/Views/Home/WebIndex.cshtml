@@ -3,11 +3,7 @@
     Layout = "~/Views/Shared/_WebLayout.cshtml";
     string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dist/browser/signalr.min.js";
 }
-<link rel="stylesheet" href="~/css/all.min.css">
-<link rel="stylesheet" href="~/css/bootstrap.min.css">
-<!--   ALL CSS GOSE HEAR  -->
-<!--   ALL CSS GOSE HEAR  -->
-<link rel="stylesheet" href="~/css/style.css">
+
 <style>
     .tag {
         float: left;
@@ -62,17 +58,14 @@
 
 
 <script src="@url"></script>
-<script src="~/dash/js/jquery1-3.4.1.min.js"></script>
-@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>*@
+@*<script src="~/dash/js/jquery1-3.4.1.min.js"></script>*@
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
 
     $("#load-more").css({"display":"inline-block",});
 
         let loadMoreBtn = document.querySelector('#load-more');
-        //let currentItem = parseInt($("#currentitemCnt").val(), 32);
-        //$(window).scroll = () => {
+        
         loadMoreBtn.onclick = () =>{
             debugger
 
@@ -174,4 +167,7 @@
 
     //$('select').selectpicker();
 </script>
-
+@*
+<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>*@

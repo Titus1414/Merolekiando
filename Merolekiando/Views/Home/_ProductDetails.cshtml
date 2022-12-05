@@ -2,63 +2,124 @@
 @using Microsoft.AspNetCore.Http
 @model Merolekando.Models.Dtos.Productdto
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap">
-<link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/css/mdb.min.css">
-<link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/css/all.min.css">
+<link rel="stylesheet" href="~/css/mdb.min.css" />
+<link rel="stylesheet" href="~/css/all.min.css" />*@
+@*<link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/css/mdb.min.css">
+    <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/css/all.min.css">*@
 <link rel="stylesheet" href="~/js/loadmore/css/style.css">
 @{
     string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dist/browser/signalr.min.js";
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />*@
 
-
+@*<link rel="stylesheet" href="~/colojscs/slider.css" />*@
+  <link rel="stylesheet" href="~/colojscs/font-awesome.min.css">
+    <link rel="stylesheet" href="~/colojscs/style.css">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 <div class="row">
-    <div class="col-md-6">
+    @*<div class="col-md-6">
         <div class="ecommerce-gallery" data-mdb-zoom-effect="true" data-mdb-auto-height="true">
-            <div class="row py-3 shadow-5">
+        <div class="row py-3 shadow-5">
 
+        @{
+        int glry = 1;
+        }
+        @foreach (var item in @Model.ProdImages)
+        {
+        var baseur = Methods.baseurl;
+
+        if (glry == 1)
+        {
+        <div class="col-12 mb-1">
+        <div class="lightbox">
+        <img src="@baseur@item.Image" height="450px" class="ecommerce-gallery-main-img active w-100" />
+        </div>
+        </div>
+
+        <div class="col-3 mt-1">
+        <img src="@baseur@item.Image"
+        data-mdb-img="@baseur@item.Image"
+        alt="Gallery image @glry"
+        style="height:100px !important"
+        class="active w-100" />
+        </div>
+        }
+        else
+        {
+        <div class="col-3 mt-1">
+        <img src="@baseur@item.Image"
+        data-mdb-img="@baseur@item.Image"
+        alt="Gallery image @glry"
+        style="height:100px !important"
+        class="w-100" />
+        </div>
+        }
+
+
+        glry++;
+        }
+
+        </div>
+        </div>
+        </div>*@
+    <div class="col-md-6">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
                 @{
                     int glry = 1;
                 }
                 @foreach (var item in @Model.ProdImages)
                 {
                     var baseur = Methods.baseurl;
-
                     if (glry == 1)
                     {
-                        <div class="col-12 mb-1">
-                            <div class="lightbox">
-                                <img src="@baseur@item.Image" height="450px" class="ecommerce-gallery-main-img active w-100" />
-                            </div>
-                        </div>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                    }
+                    else
+                    {
+                        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                    }
+                    glry++;
+                }
 
-                        <div class="col-3 mt-1">
-                            <img src="@baseur@item.Image"
-                         data-mdb-img="@baseur@item.Image"
-                         alt="Gallery image @glry"
-                         style="height:100px !important"
-                         class="active w-100" />
+            </ol>
+            <div class="carousel-inner">
+                @{
+                    glry = 1;
+                }
+                @foreach (var item in @Model.ProdImages)
+                {
+                    var baseur = Methods.baseurl;
+                    if (glry == 1)
+                    {
+                        <div class="carousel-item active">
+                            <img class="d-block w-100" src="@baseur@item.Image" alt="First slide">
                         </div>
                     }
                     else
                     {
-                        <div class="col-3 mt-1">
-                            <img src="@baseur@item.Image"
-                         data-mdb-img="@baseur@item.Image"
-                         alt="Gallery image @glry"
-                         style="height:100px !important"
-                         class="w-100" />
+                        <div class="carousel-item">
+                            <img class="d-block w-100" src="@baseur@item.Image" alt="Second slide">
                         </div>
                     }
-
-
                     glry++;
                 }
-
             </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
     </div>
+
     <div class="col-md-6">
         <h3 style="float: left;">@Model.Title</h3>
         <br />
@@ -84,19 +145,19 @@
         {
             if (@ViewBag.UserIdSession == ViewBag.ToId)
             {
-                <a type="button" style="float: left;" id="DeleteProd" data-target="@Model.Id" class="btn btn-lg btn-outline-danger">
-                    <i class="far fa-trash-alt"></i>
-                </a>
-                <a type="button" style="float: left;margin-left: 2%;" id="EditProd" data-target="@Model.Id" class="btn btn-lg btn-outline-secondary">
-                    <i class="fas fa-edit"></i>
-                </a>
+                <button type="button" style="float: left;" id="DeleteProd" data-target="@Model.Id" class="btn btn-lg btn-outline-danger">
+                    <i class="fa fa-trash"></i>
+                </button>
+                <button type="button" style="float: left;margin-left: 2%;" id="EditProd" data-target="@Model.Id" class="btn btn-lg btn-outline-secondary">
+                    <i class="fa fa-edit"></i>
+                </button>
             }
             else
             {
-                <a type="button" style="float: left;" id="getUserbyId" data-target="@ViewBag.UserIdBtnId" class="btn btn-lg btn-outline-dark" data-mdb-ripple-color="dark">
-                    <i class="far fa-user"></i>
+                <button type="button" style="float: left;" id="getUserbyId" data-target="@ViewBag.UserIdBtnId" class="btn btn-lg btn-outline-dark" data-ripple-color="dark">
+                    <i class="fa fa-user"></i>
                     @ViewBag.UserbyId.Name
-                </a>
+                </button>
             }
 
 
@@ -107,23 +168,23 @@
             {
                 if (ViewBag.FavCheck == true)
                 {
-                    <a type="button" id="SetFavProdId" data-target="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Unfav</a>
+                    <button type="button" id="SetFavProdId" data-target="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-ripple-color="dark">Unfav</button>
                 }
                 else
                 {
-                    <a type="button" id="SetFavProdId" data-target="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Fav</a>
+                    <button type="button" id="SetFavProdId" data-target="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-ripple-color="dark">Fav</button>
                 }
             }
 
 
-            <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Share</button>
+            <button type="button" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-ripple-color="dark">Share</button>
             if (@ViewBag.UserIdSession != ViewBag.ToId)
             {
-                <a type="button" id="SetReportProdId" data-target="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Report</a>
+                <button type="button" id="SetReportProdId" data-target="@Model.Id" class="btn btn-outline-secondary btn-rounded" style="float: left; margin-left: 10px;" data-ripple-color="dark">Report</button>
                 <br />
                 <br />
                 <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-outline-success" id="GetChatSec" @*data-mdb-toggle="modal" data-mdb-target="#ChatModal"*@ style="float: left; margin-left: 10px;" data-mdb-ripple-color="dark">Chat</button>
+                    <button type="button" class="btn btn-outline-success" id="GetChatSec" @*data-mdb-toggle="modal" data-mdb-target="#ChatModal"*@ style="float: left; margin-left: 10px; width:105%" data-mdb-ripple-color="dark">Chat</button>
                 </div>
             }
             <br />
@@ -173,16 +234,16 @@
                                             App
                                             </button>*@
                                     </div>
-                                    <div class="card-body" id="chatmdl" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+                                    <div class="card-body" id="chatmdl" data-perfect-scrollbar="true" style="position: relative; height: 400px">
                                     </div>
                                     <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
                                         <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
                                              alt="avatar 3" style="width: 40px; height: 100%;">
                                         <input type="text" class="form-control form-control-lg" id="MsgInput"
                                                placeholder="Type message">
-                                        <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+                                        <a class="ms-1 text-muted" href="#!"><i class="fa fa-paperclip"></i></a>
                                         @*<a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>*@
-                                        <a id="MessageSendId" class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>
+                                        <a id="MessageSendId" class="ms-3" href="#!"><i class="fa fa-paper-plane"></i></a>
                                     </div>
                                 </div>
 
@@ -198,27 +259,31 @@
 
 
 <div class="modal fade" id="EditProdModal" tabindex="-1" aria-labelledby="AddNewModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit Prooduct</h5>
-                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div id="GetProdHere">
-
-                </div>
-
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Prooduct</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div id="GetProdHere">
+            </div>
+
         </div>
     </div>
+</div>
 
+@*<script type="text/javascript" src="~/js/mdb.min.js"> </script>*@
+@*<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>*@
+@*<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>*@
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="~/colojscs/popper.js"></script>
+        <script src="~/colojscs/bootstrap.min.js"></script>
+        <script src="~/colojscs/main.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
-<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/js/mdb.min.js"></script>
-<script type="text/javascript" src="https://mdbootstrap.com/api/snippets/static/download/MDB5-Pro-Advanced_5.0.0/plugins/js/all.min.js"></script>
-
-    
 <script>
-    
+
 
      $("#SetReportProdId").unbind().click(function() {
     //$(document).on("click", "#SetReportProdId", function () {
@@ -245,7 +310,7 @@
                             }
                         })
                     });
-    
+
         $("#SetFavProdId").unbind().click(function() {
     //$(document).on("click", "#SetFavProdId", function () {
         var val = $(this).attr("data-target");
@@ -328,9 +393,9 @@
         });
 
 
-        const options = {
-        accessTokenFactory: getToken
-    };
+    //    const options = {
+    //    accessTokenFactory: getToken
+    //};
     var sess = $("#SessionValue").val();
         var connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Debug)
@@ -396,7 +461,7 @@
                             }
                         })
                     });
-                    $("#EditProd").unbind().click(function() {
+                    $("#EditProd").click(function() {
          //$(document).on("click", "#EditProd", function () {
             var val = $(this).attr("data-target");
                          $.ajax({
@@ -439,6 +504,15 @@
                                     }
                                 })
                 })
+
+                $("#delImg").click(function() {
+                    debugger
+                        var val = $(this).attr("data-target");
+                            alert("asdfaf");
+                       });
 </script>
 
-
+@*
+<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>*@
