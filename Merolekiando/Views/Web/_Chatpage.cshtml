@@ -156,7 +156,7 @@ string url = "https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0-rc1-update1/dis
 
 var connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Debug)
-        .withUrl("http://64.20.48.40/Chat?token="+sess+"")
+        .withUrl("https://merolikeando.com/Chat?token=" + sess + "")
         //.withUrl('https://localhost:44303/Chat', options)
         .configureLogging(signalR.LogLevel.Information)
         .build();

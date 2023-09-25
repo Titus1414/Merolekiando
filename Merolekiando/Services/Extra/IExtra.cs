@@ -24,6 +24,7 @@ namespace Merolekando.Services.Extra
         public Task<List<SubCategory>> GetSubCategories();
         public Task<SubCategory> GetSubCategoryById(int id);
         public Task<List<Banner>> GetBanners();
+        public Task<List<JsonApiDatum>> GetJsonApiData();
         public Task<Banner> GetBannerById(int id);
         public Task<UserDto> GiveRate(Rating dto);
         public Task<string> SetMessageUser(MessaveDto dto);
@@ -38,5 +39,7 @@ namespace Merolekando.Services.Extra
         public Task<List<MsgNotification>> GetMSgNotify(int id);
         public Task<ContactDto> AllIfon();
         public Task<long?> CheckSubs(int id);
+        public Task<string> Chat(string message, string userId, string Pid, string from, string conn);
+        public Task<string> ChangeConnId(string conn, int userId, int sellerId, int pId);
     }
 }

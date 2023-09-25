@@ -91,6 +91,7 @@ namespace Merolekando.Services.Auth
         public async Task<List<UserDto>> GetUser()
         {
             var dt = await _Context.Users.Where(a => a.IsDeleted != true).ToListAsync();
+
             List<UserDto> lst = new();
             foreach (var item in dt)
             {
@@ -119,9 +120,7 @@ namespace Merolekando.Services.Auth
                 dto.Favorites = _Context.Favorites.Where(a => a.UserId == item.Id).ToList(); // _Context.Favorites.Where(a => a.UserId == item.Id).ToList();
                 dto.Followers = _Context.Folowers.Where(a => a.Folowers == item.Id).ToList();
                 lst.Add(dto);
-
             }
-
 
             return lst;
         }

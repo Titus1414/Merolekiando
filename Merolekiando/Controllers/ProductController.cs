@@ -31,7 +31,7 @@ namespace Merolekando.Controllers
         [Route("Test")]
         //[DisableFormValueModelBinding]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Test([FromForm] testDto user) 
+        public async Task<IActionResult> Test([FromForm] testDto user)
         {
             return Ok();
         }
@@ -60,7 +60,7 @@ namespace Merolekando.Controllers
                             return BadRequest("Por favor, suscríbete para publicar");
                         }
                     }
-                    
+
                     user.SellerId = Convert.ToInt32(name);
                     var result = _productService.ManageProduct(user);
                     if (result.Result != null)
@@ -175,7 +175,7 @@ namespace Merolekando.Controllers
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {
-                    var result = _productService.SetCountOfViewProduct(Convert.ToInt32(name),id);
+                    var result = _productService.SetCountOfViewProduct(Convert.ToInt32(name), id);
                     if (result.Result != null)
                     {
                         return Ok(new { result.Result });
@@ -186,10 +186,42 @@ namespace Merolekando.Controllers
             }
             return Unauthorized();
         }
-        
+        [HttpPost]
+        [Route("SetProductCountWithOutToken")]
+        public IActionResult SetProductCountWithOutToken(int id)
+        {
+            var result = _productService.SetCountOfViewProduct(id);
+            if (result.Result != null)
+            {
+                return Ok(new { result.Result });
+            }
+            return BadRequest(result.Result);
+        }
+        [HttpGet]
+        [Route("GetProductsWithOutTokenByFilters")]
+        public async Task<IActionResult> GetProductsWithOutTokenByFilters(int cat, int subCat, int prvnc, int munc, int pageSize, int pageNumber, string search)
+        {
+            var result = await _productService.GetProductAsyncWithOutTokenWithCatSubCatProvncMunci(cat, subCat, prvnc, munc, pageSize, pageNumber, search);
+            if (result != null)
+            {
+                return Ok(new { result });
+            }
+            return BadRequest();
+        }
+        [HttpGet]
+        [Route("GetProductsWithOutToken")]
+        public async Task<IActionResult> GetProductsWithOutToken(int pageSize, int pageNumber)
+        {
+            var result = await _productService.GetProductAsyncWithOutToken(pageSize, pageNumber);
+            if (result != null)
+            {
+                return Ok(new { result });
+            }
+            return BadRequest();
+        }
         [HttpGet]
         [Route("GetProducts")]
-        public IActionResult GetProducts()
+        public IActionResult GetProducts(/*int pageSize, int pageNumber*/)
         {
             var identity = User.Identity as ClaimsIdentity;
             if (identity != null)
@@ -199,7 +231,7 @@ namespace Merolekando.Controllers
                 if (name != null)
                 {
 
-                    var result = _productService.GetProductAsync(Convert.ToInt32(name));
+                    var result = _productService.GetProductAsync(Convert.ToInt32(name)/*, pagesize, pagenumber*/);
                     if (result.Result != null)
                     {
                         return Ok(new { result.Result });
@@ -212,7 +244,7 @@ namespace Merolekando.Controllers
         }
         [HttpGet]
         [Route("GetUserProducts")]
-        public IActionResult GetUserProducts()
+        public IActionResult GetUserProducts(int pageSize, int pageNumber)
         {
             var identity = User.Identity as ClaimsIdentity;
             if (identity != null)
@@ -221,7 +253,13 @@ namespace Merolekando.Controllers
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {
-                    var result = _productService.GetUserProduct(Convert.ToInt32(name));
+                    if (pageSize == 0 && pageNumber == 0)
+                    {
+                        pageSize = 20;
+                        pageNumber = 1;
+                    }
+                    
+                    var result = _productService.GetUserProduct(Convert.ToInt32(name), pageSize, pageNumber);
                     if (result.Result != null)
                     {
                         return Ok(new { result.Result });
@@ -236,47 +274,34 @@ namespace Merolekando.Controllers
         [Route("GetProductsById")]
         public IActionResult GetProductsId(int id)
         {
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity != null)
+            var result = _productService.GetProductId(id);
+            if (result.Result != null)
             {
-                IEnumerable<Claim> claims = identity.Claims;
-                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
-                if (name != null)
-                {
-
-                    var result = _productService.GetProductId(id);
-                    if (result.Result != null)
-                    {
-                        return Ok(new { result.Result });
-                    }
-                    return BadRequest();
-                }
-                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
+                return Ok(new { result.Result });
             }
-            return Unauthorized();
+            return BadRequest();
         }
         [HttpGet]
         [Route("GetProductsBySellerId")]
         public IActionResult GetProductsSellerId(int id)
         {
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity != null)
+            var result = _productService.GetProductSellerId(id);
+            if (result.Result != null)
             {
-                IEnumerable<Claim> claims = identity.Claims;
-                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
-                if (name != null)
-                {
-
-                    var result = _productService.GetProductSellerId( id);
-                    if (result.Result != null)
-                    {
-                        return Ok(new { result.Result });
-                    }
-                    return BadRequest();
-                }
-                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
+                return Ok(new { result.Result });
             }
-            return Unauthorized();
+            return BadRequest();
+        }
+        [HttpGet]
+        [Route("GetProductsByCategoryIdWithOutToken")]
+        public IActionResult GetProductsByCategoryIdWithOutToken(int id)
+        {
+            var result = _productService.GetProductCategoryId(id);
+            if (result.Result != null)
+            {
+                return Ok(new { result.Result });
+            }
+            return BadRequest();
         }
         [HttpGet]
         [Route("GetProductsByCategoryId")]
@@ -325,6 +350,17 @@ namespace Merolekando.Controllers
             return Unauthorized();
         }
         [HttpGet]
+        [Route("GetProductsBySubCategoryIdWithOutToken")]
+        public IActionResult GetProductsBySubCategoryIdWithOutToken(int id)
+        {
+            var result = _productService.GetProductSubCategoryId(id);
+            if (result.Result != null)
+            {
+                return Ok(new { result.Result });
+            }
+            return BadRequest();
+        }
+        [HttpGet]
         [Route("GetFavProducts")]
         public IActionResult GetFavProducts()
         {
@@ -346,6 +382,17 @@ namespace Merolekando.Controllers
                 return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
+        }
+        [HttpGet]
+        [Route("SearchProductsWithOutToken")]
+        public IActionResult SearchProductsWithOutToken(string Search)
+        {
+            var result = _productService.SearchProducts(Search);
+            if (result.Result != null)
+            {
+                return Ok(new { result.Result });
+            }
+            return BadRequest();
         }
         [HttpGet]
         [Route("SearchProducts")]
@@ -374,23 +421,12 @@ namespace Merolekando.Controllers
         [Route("GetImagesByPid")]
         public IActionResult GetImagesByPid(int id)
         {
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity != null)
+            var result = _productService.GetImagesByPId(id);
+            if (result.Result != null)
             {
-                IEnumerable<Claim> claims = identity.Claims;
-                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
-                if (name != null)
-                {
-                    var result = _productService.GetImagesByPId(id);
-                    if (result.Result != null)
-                    {
-                        return Ok(new { result.Result });
-                    }
-                    return BadRequest();
-                }
-                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
+                return Ok(new { result.Result });
             }
-            return Unauthorized();
+            return BadRequest();
         }
     }
 }

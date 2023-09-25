@@ -218,7 +218,7 @@ namespace Merolekando.Controllers
                     {
                         return Ok(new { result.Result });
                     }
-                    
+
                 }
                 return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
@@ -333,6 +333,28 @@ namespace Merolekando.Controllers
             }
             return Unauthorized();
         }
+        [HttpPost]
+        [Route("Chat")]
+        public IActionResult ChatHit(WebChatDto dto)
+        {
+            var result = _extra.Chat(dto.message, dto.userId, dto.Pid, dto.from, dto.conn);
+            if (result.Result != null)
+            {
+                return Ok(result.Result);
+            }
+            return Unauthorized();
+        }
+        [HttpPost]
+        [Route("UpdateConnection")]
+        public IActionResult UpdateConnection(string conn, int userId, int sellerId, int pId)
+        {
+            var result = _extra.ChangeConnId(conn, userId, sellerId, pId);
+            if (result.Result != null)
+            {
+                return Ok(result.Result);
+            }
+            return Unauthorized();
+        }
         [HttpGet]
         [Route("GetMunicipilty")]
         public IActionResult GetMunicipilty(int id)
@@ -393,26 +415,14 @@ namespace Merolekando.Controllers
         {
             try
             {
-                var identity = User.Identity as ClaimsIdentity;
-                if (identity != null)
-                {
-                    IEnumerable<Claim> claims = identity.Claims;
-                    var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
-                    if (name != null)
-                    {
-                        var result = _extra.GetProvinces();
-                        return Ok(new { result.Result });
-                    }
-                    return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
-                }
-                return Unauthorized("asdfasdf");
+                var result = _extra.GetProvinces();
+                return Ok(new { result.Result });
             }
             catch (Exception ex)
             {
                 return Unauthorized();
                 throw;
             }
-            
         }
         [HttpGet]
         [Route("GetCategory")]
@@ -433,22 +443,25 @@ namespace Merolekando.Controllers
             return Unauthorized();
         }
         [HttpGet]
+        [Route("GetCategoryByIdWOT")]
+        public IActionResult GetCategoryByIdWithOutToken(int id)
+        {
+            var result = _extra.GetCategoryById(id);
+            return Ok(new { result.Result });
+        }
+        [HttpGet]
+        [Route("GetSubCategoryByIdWOT")]
+        public IActionResult GetSubCategoryByIdWithOutToken(int id)
+        {
+            var result = _extra.GetSubCategoryById(id);
+            return Ok(new { result.Result });
+        }
+        [HttpGet]
         [Route("GetCategories")]
         public IActionResult GetCategories()
         {
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                IEnumerable<Claim> claims = identity.Claims;
-                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
-                if (name != null)
-                {
-                    var result = _extra.GetCategories();
-                    return Ok(new { result.Result });
-                }
-                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
-            }
-            return Unauthorized();
+            var result = _extra.GetCategories();
+            return Ok(new { result.Result });
         }
         [HttpGet]
         [Route("GetSubCategory")]
@@ -587,7 +600,7 @@ namespace Merolekando.Controllers
                 var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
                 if (name != null)
                 {
-                    var result = _extra.GetNotify( Convert.ToInt32(name));
+                    var result = _extra.GetNotify(Convert.ToInt32(name));
                     return Ok(new { result.Result });
                 }
                 return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
@@ -616,19 +629,8 @@ namespace Merolekando.Controllers
         [Route("AllInfo")]
         public async Task<IActionResult> AllInfo()
         {
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                IEnumerable<Claim> claims = identity.Claims;
-                var name = claims.Where(p => p.Type == "ID").FirstOrDefault()?.Value;
-                if (name != null)
-                {
-                    var result = _extra.AllIfon();
-                    return Ok(new { result.Result });
-                }
-                return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
-            }
-            return Unauthorized();
+            var result = _extra.AllIfon();
+            return Ok(new { result.Result });
         }
         [HttpGet]
         [Route("CheckSubs")]
@@ -647,6 +649,13 @@ namespace Merolekando.Controllers
                 return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
+        }
+        [HttpGet]
+        [Route("JsonDataApi")]
+        public async Task<IActionResult> JsonDataApi()
+        {
+            var result = _extra.GetJsonApiData();
+            return Ok(new { result.Result });
         }
     }
 }

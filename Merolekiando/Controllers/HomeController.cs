@@ -14,11 +14,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Merolekiando.Controllers
@@ -57,6 +59,14 @@ namespace Merolekiando.Controllers
                     RedirectUri = Url.Action("FacebookResponse")
                 });
             }
+        }
+        public IActionResult ContactUs()
+        {
+            return View();
+        }
+        public IActionResult PrivacyPolicy()
+        {
+            return View();
         }
         public async Task<IActionResult> GoogleResponse()
         {
@@ -437,8 +447,32 @@ namespace Merolekiando.Controllers
 
             return PartialView("~/Views/Home/_ProductsView.cshtml");
         }
-        public IActionResult WebIndex()
+        public async Task<IActionResult> WebIndex()
         {
+
+            //var dt = _Context.JsonApiData.ToList();
+            //foreach (var item in dt)
+            //{
+            //    var client = new HttpClient();
+            //    HttpResponseMessage response = await client.GetAsync("https://www.nutritionix.com/nixapi/brands/"+item.Id);
+            //    HttpContent responseContent = response.Content;
+            //    using (var reader = new StreamReader(await responseContent.ReadAsStreamAsync()))
+            //    {
+            //        var sda = await reader.ReadToEndAsync();
+
+            //        jsonApiMdl std = JsonConvert.DeserializeObject<jsonApiMdl>(sda);
+            //        var sd = std.logo;
+
+            //        var data = _Context.JsonApiData.Where(a => a.Id == item.Id).FirstOrDefault();
+
+            //        data.Logo = sd;
+
+            //        _Context.JsonApiData.Update(data);
+            //        _Context.SaveChanges();
+            //    }
+            //}
+
+
             var banners = _Context.Banners.Where(a => a.IsActive == true).ToList();
             ViewBag.Banners = banners;
 

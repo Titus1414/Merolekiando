@@ -400,7 +400,7 @@
         var connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Debug)
         //.withUrl('https://localhost:44303/Chat', options)
-        .withUrl("http://64.20.48.40/Chat?token="+sess+"")
+        .withUrl("https://merolikeando.com/Chat?token=" + sess + "")
         .configureLogging(signalR.LogLevel.Information)
         .build();
     connection.start().then(() => {

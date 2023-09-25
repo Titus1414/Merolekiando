@@ -39,55 +39,56 @@ namespace Merolekiando
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(
-                options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-                //options.DefaultForbidScheme = FacebookDefaults.AuthenticationScheme;
-            }
-            )
-                .AddCookie(options => options.SlidingExpiration = true)
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                            .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateActor = false,
-                        ValidateLifetime = true,
-                        NameClaimType = ClaimTypes.NameIdentifier
+            //services.AddAuthentication(
+            //    options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            //    //options.DefaultForbidScheme = FacebookDefaults.AuthenticationScheme;
+            //}
+            //)
+            //    .AddCookie(options => options.SlidingExpiration = true)
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.RequireHttpsMetadata = false;
+            //        options.SaveToken = true;
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuerSigningKey = true,
+            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+            //                .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+            //            ValidateIssuer = false,
+            //            ValidateAudience = false,
+            //            ValidateActor = false,
+            //            ValidateLifetime = true,
+            //            NameClaimType = ClaimTypes.NameIdentifier
 
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            var accessToken = context.Request.Query["access_token"];
-                            var path = context.HttpContext.Request.Path;
-                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/signalServer"))) // for me my hub endpoint is ConnectionHub
-                            {
-                                context.Token = accessToken;
-                            }
-                            return Task.CompletedTask;
-                        }
-                    };
-                    //GoogleDefaults.AuthenticationScheme,
-                }).AddGoogle(options => {
-                    options.ClientId = Configuration["Authentication:Google:ClientId"];
-                    options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-                    options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
-                    //FacebookDefaults.AuthenticationScheme, 
-                }).AddFacebook(options => {
-                    options.AppId = Configuration["Authentication:Facebook:AppId"];
-                    options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-                });
+            //        };
+            //        options.Events = new JwtBearerEvents
+            //        {
+            //            OnMessageReceived = context =>
+            //            {
+            //                var accessToken = context.Request.Query["access_token"];
+            //                var path = context.HttpContext.Request.Path;
+            //                if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/signalServer"))) // for me my hub endpoint is ConnectionHub
+            //                {
+            //                    context.Token = accessToken;
+            //                }
+            //                return Task.CompletedTask;
+            //            }
+            //        };
+            //        //GoogleDefaults.AuthenticationScheme,
+            //    });
+            //.AddGoogle(options => {
+            //        options.ClientId = Configuration["Authentication:Google:ClientId"];
+            //        options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+            //        options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+            //        //FacebookDefaults.AuthenticationScheme, 
+            //    }).AddFacebook(options => {
+            //        options.AppId = Configuration["Authentication:Facebook:AppId"];
+            //        options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            //    });
 
             //Global.ConnectionsString = Configuration.GetConnectionString("DefaultConnection");
 
@@ -128,35 +129,35 @@ namespace Merolekiando
             });
 
 
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //    .AddJwtBearer(options =>
-            //    {
-            //        options.TokenValidationParameters = new TokenValidationParameters
-            //        {
-            //            ValidateIssuerSigningKey = true,
-            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-            //                .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
-            //            ValidateIssuer = false,
-            //            ValidateAudience = false,
-            //            ValidateActor = false,
-            //            ValidateLifetime = true,
-            //            NameClaimType = ClaimTypes.NameIdentifier
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+                            .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateActor = false,
+                        ValidateLifetime = true,
+                        NameClaimType = ClaimTypes.NameIdentifier
 
-            //        };
-            //        options.Events = new JwtBearerEvents
-            //        {
-            //            OnMessageReceived = context =>
-            //            {
-            //                var accessToken = context.Request.Query["access_token"];
-            //                var path = context.HttpContext.Request.Path;
-            //                if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/signalServer"))) // for me my hub endpoint is ConnectionHub
-            //                {
-            //                    context.Token = accessToken;
-            //                }
-            //                return Task.CompletedTask;
-            //            }
-            //        };
-            //    });
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/signalServer"))) // for me my hub endpoint is ConnectionHub
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
 
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore

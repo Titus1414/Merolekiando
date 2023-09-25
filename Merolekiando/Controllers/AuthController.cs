@@ -49,12 +49,13 @@ namespace Merolekando.Controllers
                     {
                         return BadRequest("Ya existe el correo electrónico");
                     }
-                    else {
+                    else
+                    {
                         return BadRequest("Error");
                     }
-                    
+
                 }
-                
+
             }
             return Unauthorized();
         }
@@ -89,7 +90,7 @@ namespace Merolekando.Controllers
                         }
                     }
                 }
-                
+
                 var res = _auth.Login(user);
                 if (res.Result == "Success")
                 {
@@ -110,7 +111,8 @@ namespace Merolekando.Controllers
                 {
                     return BadRequest("credenciales no válidas");
                 }
-                else {
+                else
+                {
                     return BadRequest(res.Result);
                 }
             }
@@ -354,6 +356,13 @@ namespace Merolekando.Controllers
                 return Unauthorized("Sesión caducada. Por favor, inicie sesión de nuevo");
             }
             return Unauthorized();
+        }
+        [HttpGet]
+        [Route("GetUsersByIdWithOutToken")]
+        public IActionResult GetUsersByIdWithOutToken(int id)
+        {
+            var result = _auth.GetUserById(id);
+            return Ok(new { result.Result });
         }
         [HttpGet]
         [Route("GetUser")]

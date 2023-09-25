@@ -24,6 +24,7 @@ namespace Merolekiando.Models
         public virtual DbSet<ConversationCount> ConversationCounts { get; set; }
         public virtual DbSet<Favorite> Favorites { get; set; }
         public virtual DbSet<Folower> Folowers { get; set; }
+        public virtual DbSet<JsonApiDatum> JsonApiData { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<MsgNotification> MsgNotifications { get; set; }
         public virtual DbSet<Municipality> Municipalities { get; set; }
@@ -45,7 +46,7 @@ namespace Merolekiando.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-NNNJB7B;Database=MerolikandoDB;Trusted_Connection=True;MultipleActiveResultSets=true;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-IL78EKE;Database=MerolikandoDB;Trusted_Connection=True;MultipleActiveResultSets=true;");
             }
         }
 
@@ -198,6 +199,21 @@ namespace Merolekiando.Models
                     .WithMany(p => p.Folowers)
                     .HasForeignKey(d => d.Fuser)
                     .HasConstraintName("FK_Folowers_Users");
+            });
+
+            modelBuilder.Entity<JsonApiDatum>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasMaxLength(50)
+                    .HasColumnName("id");
+
+                entity.Property(e => e.Logo).HasColumnName("logo");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .IsUnicode(false)
+                    .HasColumnName("name");
             });
 
             modelBuilder.Entity<Message>(entity =>
